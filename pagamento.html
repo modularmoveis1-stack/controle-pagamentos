@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Controle de Pagamentos — Modular Móveis</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f1117; --surface: #181c27; --surface2: #1e2336;
+  --border: #2a2f45; --border2: #353b56;
+  --text: #e8eaf0; --text2: #8b90a8; --text3: #555d7a;
+  --accent: #4f7bff; --accent-dim: #1e2d5a;
+  --green: #22c55e; --green-dim: #0d2e1a;
+  --yellow: #f59e0b; --yellow-dim: #2d2006;
+  --red: #ef4444; --red-dim: #2d0f0f;
+  --teal: #14b8a6; --purple: #a855f7; --orange: #f97316;
+  --font: 'DM Sans', sans-serif; --mono: 'DM Mono', monospace;
+  --radius: 10px; --radius-sm: 6px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 14px; }
+body { font-family: var(--font); background: var(--bg); color: var(--text); min-height: 100vh; }
+
+.sidebar {
+  position: fixed; left: 0; top: 0; bottom: 0; width: 220px;
+  background: var(--surface); border-right: 1px solid var(--border);
+  display: flex; flex-direction: column; z-index: 100;
+}
+.sidebar-logo { padding: 20px 18px 14px; border-bottom: 1px solid var(--border); }
+.sidebar-logo h1 { font-size: 13px; font-weight: 600; }
+.sidebar-logo span { font-size: 11px; color: var(--text3); display: block; margin-top: 2px; }
+.nav { flex: 1; padding: 12px 8px; display: flex; flex-direction: column; gap: 2px; }
+.nav-item {
+  display: flex; align-items: center; gap: 10px; padding: 8px 10px;
+  border-radius: var(--radius-sm); cursor: pointer; font-size: 13px;
+  color: var(--text2); transition: all 0.15s; border: none; background: none;
+  width: 100%; text-align: left;
+}
+.nav-item:hover { background: var(--surface2); color: var(--text); }
+.nav-item.active { background: var(--accent-dim); color: var(--accent); font-weight: 500; }
+.nav-section { font-size: 10px; font-weight: 600; color: var(--text3); padding: 10px 10px 4px; letter-spacing: 0.08em; text-transform: uppercase; }
+.main { margin-left: 220px; min-height: 100vh; }
+.topbar {
+  position: sticky; top: 0; z-index: 50;
+  background: var(--bg); border-bottom: 1px solid var(--border);
+  padding: 12px 24px; display: flex; align-items: center; gap: 12px;
+}
+.topbar-title { font-size: 15px; font-weight: 600; flex: 1; }
+.content { padding: 24px; }
+
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 14px; border-radius: var(--radius-sm);
+  font-size: 13px; font-family: var(--font); font-weight: 500;
+  cursor: pointer; border: 1px solid transparent; transition: all 0.15s;
+}
+.btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+.btn-primary:hover { opacity: 0.88; }
+.btn-ghost { background: transparent; color: var(--text2); border-color: var(--border2); }
+.btn-ghost:hover { background: var(--surface2); color: var(--text); }
+.btn-danger { background: transparent; color: var(--red); border-color: var(--red); }
+.btn-danger:hover { background: var(--red-dim); }
+.btn-sm { padding: 4px 10px; font-size: 12px; }
+
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+.card-header { padding: 14px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.card-title { font-size: 13px; font-weight: 600; }
+.card-body { padding: 18px; }
+
+.badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 99px; font-size: 11px; font-weight: 600; }
+.badge-green { background: var(--green-dim); color: var(--green); }
+.badge-yellow { background: var(--yellow-dim); color: var(--yellow); }
+.badge-red { background: var(--red-dim); color: var(--red); }
+.badge-blue { background: var(--accent-dim); color: var(--accent); }
+.badge-gray { background: var(--surface2); color: var(--text2); }
+.badge-purple { background: rgba(168,85,247,0.15); color: var(--purple); }
+.badge-teal { background: rgba(20,184,166,0.15); color: var(--teal); }
+
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 20px; }
+.stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; }
+.stat-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+.stat-value { font-size: 24px; font-weight: 600; font-family: var(--mono); line-height: 1; }
+.stat-value.green { color: var(--green); }
+.stat-value.yellow { color: var(--yellow); }
+.stat-value.red { color: var(--red); }
+.stat-value.blue { color: var(--accent); }
+.stat-sub { font-size: 11px; color: var(--text3); margin-top: 4px; }
+
+/* EMPLOYEE CARDS */
+.emp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+.emp-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px;
+  cursor: pointer; transition: all 0.15s;
+}
+.emp-card:hover { border-color: var(--accent); background: var(--surface2); }
+.emp-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.emp-avatar {
+  width: 40px; height: 40px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; font-weight: 700; flex-shrink: 0;
+}
+.emp-name { font-size: 13px; font-weight: 600; }
+.emp-role { font-size: 11px; color: var(--text3); }
+.emp-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.emp-stat { background: var(--surface2); border-radius: var(--radius-sm); padding: 8px 10px; }
+.emp-stat-label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px; }
+.emp-stat-value { font-size: 13px; font-weight: 600; font-family: var(--mono); }
+.emp-stat-value.green { color: var(--green); }
+.emp-stat-value.red { color: var(--red); }
+
+/* DETAIL PANEL */
+#detailPanel {
+  position: fixed; right: 0; top: 0; bottom: 0; width: 560px;
+  background: var(--surface); border-left: 1px solid var(--border);
+  z-index: 150; transform: translateX(100%); transition: transform 0.25s;
+  overflow-y: auto; display: flex; flex-direction: column;
+}
+#detailPanel.open { transform: translateX(0); }
+.detail-header {
+  padding: 18px 20px; border-bottom: 1px solid var(--border);
+  display: flex; justify-content: space-between; align-items: flex-start;
+  position: sticky; top: 0; background: var(--surface); z-index: 5;
+}
+.detail-body { padding: 18px 20px; flex: 1; }
+.detail-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
+
+.pay-section { margin-bottom: 12px; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.pay-section-header { padding: 9px 14px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; display: flex; justify-content: space-between; align-items: center; }
+.pay-section-header.green { background: rgba(34,197,94,0.12); color: var(--green); }
+.pay-section-header.red { background: rgba(239,68,68,0.12); color: var(--red); }
+.pay-section-header.blue { background: rgba(79,123,255,0.12); color: var(--accent); }
+.pay-section-header.yellow { background: rgba(245,158,11,0.12); color: var(--yellow); }
+.pay-section-header.purple { background: rgba(168,85,247,0.12); color: var(--purple); }
+
+.pay-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 14px; border-top: 1px solid var(--border);
+}
+.pay-row:first-of-type { border-top: none; }
+.pay-label { flex: 1; font-size: 12px; color: var(--text2); }
+.pay-value { font-family: var(--mono); font-size: 12px; font-weight: 600; }
+.pay-value.green { color: var(--green); }
+.pay-value.red { color: var(--red); }
+.pay-value.muted { color: var(--text3); }
+.pay-input { width: 120px; font-size: 12px; padding: 4px 8px; font-family: var(--mono); text-align: right; }
+
+.total-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px 16px; background: var(--surface2); border-radius: var(--radius);
+  border: 1px solid var(--border2); margin-top: 8px;
+}
+.total-label { font-size: 13px; font-weight: 600; }
+.total-value { font-size: 18px; font-weight: 700; font-family: var(--mono); }
+
+/* MODAL */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 300; opacity: 0; pointer-events: none; transition: opacity 0.2s;
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal {
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 14px; width: 520px; max-width: 96vw; max-height: 90vh;
+  overflow-y: auto;
+}
+.modal-header { padding: 18px 22px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.modal-header h2 { font-size: 15px; font-weight: 600; }
+.modal-close { background: none; border: none; color: var(--text2); cursor: pointer; font-size: 20px; }
+.modal-body { padding: 22px; display: flex; flex-direction: column; gap: 14px; }
+.modal-footer { padding: 14px 22px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 8px; }
+
+label { font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; }
+input, select, textarea {
+  background: var(--surface2); border: 1px solid var(--border2);
+  border-radius: var(--radius-sm); color: var(--text);
+  font-family: var(--font); font-size: 13px;
+  padding: 8px 11px; transition: border-color 0.15s; width: 100%;
+}
+input:focus, select:focus { outline: none; border-color: var(--accent); }
+input[type="number"] { font-family: var(--mono); }
+.form-group { display: flex; flex-direction: column; gap: 5px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* TOAST */
+.toast {
+  position: fixed; bottom: 20px; right: 24px; z-index: 999;
+  background: var(--surface2); border: 1px solid var(--border2);
+  border-radius: var(--radius); padding: 12px 16px;
+  font-size: 13px; color: var(--text); transform: translateY(20px);
+  opacity: 0; transition: all 0.25s; pointer-events: none;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+
+/* HISTORY TABLE */
+.hist-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.hist-table th { background: var(--surface2); color: var(--text3); font-size: 10px; font-weight: 600; text-transform: uppercase; padding: 7px 10px; text-align: left; border-bottom: 1px solid var(--border); }
+.hist-table td { padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+.hist-table tr:hover td { background: var(--surface2); }
+
+/* ADVANCE LIST */
+.adv-item { display: flex; align-items: center; gap: 10px; padding: 8px 14px; border-top: 1px solid var(--border); }
+.adv-item:first-of-type { border-top: none; }
+.adv-date { font-family: var(--mono); font-size: 11px; color: var(--text3); min-width: 80px; }
+.adv-desc { flex: 1; font-size: 12px; color: var(--text2); }
+.adv-val { font-family: var(--mono); font-size: 12px; font-weight: 600; color: var(--red); }
+
+/* FILTERS */
+.filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+.filters input, .filters select { width: auto; min-width: 160px; font-size: 13px; }
+
+/* LOADING */
+#loadingOverlay {
+  position: fixed; inset: 0; background: rgba(15,17,23,0.85);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 500; opacity: 0; pointer-events: none; transition: opacity 0.2s;
+}
+#loadingOverlay.show { opacity: 1; pointer-events: all; }
+.spinner { width: 28px; height: 28px; border: 3px solid var(--border2); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.month-selector { display: flex; align-items: center; gap: 8px; }
+.month-selector select { font-size: 13px; padding: 6px 10px; width: auto; }
+
+.section-divider { margin: 6px 0; height: 1px; background: var(--border); }
+
+@media (max-width: 900px) {
+  .sidebar { width: 52px; }
+  .sidebar-logo, .nav-section, .nav-item span { display: none; }
+  .nav-item { justify-content: center; padding: 10px; }
+  .main { margin-left: 52px; }
+  #detailPanel { width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<div id="loadingOverlay"><div class="spinner"></div></div>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <h1>💰 Pagamentos</h1>
+    <span>Modular Móveis</span>
+  </div>
+  <div class="nav">
+    <span class="nav-section">Menu</span>
+    <button class="nav-item active" onclick="showPage('dashboard')" id="nav-dashboard">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      <span>Dashboard</span>
+    </button>
+    <button class="nav-item" onclick="showPage('funcionarios')" id="nav-funcionarios">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+      <span>Funcionários</span>
+    </button>
+    <button class="nav-item" onclick="showPage('adiantamentos')" id="nav-adiantamentos">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+      <span>Adiantamentos</span>
+    </button>
+    <button class="nav-item" onclick="openAddEmployee()" style="margin-top:auto">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      <span>Add Funcionário</span>
+    </button>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <span class="topbar-title" id="pageTitle">Dashboard</span>
+    <div id="syncStatus" style="font-size:11px;color:var(--text3);font-family:var(--mono)">carregando...</div>
+    <button class="btn btn-ghost" style="font-size:12px" onclick="reloadData()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+      Atualizar
+    </button>
+    <div class="month-selector">
+      <select id="monthSel" onchange="changeMonth()"></select>
+    </div>
+    <button class="btn btn-primary" onclick="openAddEmployee()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Funcionário
+    </button>
+  </div>
+
+  <div class="content">
+
+    <!-- DASHBOARD -->
+    <div id="page-dashboard">
+      <div class="stats-grid" id="statsGrid"></div>
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Folha do Mês — Resumo</span>
+          <span id="dashTotal" style="font-family:var(--mono);font-size:14px;font-weight:700;color:var(--green)"></span>
+        </div>
+        <div class="card-body" style="padding:0">
+          <div style="overflow-x:auto">
+            <table class="hist-table" id="dashTable">
+              <thead><tr>
+                <th>Funcionário</th><th>Função</th>
+                <th>Total Mês</th><th>Deduções</th><th>Adiantamento</th><th>Saldo</th><th>Status</th>
+              </tr></thead>
+              <tbody id="dashBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FUNCIONÁRIOS -->
+    <div id="page-funcionarios" style="display:none">
+      <div class="filters">
+        <input type="text" id="searchEmp" placeholder="Buscar funcionário..." oninput="renderEmployees()" style="min-width:220px">
+        <select id="filterFunc" onchange="renderEmployees()">
+          <option value="">Todas as funções</option>
+        </select>
+      </div>
+      <div class="emp-grid" id="empGrid"></div>
+    </div>
+
+    <!-- ADIANTAMENTOS -->
+    <div id="page-adiantamentos" style="display:none">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <span style="font-size:13px;color:var(--text2)">Todos os adiantamentos do mês selecionado</span>
+        <button class="btn btn-primary btn-sm" onclick="openAddAdv()">+ Adiantamento</button>
+      </div>
+      <div class="card">
+        <div class="card-body" style="padding:0">
+          <div style="overflow-x:auto">
+            <table class="hist-table" id="advTable">
+              <thead><tr><th>Data</th><th>Funcionário</th><th>Tipo</th><th>Valor</th><th>Obs.</th><th></th></tr></thead>
+              <tbody id="advBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- DETAIL PANEL -->
+<div id="detailPanel">
+  <div class="detail-header">
+    <div>
+      <div style="font-size:16px;font-weight:700" id="dp-name">—</div>
+      <div class="detail-meta" id="dp-meta"></div>
+    </div>
+    <button class="btn btn-ghost btn-sm" onclick="closeDetail()">✕</button>
+  </div>
+  <div class="detail-body" id="dp-body"></div>
+</div>
+
+<!-- MODAL ADD/EDIT EMPLOYEE -->
+<div class="modal-overlay" id="modalEmp">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="modalEmpTitle">Novo Funcionário</h2>
+      <button class="modal-close" onclick="closeModal('modalEmp')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="emp_id">
+      <div class="form-row">
+        <div class="form-group"><label>Nome Completo *</label><input type="text" id="emp_nome" placeholder="Ex: João Silva"></div>
+        <div class="form-group"><label>CPF</label><input type="text" id="emp_cpf" placeholder="000.000.000-00"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Função *</label>
+          <select id="emp_funcao">
+            <option value="Marceneiro">Marceneiro</option>
+            <option value="Aux. Marceneiro">Aux. Marceneiro</option>
+            <option value="Montador">Montador</option>
+            <option value="Gerente de Montagem">Gerente de Montagem</option>
+            <option value="Consultor">Consultor</option>
+            <option value="Estoque">Estoque</option>
+            <option value="Administrativo">Administrativo</option>
+            <option value="Limpeza">Limpeza</option>
+            <option value="Outro">Outro</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Equipe</label><input type="text" id="emp_equipe" placeholder="Ex: Equipe Tadeu"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Salário Base (R$)</label><input type="number" id="emp_salario" placeholder="1525"></div>
+        <div class="form-group"><label>Adiant. Quinzena (R$)</label><input type="number" id="emp_adiant_quinzena" placeholder="600"></div>
+      </div>
+      <div style="border-top:1px solid var(--border);padding-top:14px;margin-top:2px">
+        <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px">Benefícios Fixos</div>
+        <div class="form-row">
+          <div class="form-group"><label>Salário Família (R$)</label><input type="number" id="emp_sal_familia" placeholder="0"></div>
+          <div class="form-group"><label>Ajuda de Custo (R$)</label><input type="number" id="emp_ajuda_custo" placeholder="0"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Cesta/Ticket (R$)</label><input type="number" id="emp_cesta" placeholder="0"></div>
+          <div class="form-group"><label>Prem. Presença (R$)</label><input type="number" id="emp_prem_presenca" placeholder="0"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Gratificação (R$)</label><input type="number" id="emp_gratificacao" placeholder="0"></div>
+          <div class="form-group"><label>INSS Fixo (R$)</label><input type="number" id="emp_inss" placeholder="0"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Consignado (R$)</label><input type="number" id="emp_consignado" placeholder="0"></div>
+          <div class="form-group"><label>PIX / Banco</label><input type="text" id="emp_pix" placeholder="CPF ou número"></div>
+        </div>
+      </div>
+      <div class="form-group"><label>Observações</label><textarea id="emp_obs" rows="2" placeholder="Regras de bonificação, etc."></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modalEmp')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveEmployee()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL ADD ADVANCE -->
+<div class="modal-overlay" id="modalAdv">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Registrar Adiantamento</h2>
+      <button class="modal-close" onclick="closeModal('modalAdv')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Funcionário *</label>
+        <select id="adv_emp"></select>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Tipo</label>
+          <select id="adv_tipo">
+            <option value="Adiantamento Quinzena">Adiantamento Quinzena</option>
+            <option value="Adiantamento Extra">Adiantamento Extra</option>
+            <option value="Empréstimo">Empréstimo</option>
+            <option value="Desconto">Desconto</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Data</label>
+          <input type="date" id="adv_data">
+        </div>
+      </div>
+      <div class="form-group"><label>Valor (R$) *</label><input type="number" id="adv_valor" placeholder="0,00"></div>
+      <div class="form-group"><label>Observação</label><input type="text" id="adv_obs" placeholder="Motivo ou referência"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modalAdv')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveAdv()">Registrar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════ DATA ══════════════════════════════════════════════
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx_GGxzLjfmQTS_DKF4sw3jZvPjG2rnkZa-r_vJ9M4Hju3DKCDmGOLxobQmqtM4kzixUA/exec';
+const SHEET_ID = '1wvHKPX-7RT6SUAeMUhmlrsu-xjnJIIL-g-BOlQUulqo';
+const DB_KEY = 'modular_pag_v2';
+const ADV_KEY = 'modular_adv_v2';
+const PAY_KEY = 'modular_pay_v2'; // monthly payment data
+
+let employees = [];
+let advances = [];
+let payData = {}; // { 'YYYY-MM': { empId: { creditos: {}, debitos: {} } } }
+let currentMonth = '';
+let selectedEmpId = null;
+
+// ══════ GOOGLE SHEETS SYNC ═══════════════════════════════
+async function gasCall(params) {
+  const url = SCRIPT_URL + '?' + new URLSearchParams(params).toString();
+  const r = await fetch(url);
+  return r.json();
+}
+
+async function loadFromSheets() {
+  try {
+    const res = await gasCall({ action: 'list', sheetId: SHEET_ID });
+    if (res.ok) {
+      employees = res.data.employees || [];
+      advances  = res.data.advances  || [];
+      // paydata is array of {key, value} objects
+      payData = {};
+      (res.data.paydata || []).forEach(row => { try { payData[row.key] = JSON.parse(row.value); } catch {} });
+      localStorage.setItem(DB_KEY, JSON.stringify(employees));
+      localStorage.setItem(ADV_KEY, JSON.stringify(advances));
+      localStorage.setItem(PAY_KEY, JSON.stringify(payData));
+      return true;
+    }
+  } catch(e) { console.warn('Sheets load failed', e); }
+  return false;
+}
+
+async function saveToSheets() {
+  try {
+    // employees
+    await gasCall({ action: 'save', sheetId: SHEET_ID, collection: 'employees', records: JSON.stringify(employees) });
+    // advances
+    await gasCall({ action: 'save', sheetId: SHEET_ID, collection: 'advances', records: JSON.stringify(advances) });
+    // paydata as key/value rows
+    const pdRows = Object.entries(payData).map(([key, value]) => ({ key, value: JSON.stringify(value) }));
+    await gasCall({ action: 'save', sheetId: SHEET_ID, collection: 'paydata', records: JSON.stringify(pdRows) });
+    updateSyncStatus(true);
+  } catch(e) {
+    console.warn('Sheets save failed', e);
+    updateSyncStatus(false);
+  }
+}
+
+function updateSyncStatus(ok) {
+  const el = document.getElementById('syncStatus');
+  if (!el) return;
+  const now = new Date().toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' });
+  el.textContent = ok ? `✓ sync ${now}` : '⚠ offline';
+  el.style.color = ok ? 'var(--teal)' : 'var(--yellow)';
+}
+
+function load() {
+  try { employees = JSON.parse(localStorage.getItem(DB_KEY)) || []; } catch { employees = []; }
+  try { advances  = JSON.parse(localStorage.getItem(ADV_KEY)) || []; } catch { advances = []; }
+  try { payData   = JSON.parse(localStorage.getItem(PAY_KEY)) || {}; } catch { payData = {}; }
+  if (!employees.length) seedEmployees();
+}
+
+function save() {
+  localStorage.setItem(DB_KEY, JSON.stringify(employees));
+  localStorage.setItem(ADV_KEY, JSON.stringify(advances));
+  localStorage.setItem(PAY_KEY, JSON.stringify(payData));
+  saveToSheets(); // async, fire and forget
+}
+
+function seedEmployees() {
+  const seed = [
+    { id:1, nome:'Arlembeng Lopes Oliveira', cpf:'058.776.653-08', funcao:'Marceneiro', equipe:'Equipe Arlembeng + David', salario:1525, sal_familia:62.04, ajuda_custo:300, cesta:200, prem_presenca:200, gratificacao:0, inss:116.07, consignado:0, adiant_quinzena:600, pix:'', obs:'Bonificação: R$ 80/projeto até 15 proj.' },
+    { id:2, nome:'Cid Marcos de Sousa Carvalho', cpf:'047.897.613-55', funcao:'Marceneiro', equipe:'Equipe CID', salario:1525, sal_familia:62.04, ajuda_custo:0, cesta:520, prem_presenca:0, gratificacao:0, inss:116.07, consignado:0, adiant_quinzena:1000, pix:'', obs:'Bonificação: R$ 100/projeto. Bônus pre-montagem.' },
+    { id:3, nome:'David Guilherme Moura da Silva Vieira', cpf:'087.107.903-81', funcao:'Aux. Marceneiro', equipe:'Equipe Arlembeng + David', salario:1518, sal_familia:0, ajuda_custo:0, cesta:0, prem_presenca:140, gratificacao:0, inss:116.5, consignado:0, adiant_quinzena:600, pix:'', obs:'Bonificação: R$ 30/projeto' },
+    { id:4, nome:'Helder Batista Pires', cpf:'795.940.263-91', funcao:'Gerente de Montagem', equipe:'', salario:1525, sal_familia:62.04, ajuda_custo:60, cesta:250, prem_presenca:250, gratificacao:610, inss:170.97, consignado:0, adiant_quinzena:750, pix:'', obs:'Bonificação por equipe: R$ 100/equipe que bater meta. R$ 800 supervisão.' },
+    { id:5, nome:'Jean Thaynan Veras Sousa', cpf:'017.810.703-42', funcao:'Consultor', equipe:'', salario:1525, sal_familia:0, ajuda_custo:400, cesta:0, prem_presenca:0, gratificacao:610, inss:0, consignado:0, adiant_quinzena:1000, pix:'', obs:'Comissão sobre valor dos projetos fechados. Ver % por faixa de meta.' },
+    { id:6, nome:'Marlony Douglas de Sousa Lima', cpf:'077.555.143-07', funcao:'Gerente de Montagem', equipe:'', salario:1525, sal_familia:0, ajuda_custo:0, cesta:0, prem_presenca:200, gratificacao:0, inss:0, consignado:0, adiant_quinzena:1000, pix:'', obs:'R$ 675 supervisão. R$ 400 corte. Bonificação por equipe: R$ 100/equipe.' },
+    { id:7, nome:'José Atevaldo Santos da Cunha', cpf:'959.413.393-72', funcao:'Montador', equipe:'Todas as equipes', salario:1518, sal_familia:260, ajuda_custo:150, cesta:0, prem_presenca:150, gratificacao:0, inss:133.28, consignado:0, adiant_quinzena:800, pix:'', obs:'Auxilia todas as equipes.' },
+    { id:8, nome:'Tadeu Leandro Licar', cpf:'043.146.003-57', funcao:'Montador', equipe:'Equipe Arlembeng + Tadeu', salario:1518, sal_familia:0, ajuda_custo:0, cesta:0, prem_presenca:0, gratificacao:0, inss:128.32, consignado:0, adiant_quinzena:600, pix:'', obs:'Bonificação: R$ 80/projeto até 15 proj. 200 se bater 10 projetos.' },
+    { id:9, nome:'Lucas Araújo da Silva', cpf:'045.966.473-56', funcao:'Montador', equipe:'Equipe Lucas + Yure', salario:1518, sal_familia:0, ajuda_custo:0, cesta:0, prem_presenca:125, gratificacao:0, inss:123.08, consignado:0, adiant_quinzena:600, pix:'', obs:'Bonificação: R$ 80/projeto.' },
+    { id:10, nome:'Yure da Silva Carvalho', cpf:'068.683.693-60', funcao:'Montador', equipe:'Equipe Lucas + Yure', salario:1518, sal_familia:0, ajuda_custo:200, cesta:0, prem_presenca:125, gratificacao:0, inss:119.28, consignado:0, adiant_quinzena:600, pix:'', obs:'Bonificação: R$ 50/projeto. Acerto antigo ajuda de custo.' },
+    { id:11, nome:'Wallison de Sousa Noronha', cpf:'070.864.083-44', funcao:'Montador', equipe:'Equipe Tadeu + Noronha', salario:1518, sal_familia:65, ajuda_custo:0, cesta:0, prem_presenca:0, gratificacao:0, inss:126.65, consignado:0, adiant_quinzena:600, pix:'', obs:'Bonificação: R$ 30/projeto. Kit removedor: R$ 125.' },
+    { id:12, nome:'João Mateus Pereira de Sousa', cpf:'066.677.313-05', funcao:'Estoque', equipe:'Estoque / Conferência', salario:1525, sal_familia:0, ajuda_custo:400, cesta:0, prem_presenca:100, gratificacao:0, inss:137.71, consignado:0, adiant_quinzena:862.2, pix:'', obs:'Quando atuar com conferências: R$ 100 por equipe de meta batida.' },
+    { id:13, nome:'Francisco das Chagas de Jesus Mesquita', cpf:'020.751.443-70', funcao:'Montador', equipe:'Equipe Mesquita + João Victor Pequeno', salario:1525, sal_familia:0, ajuda_custo:300, cesta:0, prem_presenca:200, gratificacao:0, inss:124.01, consignado:0, adiant_quinzena:762.5, pix:'', obs:'Bonificação: R$ 80/projeto.' },
+    { id:14, nome:'João Victor da Silva Pequeno', cpf:'100.727.973-71', funcao:'Montador', equipe:'Equipe Mesquita + João Victor Pequeno', salario:1518, sal_familia:0, ajuda_custo:0, cesta:0, prem_presenca:100, gratificacao:0, inss:115.72, consignado:0, adiant_quinzena:600, pix:'', obs:'Bonificação: R$ 30/projeto.' },
+    { id:15, nome:'João Victor Gomes Marques da Silva', cpf:'076.386.653-92', funcao:'Aux. Marceneiro', equipe:'Corte', salario:1518, sal_familia:0, ajuda_custo:0, cesta:0, prem_presenca:100, gratificacao:0, inss:116.53, consignado:0, adiant_quinzena:600, pix:'', obs:'Recebe R$ 50 por equipe que bater meta.' },
+    { id:16, nome:'Marcilio Dias Maciel', cpf:'056.339.483-86', funcao:'Montador', equipe:'Equipe Marcilio', salario:1525, sal_familia:130, ajuda_custo:144, cesta:0, prem_presenca:200, gratificacao:0, inss:126.12, consignado:0, adiant_quinzena:762.5, pix:'', obs:'R$ 50/proj pequeno | R$ 100/proj grande.' },
+    { id:17, nome:'Larisse da Silva Rosa Rodrigues', cpf:'455.890.278-61', funcao:'Administrativo', equipe:'', salario:1525, sal_familia:0, ajuda_custo:400, cesta:0, prem_presenca:150, gratificacao:0, inss:127.25, consignado:0, adiant_quinzena:819.2, pix:'', obs:'' },
+    { id:18, nome:'Maria Clara Dias de Araujo e Silva', cpf:'120.282.054-90', funcao:'Consultor', equipe:'', salario:1525, sal_familia:0, ajuda_custo:300, cesta:0, prem_presenca:375, gratificacao:0, inss:122.82, consignado:0, adiant_quinzena:762.5, pix:'', obs:'Comissão sobre valor dos projetos fechados.' },
+    { id:19, nome:'Adriana Evangelista', cpf:'068.683.693-60', funcao:'Administrativo', equipe:'', salario:1621, sal_familia:0, ajuda_custo:200, cesta:0, prem_presenca:100, gratificacao:0, inss:121.57, consignado:0, adiant_quinzena:600, pix:'86988768771', obs:'R$ 975 bonificação.' },
+    { id:20, nome:'Victoria Oliveira Torres', cpf:'081.620.153-61', funcao:'Limpeza', equipe:'', salario:1525, sal_familia:0, ajuda_custo:0, cesta:0, prem_presenca:475, gratificacao:0, inss:124.14, consignado:0, adiant_quinzena:762.5, pix:'', obs:'' },
+    { id:21, nome:'Antonio Jose Alves Rodrigues', cpf:'058.251.113-52', funcao:'Montador', equipe:'Equipe Antonio José', salario:1518, sal_familia:0, ajuda_custo:200, cesta:0, prem_presenca:0, gratificacao:0, inss:126.11, consignado:0, adiant_quinzena:600, pix:'', obs:'Bonificação: R$ 30/projeto. Toda vez que bater 10 proj recebe R$ 80.' },
+  ];
+  employees = seed;
+  save();
+}
+
+// ══════ MONTH ═════════════════════════════════════════════
+function initMonths() {
+  const sel = document.getElementById('monthSel');
+  const now = new Date();
+  sel.innerHTML = '';
+  for (let i = 0; i < 12; i++) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const key = d.toISOString().slice(0, 7);
+    const label = d.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+    const opt = document.createElement('option');
+    opt.value = key;
+    opt.textContent = label.charAt(0).toUpperCase() + label.slice(1);
+    sel.appendChild(opt);
+  }
+  currentMonth = now.toISOString().slice(0, 7);
+}
+
+function changeMonth() {
+  currentMonth = document.getElementById('monthSel').value;
+  renderAll();
+}
+
+// ══════ PAY DATA ══════════════════════════════════════════
+function getEmpPay(empId) {
+  if (!payData[currentMonth]) payData[currentMonth] = {};
+  if (!payData[currentMonth][empId]) {
+    const emp = employees.find(e => e.id === empId);
+    if (!emp) return {};
+    payData[currentMonth][empId] = {
+      // variáveis do mês
+      hora_extra: 0, hora_extra_noturno: 0, bon_projeto: 0,
+      bon_supervisao: 0, bon_meta_equipe: 0, bon_elpi: 0,
+      bon_removedor: 0, bon_desempenho: 0, bon_extra: 0,
+      premissao_surpresa: 0, descanso_remunerado: 0,
+      falta: 0, consignado_extra: 0, faltas_obs: '',
+      obs_mes: '', presenca: true,
+    };
+  }
+  return payData[currentMonth][empId];
+}
+
+function saveEmpPay(empId, data) {
+  if (!payData[currentMonth]) payData[currentMonth] = {};
+  payData[currentMonth][empId] = { ...getEmpPay(empId), ...data };
+  save();
+}
+
+function calcSaldo(emp) {
+  const pay = getEmpPay(emp.id);
+  const creditos = [
+    emp.salario,
+    emp.sal_familia || 0,
+    emp.cesta || 0,
+    pay.presenca ? (emp.prem_presenca || 0) : 0,
+    emp.ajuda_custo || 0,
+    emp.gratificacao || 0,
+    pay.hora_extra || 0,
+    pay.hora_extra_noturno || 0,
+    pay.bon_projeto || 0,
+    pay.bon_supervisao || 0,
+    pay.bon_meta_equipe || 0,
+    pay.bon_elpi || 0,
+    pay.bon_removedor || 0,
+    pay.bon_desempenho || 0,
+    pay.bon_extra || 0,
+    pay.premissao_surpresa || 0,
+    pay.descanso_remunerado || 0,
+  ].reduce((a, b) => a + (parseFloat(b) || 0), 0);
+
+  const monthAdvs = advances.filter(a => a.empId === emp.id && a.mes === currentMonth);
+  const totalAdv = monthAdvs.reduce((s, a) => s + (parseFloat(a.valor) || 0), 0);
+
+  const deducoes = [
+    emp.inss || 0,
+    emp.consignado || 0,
+    pay.consignado_extra || 0,
+    pay.falta || 0,
+  ].reduce((a, b) => a + (parseFloat(b) || 0), 0);
+
+  return {
+    total: creditos,
+    deducoes,
+    adiantamento: totalAdv,
+    saldo: creditos - deducoes - totalAdv,
+  };
+}
+
+// ══════ RENDER ════════════════════════════════════════════
+const COLORS = ['#4f7bff','#22c55e','#f59e0b','#a855f7','#14b8a6','#f97316','#ef4444','#ec4899'];
+function avatarColor(name) { let h = 0; for (let c of name) h += c.charCodeAt(0); return COLORS[h % COLORS.length]; }
+function initials(name) { return name.split(' ').slice(0,2).map(n=>n[0]).join('').toUpperCase(); }
+function fmt(v) { return 'R$ ' + (parseFloat(v)||0).toLocaleString('pt-BR', {minimumFractionDigits:2,maximumFractionDigits:2}); }
+
+function renderAll() {
+  renderDashboard();
+  renderEmployees();
+  renderAdvances();
+  if (selectedEmpId) openDetail(selectedEmpId);
+}
+
+function renderDashboard() {
+  let totalFolha = 0, totalAdv = 0, totalDed = 0, totalSaldo = 0;
+  let rows = '';
+  employees.filter(e => e.ativo !== false).forEach(emp => {
+    const c = calcSaldo(emp);
+    totalFolha += c.total;
+    totalDed += c.deducoes;
+    totalAdv += c.adiantamento;
+    totalSaldo += c.saldo;
+    const sc = c.saldo >= 0 ? 'green' : 'red';
+    rows += `<tr style="cursor:pointer" onclick="openDetail(${emp.id})">
+      <td><div style="display:flex;align-items:center;gap:8px">
+        <div style="width:28px;height:28px;border-radius:50%;background:${avatarColor(emp.nome)};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0">${initials(emp.nome)}</div>
+        <span style="font-weight:500">${emp.nome}</span>
+      </div></td>
+      <td><span class="badge badge-gray">${emp.funcao}</span></td>
+      <td style="font-family:var(--mono);color:var(--green)">${fmt(c.total)}</td>
+      <td style="font-family:var(--mono);color:var(--red)">-${fmt(c.deducoes)}</td>
+      <td style="font-family:var(--mono);color:var(--yellow)">-${fmt(c.adiantamento)}</td>
+      <td style="font-family:var(--mono);font-weight:700;color:var(--${sc})">${fmt(c.saldo)}</td>
+      <td><span class="badge ${c.saldo>=0?'badge-green':'badge-red'}">${c.saldo>=0?'✓ OK':'⚠ Neg.'}</span></td>
+    </tr>`;
+  });
+  document.getElementById('dashBody').innerHTML = rows;
+  document.getElementById('dashTotal').textContent = fmt(totalSaldo);
+  document.getElementById('statsGrid').innerHTML = `
+    <div class="stat-card"><div class="stat-label">Total Bruto</div><div class="stat-value blue">${fmt(totalFolha)}</div><div class="stat-sub">${employees.filter(e=>e.ativo!==false).length} funcionários</div></div>
+    <div class="stat-card"><div class="stat-label">Deduções</div><div class="stat-value red">-${fmt(totalDed)}</div><div class="stat-sub">INSS + Consignado + Faltas</div></div>
+    <div class="stat-card"><div class="stat-label">Adiantamentos</div><div class="stat-value yellow">-${fmt(totalAdv)}</div><div class="stat-sub">Quinzena + Extra</div></div>
+    <div class="stat-card"><div class="stat-label">Saldo a Pagar</div><div class="stat-value ${totalSaldo>=0?'green':'red'}">${fmt(totalSaldo)}</div><div class="stat-sub">Dia 05</div></div>
+  `;
+}
+
+function renderEmployees() {
+  const q = document.getElementById('searchEmp').value.toLowerCase();
+  const ff = document.getElementById('filterFunc').value;
+  const funcoes = [...new Set(employees.map(e=>e.funcao))].sort();
+  const sel = document.getElementById('filterFunc');
+  const prev = sel.value;
+  sel.innerHTML = '<option value="">Todas as funções</option>' + funcoes.map(f=>`<option value="${f}" ${f===prev?'selected':''}>${f}</option>`).join('');
+
+  const filtered = employees.filter(e =>
+    e.ativo !== false &&
+    e.nome.toLowerCase().includes(q) &&
+    (!ff || e.funcao === ff)
+  );
+
+  document.getElementById('empGrid').innerHTML = filtered.map(emp => {
+    const c = calcSaldo(emp);
+    const col = avatarColor(emp.nome);
+    return `<div class="emp-card" onclick="openDetail(${emp.id})">
+      <div class="emp-header">
+        <div class="emp-avatar" style="background:${col};color:#fff">${initials(emp.nome)}</div>
+        <div>
+          <div class="emp-name">${emp.nome.split(' ').slice(0,3).join(' ')}</div>
+          <div class="emp-role">${emp.funcao}${emp.equipe?' · '+emp.equipe:''}</div>
+        </div>
+      </div>
+      <div class="emp-stats">
+        <div class="emp-stat">
+          <div class="emp-stat-label">Total Mês</div>
+          <div class="emp-stat-value green">${fmt(c.total)}</div>
+        </div>
+        <div class="emp-stat">
+          <div class="emp-stat-label">Saldo Final</div>
+          <div class="emp-stat-value ${c.saldo>=0?'green':'red'}">${fmt(c.saldo)}</div>
+        </div>
+        <div class="emp-stat">
+          <div class="emp-stat-label">Adiantamentos</div>
+          <div class="emp-stat-value" style="color:var(--yellow)">${fmt(c.adiantamento)}</div>
+        </div>
+        <div class="emp-stat">
+          <div class="emp-stat-label">Deduções</div>
+          <div class="emp-stat-value red">${fmt(c.deducoes)}</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderAdvances() {
+  const monthAdvs = advances.filter(a => a.mes === currentMonth);
+  if (!monthAdvs.length) {
+    document.getElementById('advBody').innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:40px">Nenhum adiantamento registrado neste mês.</td></tr>';
+    return;
+  }
+  document.getElementById('advBody').innerHTML = monthAdvs.map(a => {
+    const emp = employees.find(e => e.id === a.empId);
+    return `<tr>
+      <td style="font-family:var(--mono);font-size:12px;color:var(--text3)">${a.data||'—'}</td>
+      <td style="font-weight:500">${emp?.nome.split(' ').slice(0,2).join(' ') || '—'}</td>
+      <td><span class="badge badge-yellow">${a.tipo}</span></td>
+      <td style="font-family:var(--mono);font-weight:600;color:var(--red)">${fmt(a.valor)}</td>
+      <td style="color:var(--text2);font-size:12px">${a.obs||'—'}</td>
+      <td><button class="btn btn-danger btn-sm" onclick="deleteAdv('${a.id}')">✕</button></td>
+    </tr>`;
+  }).join('');
+}
+
+// ══════ DETAIL PANEL ══════════════════════════════════════
+function openDetail(id) {
+  const emp = employees.find(e => e.id === id);
+  if (!emp) return;
+  selectedEmpId = id;
+  const pay = getEmpPay(id);
+  const c = calcSaldo(emp);
+  const monthAdvs = advances.filter(a => a.empId === id && a.mes === currentMonth);
+
+  document.getElementById('dp-name').textContent = emp.nome;
+  document.getElementById('dp-meta').innerHTML = `
+    <span class="badge badge-blue">${emp.funcao}</span>
+    ${emp.equipe ? `<span class="badge badge-gray">👥 ${emp.equipe}</span>` : ''}
+    <span class="badge ${c.saldo>=0?'badge-green':'badge-red'}">${c.saldo>=0?'✓':'⚠'} ${fmt(c.saldo)}</span>
+  `;
+
+  const presLabel = pay.presenca !== false ? '✅ Presente' : '❌ Faltou';
+  const presBadge = pay.presenca !== false ? 'badge-green' : 'badge-red';
+
+  const rows = (items) => items.map(([label, val, cls='']) => `
+    <div class="pay-row">
+      <div class="pay-label">${label}</div>
+      <div class="pay-value ${cls}">${fmt(val)}</div>
+    </div>`).join('');
+
+  const editRow = (label, key, val) => `
+    <div class="pay-row">
+      <div class="pay-label">${label}</div>
+      <input class="pay-input" type="number" value="${val||0}" onchange="updatePay(${id},'${key}',this.value)" style="background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text)">
+    </div>`;
+
+  const advsHtml = monthAdvs.length ? monthAdvs.map(a => `
+    <div class="adv-item">
+      <div class="adv-date">${a.data||''}</div>
+      <div class="adv-desc">${a.tipo}</div>
+      <div class="adv-val">-${fmt(a.valor)}</div>
+      <button class="btn btn-ghost btn-sm" onclick="deleteAdv('${a.id}')" style="padding:2px 6px;font-size:11px">✕</button>
+    </div>`).join('') : '<div style="padding:12px 14px;font-size:12px;color:var(--text3)">Nenhum adiantamento este mês</div>';
+
+  document.getElementById('dp-body').innerHTML = `
+    <!-- PRESENÇA -->
+    <div class="pay-section" style="margin-bottom:12px">
+      <div class="pay-section-header blue" style="cursor:pointer" onclick="togglePresenca(${id})">
+        <span>👤 Presença no Mês</span>
+        <span class="badge ${presBadge}">${presLabel}</span>
+      </div>
+    </div>
+
+    <!-- CRÉDITOS FIXOS -->
+    <div class="pay-section" style="margin-bottom:12px">
+      <div class="pay-section-header green"><span>✅ Créditos Fixos</span><span style="font-size:12px">${fmt(emp.salario + (emp.sal_familia||0) + (emp.cesta||0) + (pay.presenca!==false?(emp.prem_presenca||0):0) + (emp.ajuda_custo||0) + (emp.gratificacao||0))}</span></div>
+      ${rows([
+        ['Salário Contratual', emp.salario, 'green'],
+        ...(emp.sal_familia ? [['Salário Família', emp.sal_familia, 'green']] : []),
+        ...(emp.cesta ? [['Cesta / Cartão Ticket', emp.cesta, 'green']] : []),
+        ...(emp.ajuda_custo ? [['Ajuda de Custo', emp.ajuda_custo, 'green']] : []),
+        ...(emp.gratificacao ? [['Gratificação', emp.gratificacao, 'green']] : []),
+        ...(pay.presenca !== false && emp.prem_presenca ? [['Premiação por Presença', emp.prem_presenca, 'green']] : []),
+        ...(!pay.presenca && emp.prem_presenca ? [['Premiação por Presença (suspensa)', 0, 'muted']] : []),
+      ])}
+    </div>
+
+    <!-- CRÉDITOS VARIÁVEIS -->
+    <div class="pay-section" style="margin-bottom:12px">
+      <div class="pay-section-header purple"><span>⭐ Variáveis do Mês</span></div>
+      ${editRow('Hora Extra (R$)', 'hora_extra', pay.hora_extra)}
+      ${editRow('Hora Extra Noturna (R$)', 'hora_extra_noturno', pay.hora_extra_noturno)}
+      ${editRow('Descanso Semanal Rem. (R$)', 'descanso_remunerado', pay.descanso_remunerado)}
+      ${editRow('Bonif. de Projeto (R$)', 'bon_projeto', pay.bon_projeto)}
+      ${editRow('Bonif. Supervisão (R$)', 'bon_supervisao', pay.bon_supervisao)}
+      ${editRow('Bonif. Meta Equipe (R$)', 'bon_meta_equipe', pay.bon_meta_equipe)}
+      ${editRow('Bonif. Elpi (R$)', 'bon_elpi', pay.bon_elpi)}
+      ${editRow('Bonif. Removedor (R$)', 'bon_removedor', pay.bon_removedor)}
+      ${editRow('Bonif. Extra / Surpresa (R$)', 'bon_extra', pay.bon_extra)}
+    </div>
+
+    <!-- DEDUÇÕES -->
+    <div class="pay-section" style="margin-bottom:12px">
+      <div class="pay-section-header red"><span>❌ Deduções</span><span style="font-size:12px">-${fmt(c.deducoes)}</span></div>
+      ${rows([
+        ...(emp.inss ? [['INSS', emp.inss, 'red']] : []),
+        ...(emp.consignado ? [['Consignado Fixo', emp.consignado, 'red']] : []),
+      ])}
+      ${editRow('Consignado Extra / Parcela (R$)', 'consignado_extra', pay.consignado_extra)}
+      ${editRow('Desconto Falta / DSR (R$)', 'falta', pay.falta)}
+    </div>
+
+    <!-- ADIANTAMENTOS -->
+    <div class="pay-section" style="margin-bottom:12px">
+      <div class="pay-section-header yellow">
+        <span>💳 Adiantamentos — ${fmt(c.adiantamento)}</span>
+        <button class="btn btn-ghost btn-sm" onclick="openAddAdvEmp(${id})" style="font-size:11px;padding:3px 8px">+ Add</button>
+      </div>
+      ${advsHtml}
+    </div>
+
+    <!-- TOTAL -->
+    <div class="total-row">
+      <div>
+        <div class="total-label">Saldo Final</div>
+        <div style="font-size:11px;color:var(--text3)">Total ${fmt(c.total)} − Deduções ${fmt(c.deducoes)} − Adiant. ${fmt(c.adiantamento)}</div>
+      </div>
+      <div class="total-value" style="color:${c.saldo>=0?'var(--green)':'var(--red)'}">${fmt(c.saldo)}</div>
+    </div>
+    ${emp.pix ? `<div style="margin-top:8px;font-size:12px;color:var(--text3)">PIX: ${emp.pix}</div>` : ''}
+    ${emp.obs ? `<div style="margin-top:10px;padding:10px 12px;background:var(--surface2);border-radius:var(--radius-sm);font-size:12px;color:var(--text2)">${emp.obs}</div>` : ''}
+
+    <div style="margin-top:16px;display:flex;gap:8px;justify-content:flex-end">
+      <button class="btn btn-ghost btn-sm" onclick="openEditEmployee(${id})">✏️ Editar Ficha</button>
+      <button class="btn btn-danger btn-sm" onclick="removeEmployee(${id})">🗑 Remover</button>
+    </div>
+  `;
+
+  document.getElementById('detailPanel').classList.add('open');
+}
+
+function closeDetail() {
+  document.getElementById('detailPanel').classList.remove('open');
+  selectedEmpId = null;
+}
+
+function togglePresenca(empId) {
+  const pay = getEmpPay(empId);
+  pay.presenca = !pay.presenca;
+  saveEmpPay(empId, pay);
+  openDetail(empId);
+  renderAll();
+}
+
+function updatePay(empId, key, val) {
+  const pay = getEmpPay(empId);
+  pay[key] = parseFloat(val) || 0;
+  saveEmpPay(empId, pay);
+  // Re-render totals without closing panel
+  const c = calcSaldo(employees.find(e=>e.id===empId));
+  renderDashboard();
+  renderEmployees();
+  // Update total row in detail
+  const totalEl = document.querySelector('.total-value');
+  if (totalEl) {
+    totalEl.textContent = fmt(c.saldo);
+    totalEl.style.color = c.saldo >= 0 ? 'var(--green)' : 'var(--red)';
+  }
+}
+
+// ══════ EMPLOYEES CRUD ════════════════════════════════════
+function openAddEmployee() {
+  document.getElementById('modalEmpTitle').textContent = 'Novo Funcionário';
+  document.getElementById('emp_id').value = '';
+  ['emp_nome','emp_cpf','emp_equipe','emp_pix','emp_obs'].forEach(id => document.getElementById(id).value = '');
+  ['emp_salario','emp_sal_familia','emp_ajuda_custo','emp_cesta','emp_prem_presenca','emp_gratificacao','emp_inss','emp_consignado','emp_adiant_quinzena'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('modalEmp').classList.add('open');
+}
+
+function openEditEmployee(id) {
+  const emp = employees.find(e => e.id === id);
+  if (!emp) return;
+  document.getElementById('modalEmpTitle').textContent = 'Editar Funcionário';
+  document.getElementById('emp_id').value = id;
+  document.getElementById('emp_nome').value = emp.nome;
+  document.getElementById('emp_cpf').value = emp.cpf||'';
+  document.getElementById('emp_funcao').value = emp.funcao;
+  document.getElementById('emp_equipe').value = emp.equipe||'';
+  document.getElementById('emp_salario').value = emp.salario||'';
+  document.getElementById('emp_sal_familia').value = emp.sal_familia||'';
+  document.getElementById('emp_ajuda_custo').value = emp.ajuda_custo||'';
+  document.getElementById('emp_cesta').value = emp.cesta||'';
+  document.getElementById('emp_prem_presenca').value = emp.prem_presenca||'';
+  document.getElementById('emp_gratificacao').value = emp.gratificacao||'';
+  document.getElementById('emp_inss').value = emp.inss||'';
+  document.getElementById('emp_consignado').value = emp.consignado||'';
+  document.getElementById('emp_adiant_quinzena').value = emp.adiant_quinzena||'';
+  document.getElementById('emp_pix').value = emp.pix||'';
+  document.getElementById('emp_obs').value = emp.obs||'';
+  document.getElementById('modalEmp').classList.add('open');
+}
+
+function saveEmployee() {
+  const nome = document.getElementById('emp_nome').value.trim();
+  if (!nome) { showToast('Informe o nome'); return; }
+  const id = document.getElementById('emp_id').value;
+  const data = {
+    nome, cpf: document.getElementById('emp_cpf').value.trim(),
+    funcao: document.getElementById('emp_funcao').value,
+    equipe: document.getElementById('emp_equipe').value.trim(),
+    salario: parseFloat(document.getElementById('emp_salario').value)||0,
+    sal_familia: parseFloat(document.getElementById('emp_sal_familia').value)||0,
+    ajuda_custo: parseFloat(document.getElementById('emp_ajuda_custo').value)||0,
+    cesta: parseFloat(document.getElementById('emp_cesta').value)||0,
+    prem_presenca: parseFloat(document.getElementById('emp_prem_presenca').value)||0,
+    gratificacao: parseFloat(document.getElementById('emp_gratificacao').value)||0,
+    inss: parseFloat(document.getElementById('emp_inss').value)||0,
+    consignado: parseFloat(document.getElementById('emp_consignado').value)||0,
+    adiant_quinzena: parseFloat(document.getElementById('emp_adiant_quinzena').value)||0,
+    pix: document.getElementById('emp_pix').value.trim(),
+    obs: document.getElementById('emp_obs').value.trim(),
+    ativo: true,
+  };
+  if (id) {
+    const idx = employees.findIndex(e => e.id == id);
+    if (idx !== -1) employees[idx] = { ...employees[idx], ...data };
+  } else {
+    const maxId = employees.reduce((m,e) => Math.max(m, e.id||0), 0);
+    employees.push({ id: maxId + 1, ...data });
+  }
+  save();
+  closeModal('modalEmp');
+  renderAll();
+  showToast('Salvo!');
+}
+
+function removeEmployee(id) {
+  if (!confirm('Remover este funcionário?')) return;
+  employees = employees.filter(e => e.id !== id);
+  save();
+  closeDetail();
+  renderAll();
+  showToast('Removido.');
+}
+
+// ══════ ADVANCES ══════════════════════════════════════════
+function openAddAdv() {
+  const sel = document.getElementById('adv_emp');
+  sel.innerHTML = employees.filter(e=>e.ativo!==false).map(e=>`<option value="${e.id}">${e.nome.split(' ').slice(0,3).join(' ')}</option>`).join('');
+  document.getElementById('adv_data').value = new Date().toISOString().split('T')[0];
+  document.getElementById('adv_valor').value = '';
+  document.getElementById('adv_obs').value = '';
+  document.getElementById('modalAdv').classList.add('open');
+}
+
+function openAddAdvEmp(empId) {
+  openAddAdv();
+  document.getElementById('adv_emp').value = empId;
+}
+
+function saveAdv() {
+  const empId = parseInt(document.getElementById('adv_emp').value);
+  const valor = parseFloat(document.getElementById('adv_valor').value);
+  if (!valor || valor <= 0) { showToast('Informe o valor'); return; }
+  advances.push({
+    id: Date.now().toString(),
+    empId,
+    mes: currentMonth,
+    data: document.getElementById('adv_data').value,
+    tipo: document.getElementById('adv_tipo').value,
+    valor,
+    obs: document.getElementById('adv_obs').value.trim(),
+  });
+  save();
+  closeModal('modalAdv');
+  renderAll();
+  if (selectedEmpId === empId) openDetail(empId);
+  showToast('Adiantamento registrado!');
+}
+
+function deleteAdv(advId) {
+  if (!confirm('Remover este adiantamento?')) return;
+  advances = advances.filter(a => a.id !== advId);
+  save();
+  renderAll();
+  if (selectedEmpId) openDetail(selectedEmpId);
+  showToast('Removido.');
+}
+
+// ══════ UTILS ═════════════════════════════════════════════
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+const pageTitles = { dashboard:'Dashboard', funcionarios:'Funcionários', adiantamentos:'Adiantamentos' };
+function showPage(name) {
+  ['dashboard','funcionarios','adiantamentos'].forEach(p => {
+    document.getElementById('page-'+p).style.display = p===name?'':'none';
+    document.getElementById('nav-'+p)?.classList.toggle('active', p===name);
+  });
+  document.getElementById('pageTitle').textContent = pageTitles[name]||'';
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+// ══════ RELOAD ════════════════════════════════════════════
+async function reloadData() {
+  showLoading(true);
+  const ok = await loadFromSheets();
+  if (!ok) showToast('⚠ Sem conexão — usando dados locais');
+  else showToast('Dados atualizados!');
+  renderAll();
+  showLoading(false);
+}
+
+function showLoading(v) {
+  document.getElementById('loadingOverlay').classList.toggle('show', v);
+}
+
+// ══════ INIT ══════════════════════════════════════════════
+load();
+initMonths();
+renderAll();
+showLoading(true);
+loadFromSheets().then(ok => {
+  if (ok) { renderAll(); updateSyncStatus(true); }
+  else updateSyncStatus(false);
+  showLoading(false);
+});
+</script>
+</body>
+</html>
