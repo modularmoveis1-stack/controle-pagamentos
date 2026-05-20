@@ -259,6 +259,10 @@ input[type="number"] { font-family: var(--mono); }
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
       <span>Adiantamentos</span>
     </button>
+    <button class="nav-item" onclick="showPage('dia20')" id="nav-dia20">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><text x="8" y="19" font-size="7" fill="currentColor" stroke="none" font-weight="700">20</text></svg>
+      <span>Dia 20</span>
+    </button>
     <button class="nav-item" onclick="openAddEmployee()" style="margin-top:auto">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
       <span>Add Funcionário</span>
@@ -278,6 +282,10 @@ input[type="number"] { font-family: var(--mono); }
     <div class="month-selector">
       <select id="monthSel" onchange="changeMonth()"></select>
     </div>
+    <button class="btn btn-ghost" onclick="openLancamento()" style="color:var(--yellow);border-color:var(--yellow)">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+      Lançamento Mensal
+    </button>
     <button class="btn btn-primary" onclick="openAddEmployee()">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
       Funcionário
@@ -450,11 +458,67 @@ input[type="number"] { font-family: var(--mono); }
   </div>
 </div>
 
+<!-- MODAL LANÇAMENTO MENSAL -->
+<div class="modal-overlay" id="modalLancamento">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>📅 Lançamento Mensal</h2>
+      <button class="modal-close" onclick="closeModal('modalLancamento')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;margin-bottom:4px">
+        <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;margin-bottom:6px">Mês de referência</div>
+        <div id="lancMesLabel" style="font-size:14px;font-weight:600;color:var(--accent)"></div>
+      </div>
+
+      <div style="border-top:1px solid var(--border);padding-top:14px">
+        <div style="font-size:11px;font-weight:600;color:var(--yellow);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px">💳 Adiantamentos Fixos (dia 20)</div>
+        <div id="lancAdvList" style="display:flex;flex-direction:column;gap:6px;max-height:280px;overflow-y:auto"></div>
+        <button class="btn btn-ghost" style="width:100%;margin-top:8px;font-size:12px;color:var(--yellow);border-color:var(--yellow)" onclick="lancarAdiantamentosTodos()">
+          Lançar adiantamento de todos (dia 20)
+        </button>
+      </div>
+
+      <div style="border-top:1px solid var(--border);padding-top:14px;margin-top:4px">
+        <div style="font-size:11px;font-weight:600;color:var(--purple);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px">⭐ Bônus e Variáveis do Mês</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Funcionário</label>
+            <select id="lanc_emp" style="font-size:13px"></select>
+          </div>
+          <div class="form-group">
+            <label>Tipo</label>
+            <select id="lanc_tipo" style="font-size:13px">
+              <option value="bon_projeto">Bônus de Projeto</option>
+              <option value="bon_supervisao">Bônus Supervisão</option>
+              <option value="bon_meta_equipe">Bônus Meta Equipe</option>
+              <option value="bon_removedor">Bônus Removedor</option>
+              <option value="bon_extra">Bônus Extra</option>
+              <option value="hora_extra">Hora Extra</option>
+              <option value="descanso_remunerado">Descanso Remunerado</option>
+              <option value="falta">Desconto Falta</option>
+              <option value="consignado_extra">Consignado Extra</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group" style="margin-top:8px">
+          <label>Valor (R$)</label>
+          <input type="number" id="lanc_valor" placeholder="0,00">
+        </div>
+        <button class="btn btn-primary" style="width:100%;margin-top:8px;justify-content:center" onclick="lancarVariavel()">Lançar</button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modalLancamento')">Fechar</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
 // ══════ DATA ══════════════════════════════════════════════
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx_GGxzLjfmQTS_DKF4sw3jZvPjG2rnkZa-r_vJ9M4Hju3DKCDmGOLxobQmqtM4kzixUA/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzuUxDWyRN37QPno1XhL9RIwWPqWSCnCfLrw4iAwTakUW0EVO3QwuRT6AX4hKgKPnP9-w/exec';
 const SHEET_ID = '1wvHKPX-7RT6SUAeMUhmlrsu-xjnJIIL-g-BOlQUulqo';
 const DB_KEY = 'modular_pag_v2';
 const ADV_KEY = 'modular_adv_v2';
@@ -468,8 +532,17 @@ let selectedEmpId = null;
 
 // ══════ GOOGLE SHEETS SYNC ═══════════════════════════════
 async function gasCall(params) {
-  const url = SCRIPT_URL + '?' + new URLSearchParams(params).toString();
-  const r = await fetch(url);
+  if (params.action === 'list') {
+    const url = SCRIPT_URL + '?action=list&sheetId=' + SHEET_ID;
+    const r = await fetch(url);
+    return r.json();
+  }
+  // POST para saves (evita limite de URL)
+  const r = await fetch(SCRIPT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify(params)
+  });
   return r.json();
 }
 
@@ -477,14 +550,32 @@ async function loadFromSheets() {
   try {
     const res = await gasCall({ action: 'list', sheetId: SHEET_ID });
     if (res.ok) {
-      employees = res.data.employees || [];
-      advances  = res.data.advances  || [];
-      // paydata is array of {key, value} objects
-      payData = {};
-      (res.data.paydata || []).forEach(row => { try { payData[row.key] = JSON.parse(row.value); } catch {} });
-      localStorage.setItem(DB_KEY, JSON.stringify(employees));
-      localStorage.setItem(ADV_KEY, JSON.stringify(advances));
-      localStorage.setItem(PAY_KEY, JSON.stringify(payData));
+      // Funcionários: só atualiza se a planilha tiver dados
+      if (res.data.employees && res.data.employees.length > 0) {
+        employees = res.data.employees;
+        localStorage.setItem(DB_KEY, JSON.stringify(employees));
+      } else {
+        // Planilha vazia — carrega padrão e sobe para o Sheets agora
+        if (!employees.length) seedEmployees();
+        await gasCall({ action: 'save', sheetId: SHEET_ID, collection: 'employees', records: JSON.stringify(employees) });
+        localStorage.setItem(DB_KEY, JSON.stringify(employees));
+      }
+
+      // Adiantamentos: sempre carrega tudo (todos os meses)
+      if (res.data.advances) {
+        advances = res.data.advances;
+        localStorage.setItem(ADV_KEY, JSON.stringify(advances));
+      }
+
+      // PayData mensal: sempre carrega tudo
+      if (res.data.paydata) {
+        payData = {};
+        res.data.paydata.forEach(row => {
+          try { payData[row.key] = JSON.parse(row.value); } catch {}
+        });
+        localStorage.setItem(PAY_KEY, JSON.stringify(payData));
+      }
+
       return true;
     }
   } catch(e) { console.warn('Sheets load failed', e); }
@@ -493,16 +584,25 @@ async function loadFromSheets() {
 
 async function saveToSheets() {
   try {
-    // employees
     await gasCall({ action: 'save', sheetId: SHEET_ID, collection: 'employees', records: JSON.stringify(employees) });
-    // advances
     await gasCall({ action: 'save', sheetId: SHEET_ID, collection: 'advances', records: JSON.stringify(advances) });
-    // paydata as key/value rows
     const pdRows = Object.entries(payData).map(([key, value]) => ({ key, value: JSON.stringify(value) }));
     await gasCall({ action: 'save', sheetId: SHEET_ID, collection: 'paydata', records: JSON.stringify(pdRows) });
     updateSyncStatus(true);
   } catch(e) {
     console.warn('Sheets save failed', e);
+    updateSyncStatus(false);
+  }
+}
+
+// Salva só adiantamentos e paydata (não toca nos funcionários)
+async function saveMonthlyData() {
+  try {
+    await gasCall({ action: 'save', sheetId: SHEET_ID, collection: 'advances', records: JSON.stringify(advances) });
+    const pdRows = Object.entries(payData).map(([key, value]) => ({ key, value: JSON.stringify(value) }));
+    await gasCall({ action: 'save', sheetId: SHEET_ID, collection: 'paydata', records: JSON.stringify(pdRows) });
+    updateSyncStatus(true);
+  } catch(e) {
     updateSyncStatus(false);
   }
 }
@@ -526,7 +626,12 @@ function save() {
   localStorage.setItem(DB_KEY, JSON.stringify(employees));
   localStorage.setItem(ADV_KEY, JSON.stringify(advances));
   localStorage.setItem(PAY_KEY, JSON.stringify(payData));
-  saveToSheets(); // async, fire and forget
+  saveMonthlyData(); // salva adiantamentos e paydata
+}
+
+function saveEmployees() {
+  localStorage.setItem(DB_KEY, JSON.stringify(employees));
+  saveToSheets(); // salva tudo incluindo funcionários
 }
 
 function seedEmployees() {
@@ -562,13 +667,15 @@ function initMonths() {
   const sel = document.getElementById('monthSel');
   const now = new Date();
   sel.innerHTML = '';
-  for (let i = 0; i < 12; i++) {
-    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+  // 2 meses atrás + mês atual + 36 meses à frente (~3 anos)
+  for (let i = -2; i <= 36; i++) {
+    const d = new Date(now.getFullYear(), now.getMonth() + i, 1);
     const key = d.toISOString().slice(0, 7);
     const label = d.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
     const opt = document.createElement('option');
     opt.value = key;
     opt.textContent = label.charAt(0).toUpperCase() + label.slice(1);
+    if (i === 0) opt.selected = true;
     sel.appendChild(opt);
   }
   currentMonth = now.toISOString().slice(0, 7);
@@ -961,7 +1068,7 @@ function saveEmployee() {
     const maxId = employees.reduce((m,e) => Math.max(m, e.id||0), 0);
     employees.push({ id: maxId + 1, ...data });
   }
-  save();
+  saveEmployees();
   closeModal('modalEmp');
   renderAll();
   showToast('Salvo!');
@@ -970,7 +1077,7 @@ function saveEmployee() {
 function removeEmployee(id) {
   if (!confirm('Remover este funcionário?')) return;
   employees = employees.filter(e => e.id !== id);
-  save();
+  saveEmployees();
   closeDetail();
   renderAll();
   showToast('Removido.');
@@ -1023,19 +1130,225 @@ function deleteAdv(advId) {
 // ══════ UTILS ═════════════════════════════════════════════
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
-const pageTitles = { dashboard:'Dashboard', funcionarios:'Funcionários', adiantamentos:'Adiantamentos' };
+const pageTitles = { dashboard:'Dashboard', funcionarios:'Funcionários', adiantamentos:'Adiantamentos', dia20:'Dia 20 — Adiantamentos' };
 function showPage(name) {
-  ['dashboard','funcionarios','adiantamentos'].forEach(p => {
-    document.getElementById('page-'+p).style.display = p===name?'':'none';
+  ['dashboard','funcionarios','adiantamentos','dia20'].forEach(p => {
+    const el = document.getElementById('page-'+p);
+    if (el) el.style.display = p===name?'':'none';
     document.getElementById('nav-'+p)?.classList.toggle('active', p===name);
   });
   document.getElementById('pageTitle').textContent = pageTitles[name]||'';
+  if (name === 'dia20') renderDia20();
 }
 
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+// ══════ DIA 20 ═══════════════════════════════════════════
+function getDia20Status(empId) {
+  // Pago = existe adiantamento lançado do tipo Adiantamento Quinzena neste mês
+  return advances.some(a => a.empId === empId && a.mes === currentMonth && a.tipo === 'Adiantamento Quinzena');
+}
+
+function getDia20Valor(empId) {
+  // Verifica se há valor personalizado salvo para o mês
+  const pay = getEmpPay(empId);
+  return pay.adiant_dia20_valor !== undefined ? pay.adiant_dia20_valor : (employees.find(e=>e.id===empId)?.adiant_quinzena || 0);
+}
+
+function renderDia20() {
+  const ativos = employees.filter(e => e.ativo !== false && e.adiant_quinzena > 0);
+  const pagos = ativos.filter(e => getDia20Status(e.id));
+  const pendentes = ativos.filter(e => !getDia20Status(e.id));
+  const totalGeral = ativos.reduce((s,e) => s + getDia20Valor(e.id), 0);
+  const totalPago = pagos.reduce((s,e) => s + getDia20Valor(e.id), 0);
+  const totalPendente = pendentes.reduce((s,e) => s + getDia20Valor(e.id), 0);
+
+  document.getElementById('dia20Stats').innerHTML = `
+    <div class="stat-card"><div class="stat-label">Total Geral</div><div class="stat-value blue">${fmt(totalGeral)}</div><div class="stat-sub">${ativos.length} funcionários</div></div>
+    <div class="stat-card"><div class="stat-label">Já Pago</div><div class="stat-value green">${fmt(totalPago)}</div><div class="stat-sub">${pagos.length} confirmados</div></div>
+    <div class="stat-card"><div class="stat-label">Pendente</div><div class="stat-value yellow">${fmt(totalPendente)}</div><div class="stat-sub">${pendentes.length} aguardando</div></div>
+  `;
+  document.getElementById('dia20Total').textContent = fmt(totalPendente) + ' pendente';
+
+  const rows = ativos.map(emp => {
+    const pago = getDia20Status(emp.id);
+    const valor = getDia20Valor(emp.id);
+    return `<tr style="${pago ? 'opacity:0.55' : ''}">
+      <td>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="width:28px;height:28px;border-radius:50%;background:${avatarColor(emp.nome)};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0">${initials(emp.nome)}</div>
+          <span style="font-weight:500">${emp.nome.split(' ').slice(0,3).join(' ')}</span>
+        </div>
+      </td>
+      <td><span class="badge badge-gray">${emp.funcao}</span></td>
+      <td style="color:var(--text2);font-size:12px">${emp.equipe||'—'}</td>
+      <td style="text-align:right;font-family:var(--mono);font-size:12px;color:var(--text3)">${fmt(emp.adiant_quinzena)}</td>
+      <td style="text-align:right">
+        ${pago
+          ? `<span style="font-family:var(--mono);font-size:12px;font-weight:600;color:var(--green)">${fmt(valor)}</span>`
+          : `<input type="number" value="${valor}" onchange="setDia20Valor(${emp.id}, this.value)"
+              style="width:110px;text-align:right;font-family:var(--mono);font-size:12px;padding:4px 8px;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text)">`
+        }
+      </td>
+      <td style="text-align:center">
+        ${pago
+          ? `<span class="badge badge-green">✓ Pago</span>`
+          : `<span class="badge badge-yellow">⏳ Pendente</span>`
+        }
+      </td>
+      <td style="text-align:right">
+        ${pago
+          ? `<button class="btn btn-ghost btn-sm" onclick="estornarDia20(${emp.id})" style="font-size:11px;color:var(--red)">Estornar</button>`
+          : `<button class="btn btn-primary btn-sm" onclick="confirmarDia20(${emp.id})">✓ Pago</button>`
+        }
+      </td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('dia20Body').innerHTML = rows || '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text3)">Nenhum funcionário com adiantamento cadastrado.</td></tr>';
+}
+
+function setDia20Valor(empId, val) {
+  const pay = getEmpPay(empId);
+  pay.adiant_dia20_valor = parseFloat(val) || 0;
+  saveEmpPay(empId, pay);
+}
+
+function confirmarDia20(empId) {
+  const valor = getDia20Valor(empId);
+  advances.push({
+    id: Date.now().toString() + empId,
+    empId,
+    mes: currentMonth,
+    data: currentMonth + '-20',
+    tipo: 'Adiantamento Quinzena',
+    valor,
+    obs: 'Dia 20',
+  });
+  save();
+  renderDia20();
+  renderDashboard();
+  showToast('Adiantamento confirmado!');
+}
+
+function estornarDia20(empId) {
+  if (!confirm('Estornar este adiantamento?')) return;
+  advances = advances.filter(a => !(a.empId === empId && a.mes === currentMonth && a.tipo === 'Adiantamento Quinzena'));
+  save();
+  renderDia20();
+  renderDashboard();
+  showToast('Estornado.');
+}
+
+function pagarTodosDia20() {
+  const pendentes = employees.filter(e => e.ativo !== false && e.adiant_quinzena > 0 && !getDia20Status(e.id));
+  if (!pendentes.length) { showToast('Todos já confirmados!'); return; }
+  if (!confirm(`Confirmar adiantamento de ${pendentes.length} funcionários?`)) return;
+  pendentes.forEach(emp => {
+    advances.push({
+      id: Date.now().toString() + emp.id,
+      empId: emp.id,
+      mes: currentMonth,
+      data: currentMonth + '-20',
+      tipo: 'Adiantamento Quinzena',
+      valor: getDia20Valor(emp.id),
+      obs: 'Dia 20',
+    });
+  });
+  save();
+  renderDia20();
+  renderDashboard();
+  showToast(`${pendentes.length} adiantamentos confirmados!`);
+}
+
+// ══════ LANÇAMENTO MENSAL ════════════════════════════════
+function openLancamento() {
+  // Label do mês
+  const d = new Date(currentMonth + '-15');
+  const label = d.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+  document.getElementById('lancMesLabel').textContent = label.charAt(0).toUpperCase() + label.slice(1);
+
+  // Lista de adiantamentos fixos
+  const dia20 = currentMonth + '-20';
+  const list = document.getElementById('lancAdvList');
+  list.innerHTML = employees.filter(e => e.ativo !== false).map(emp => {
+    const jaLancado = advances.some(a => a.empId === emp.id && a.mes === currentMonth && a.tipo === 'Adiantamento Quinzena');
+    return `<div style="display:flex;align-items:center;gap:10px;padding:6px 10px;background:var(--surface);border-radius:var(--radius-sm);border:1px solid ${jaLancado ? 'var(--green)' : 'var(--border)'}">
+      <div style="flex:1;font-size:12px;font-weight:500">${emp.nome.split(' ').slice(0,3).join(' ')}</div>
+      <div style="font-family:var(--mono);font-size:12px;color:var(--yellow)">R$ ${(emp.adiant_quinzena||0).toLocaleString('pt-BR',{minimumFractionDigits:2})}</div>
+      ${jaLancado
+        ? '<span style="font-size:11px;color:var(--green)">✓ lançado</span>'
+        : `<button class="btn btn-ghost btn-sm" style="font-size:11px" onclick="lancarAdiantamentoUm(${emp.id})">Lançar</button>`
+      }
+    </div>`;
+  }).join('');
+
+  // Select de funcionários para variáveis
+  const sel = document.getElementById('lanc_emp');
+  sel.innerHTML = employees.filter(e => e.ativo !== false)
+    .map(e => `<option value="${e.id}">${e.nome.split(' ').slice(0,3).join(' ')}</option>`).join('');
+
+  document.getElementById('modalLancamento').classList.add('open');
+}
+
+function lancarAdiantamentoUm(empId) {
+  const emp = employees.find(e => e.id === empId);
+  if (!emp || !emp.adiant_quinzena) return;
+  const jaLancado = advances.some(a => a.empId === empId && a.mes === currentMonth && a.tipo === 'Adiantamento Quinzena');
+  if (jaLancado) { showToast('Já lançado!'); return; }
+  advances.push({
+    id: Date.now().toString() + empId,
+    empId,
+    mes: currentMonth,
+    data: currentMonth + '-20',
+    tipo: 'Adiantamento Quinzena',
+    valor: emp.adiant_quinzena,
+    obs: 'Adiantamento dia 20',
+  });
+  save();
+  renderAll();
+  openLancamento(); // refresh modal
+  showToast('Adiantamento lançado!');
+}
+
+function lancarAdiantamentosTodos() {
+  let count = 0;
+  employees.filter(e => e.ativo !== false && e.adiant_quinzena).forEach(emp => {
+    const jaLancado = advances.some(a => a.empId === emp.id && a.mes === currentMonth && a.tipo === 'Adiantamento Quinzena');
+    if (!jaLancado) {
+      advances.push({
+        id: Date.now().toString() + emp.id,
+        empId: emp.id,
+        mes: currentMonth,
+        data: currentMonth + '-20',
+        tipo: 'Adiantamento Quinzena',
+        valor: emp.adiant_quinzena,
+        obs: 'Adiantamento dia 20',
+      });
+      count++;
+    }
+  });
+  save();
+  renderAll();
+  openLancamento();
+  showToast(count > 0 ? `${count} adiantamentos lançados!` : 'Todos já foram lançados.');
+}
+
+function lancarVariavel() {
+  const empId = parseInt(document.getElementById('lanc_emp').value);
+  const tipo = document.getElementById('lanc_tipo').value;
+  const valor = parseFloat(document.getElementById('lanc_valor').value);
+  if (!valor || valor <= 0) { showToast('Informe o valor'); return; }
+  const pay = getEmpPay(empId);
+  pay[tipo] = (parseFloat(pay[tipo]) || 0) + valor;
+  saveEmpPay(empId, pay);
+  document.getElementById('lanc_valor').value = '';
+  renderAll();
+  showToast('Lançado!');
 }
 
 // ══════ RELOAD ════════════════════════════════════════════
@@ -1049,7 +1362,8 @@ async function reloadData() {
 }
 
 function showLoading(v) {
-  document.getElementById('loadingOverlay').classList.toggle('show', v);
+  const el = document.getElementById('loadingOverlay');
+  if (el) el.classList.toggle('show', v);
 }
 
 // ══════ INIT ══════════════════════════════════════════════
