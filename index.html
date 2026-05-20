@@ -454,7 +454,7 @@ input[type="number"] { font-family: var(--mono); }
 
 <script>
 // ══════ DATA ══════════════════════════════════════════════
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzuUxDWyRN37QPno1XhL9RIwWPqWSCnCfLrw4iAwTakUW0EVO3QwuRT6AX4hKgKPnP9-w/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx_GGxzLjfmQTS_DKF4sw3jZvPjG2rnkZa-r_vJ9M4Hju3DKCDmGOLxobQmqtM4kzixUA/exec';
 const SHEET_ID = '1wvHKPX-7RT6SUAeMUhmlrsu-xjnJIIL-g-BOlQUulqo';
 const DB_KEY = 'modular_pag_v2';
 const ADV_KEY = 'modular_adv_v2';
@@ -477,19 +477,14 @@ async function loadFromSheets() {
   try {
     const res = await gasCall({ action: 'list', sheetId: SHEET_ID });
     if (res.ok) {
-      // Se a planilha devolver funcionários, usa os dados dela
-      if (res.data.employees && res.data.employees.length > 0) {
-        employees = res.data.employees;
-        advances  = res.data.advances  || [];
-        payData = {};
-        (res.data.paydata || []).forEach(row => { try { payData[row.key] = JSON.parse(row.value); } catch {} });
-        localStorage.setItem(DB_KEY, JSON.stringify(employees));
-        localStorage.setItem(ADV_KEY, JSON.stringify(advances));
-        localStorage.setItem(PAY_KEY, JSON.stringify(payData));
-      } else if (employees.length > 0) {
-        // Planilha vazia mas temos dados locais — sobe para a planilha
-        await saveToSheets();
-      }
+      employees = res.data.employees || [];
+      advances  = res.data.advances  || [];
+      // paydata is array of {key, value} objects
+      payData = {};
+      (res.data.paydata || []).forEach(row => { try { payData[row.key] = JSON.parse(row.value); } catch {} });
+      localStorage.setItem(DB_KEY, JSON.stringify(employees));
+      localStorage.setItem(ADV_KEY, JSON.stringify(advances));
+      localStorage.setItem(PAY_KEY, JSON.stringify(payData));
       return true;
     }
   } catch(e) { console.warn('Sheets load failed', e); }
