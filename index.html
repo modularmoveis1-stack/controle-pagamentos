@@ -323,8 +323,55 @@ input[type="number"] { font-family: var(--mono); }
       <div class="emp-grid" id="empGrid"></div>
     </div>
 
-    <!-- DIA 20 UNIFICADO: removido page-adiantamentos separado -->
+    <!-- ADIANTAMENTOS placeholder -->
     <div id="page-adiantamentos" style="display:none"></div>
+
+    <!-- DIA 20 UNIFICADO -->
+    <div id="page-dia20" style="display:none">
+      <div class="stats-grid" id="dia20Stats"></div>
+
+      <!-- PREVISÃO -->
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-header">
+          <span class="card-title">📅 Previsão — Dia 20</span>
+          <div style="display:flex;gap:8px;align-items:center">
+            <span id="dia20Total" style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--yellow)"></span>
+            <button class="btn btn-primary btn-sm" onclick="pagarTodosDia20()">✓ Confirmar todos</button>
+          </div>
+        </div>
+        <div class="card-body" style="padding:0">
+          <div style="overflow-x:auto">
+            <table class="hist-table">
+              <thead><tr>
+                <th>Funcionário</th>
+                <th>Função</th>
+                <th style="text-align:right">Valor Padrão</th>
+                <th style="text-align:right">Valor do Mês</th>
+                <th style="text-align:center">Status</th>
+                <th></th>
+              </tr></thead>
+              <tbody id="dia20BodyRows"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- HISTÓRICO DO MÊS -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">📋 Histórico de Adiantamentos do Mês</span>
+          <button class="btn btn-primary btn-sm" onclick="openAddAdv()">+ Adiantamento Extra</button>
+        </div>
+        <div class="card-body" style="padding:0">
+          <div style="overflow-x:auto">
+            <table class="hist-table">
+              <thead><tr><th>Data</th><th>Funcionário</th><th>Tipo</th><th>Valor</th><th>Obs.</th><th></th></tr></thead>
+              <tbody id="advBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
 
   </div>
 </div>
