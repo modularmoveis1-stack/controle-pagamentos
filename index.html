@@ -718,8 +718,7 @@ function fmt(v) { return 'R$ ' + (parseFloat(v)||0).toLocaleString('pt-BR', {min
 function renderAll() {
   renderDashboard();
   renderEmployees();
-  const dia20Page = document.getElementById('page-dia20');
-  if (dia20Page && dia20Page.style.display !== 'none') renderDia20();
+  renderDia20();
   if (selectedEmpId) openDetail(selectedEmpId);
 }
 
@@ -1345,6 +1344,7 @@ function showLoading(v) {
 // ══════ INIT ══════════════════════════════════════════════
 load();
 initMonths();
+showPage('dashboard');
 renderAll();
 showLoading(true);
 loadFromSheets().then(ok => {
