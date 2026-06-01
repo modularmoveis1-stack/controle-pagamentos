@@ -511,6 +511,13 @@ input[type="number"] { font-family: var(--mono); }
       </div>
 
       <div class="bonif-section active" id="bsec-montadores">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <div style="font-size:12px;color:var(--text3)">Somente os funcionários selecionados aparecem aqui.</div>
+          <button class="btn btn-ghost btn-sm" onclick="openGerenciarParticipantes()" style="color:var(--purple);border-color:var(--purple)">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>
+            Gerenciar participantes
+          </button>
+        </div>
         <div class="stats-grid" id="bonif-mont-stats"></div>
         <div id="bonif-montadores-list"></div>
       </div>
@@ -694,6 +701,26 @@ input[type="number"] { font-family: var(--mono); }
     </div>
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="closeModal('modalLancamento')">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL GERENCIAR PARTICIPANTES BONIFICAÇÃO -->
+<div class="modal-overlay" id="modalParticipantes">
+  <div class="modal" style="width:480px">
+    <div class="modal-header">
+      <h2>⚒️ Participantes das Bonificações</h2>
+      <button class="modal-close" onclick="closeModal('modalParticipantes')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="font-size:12px;color:var(--text2);margin-bottom:4px;padding:10px 12px;background:var(--surface2);border-radius:var(--radius-sm);border:1px solid var(--border)">
+        Marque quem deve aparecer na lista de bonificações por projeto. Você pode adicionar ou remover a qualquer momento — os dados dos projetos já lançados ficam salvos.
+      </div>
+      <div id="participantesList" style="display:flex;flex-direction:column;gap:6px;max-height:400px;overflow-y:auto;margin-top:4px"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modalParticipantes')">Fechar</button>
+      <button class="btn btn-primary" onclick="salvarParticipantes()">✓ Salvar</button>
     </div>
   </div>
 </div>
@@ -1700,11 +1727,79 @@ function lancarVariavel(){
 }
 
 // ══════ BONIFICAÇÕES (página principal) ═══════════════════
+// ── Chave para salvar participantes das bonificações ──
+const BONIF_PART_KEY = 'mm_bonif_participantes';
+let bonifParticipantes = []; // array de empId (numbers)
+
+function loadBonifParticipantes() {
+  try {
+    const raw = localStorage.getItem(BONIF_PART_KEY);
+    if (raw) { bonifParticipantes = JSON.parse(raw); return; }
+  } catch {}
+  // Padrão inicial: Arlembeng (1), Tadeu (9), João Victor (5)
+  bonifParticipantes = [1, 9, 5];
+  saveBonifParticipantes();
+}
+
+function saveBonifParticipantes() {
+  localStorage.setItem(BONIF_PART_KEY, JSON.stringify(bonifParticipantes));
+}
+
 function getBonifMontadores() {
   return employees.filter(e =>
-    e.ativo !== false &&
-    (e.funcao==='Montador'||e.funcao==='Gerente de Montagem'||e.funcao==='Aux. Marceneiro'||e.funcao==='Marceneiro')
+    e.ativo !== false && bonifParticipantes.includes(e.id)
   );
+}
+
+function openGerenciarParticipantes() {
+  const list = document.getElementById('participantesList');
+  list.innerHTML = employees
+    .filter(e => e.ativo !== false)
+    .sort((a,b) => a.nome.localeCompare(b.nome))
+    .map(emp => {
+      const checked = bonifParticipantes.includes(emp.id);
+      const col = avatarColor(emp.nome);
+      return `<label style="display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--surface2);border-radius:var(--radius-sm);border:1px solid ${checked ? 'var(--accent)' : 'var(--border)'};cursor:pointer;transition:border-color 0.15s" id="plabel_${emp.id}">
+        <input type="checkbox" id="pcheck_${emp.id}" value="${emp.id}" ${checked ? 'checked' : ''}
+          onchange="toggleParticLabel(${emp.id})"
+          style="width:16px;height:16px;accent-color:var(--accent);cursor:pointer;flex-shrink:0">
+        <div style="width:32px;height:32px;border-radius:50%;background:${col};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0">${initials(emp.nome)}</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:600">${emp.nome.split(' ').slice(0,3).join(' ')}</div>
+          <div style="font-size:11px;color:var(--text3)">${emp.funcao}${emp.equipe ? ' · ' + emp.equipe : ''}</div>
+        </div>
+        ${checked ? '<span style="font-size:10px;font-weight:600;color:var(--accent);background:var(--accent-dim);padding:2px 8px;border-radius:99px">✓ ativo</span>' : ''}
+      </label>`;
+    }).join('');
+  document.getElementById('modalParticipantes').classList.add('open');
+}
+
+function toggleParticLabel(empId) {
+  const lbl = document.getElementById('plabel_' + empId);
+  const chk = document.getElementById('pcheck_' + empId);
+  if (lbl) {
+    lbl.style.borderColor = chk.checked ? 'var(--accent)' : 'var(--border)';
+    // Atualiza badge ativo
+    const badge = lbl.querySelector('span');
+    if (chk.checked && !badge) {
+      const sp = document.createElement('span');
+      sp.style.cssText = 'font-size:10px;font-weight:600;color:var(--accent);background:var(--accent-dim);padding:2px 8px;border-radius:99px';
+      sp.textContent = '✓ ativo';
+      lbl.appendChild(sp);
+    } else if (!chk.checked && badge) {
+      badge.remove();
+    }
+  }
+}
+
+function salvarParticipantes() {
+  const checks = document.querySelectorAll('#participantesList input[type=checkbox]');
+  bonifParticipantes = [];
+  checks.forEach(c => { if (c.checked) bonifParticipantes.push(parseInt(c.value)); });
+  saveBonifParticipantes();
+  closeModal('modalParticipantes');
+  renderBonificacoes();
+  showToast('Participantes atualizados!');
 }
 
 function getBonifMes() {
@@ -1911,6 +2006,7 @@ function showLoading(v){const el=document.getElementById('loadingOverlay');if(el
 
 // ══════ INIT ══════════════════════════════════════════════
 load();
+loadBonifParticipantes();
 initMonths();
 showPage('dashboard');
 renderAll();
