@@ -452,7 +452,7 @@ input[type="number"] { font-family: var(--mono); }
       <div class="stats-grid" id="dia20Stats"></div>
       <div class="card" style="margin-bottom:16px">
         <div class="card-header">
-          <span class="card-title">📅 Previsão — Dia 20</span>
+          <span class="card-title">📅 Previsão — Dia 20 <span style="font-size:10px;font-weight:400;color:var(--text3);margin-left:6px">adiantamento lançado aqui desconta na folha do mês seguinte</span></span>
           <div style="display:flex;gap:8px;align-items:center">
             <span id="dia20Total" style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--yellow)"></span>
             <button class="btn btn-primary btn-sm" onclick="pagarTodosDia20()">✓ Confirmar todos</button>
@@ -924,6 +924,13 @@ function saveEmpPay(empId, data) {
   save();
 }
 
+// Retorna o mês anterior a um dado mês no formato 'YYYY-MM'
+function prevMonth(ym) {
+  const [y, m] = ym.split('-').map(Number);
+  const d = new Date(y, m - 2, 1); // m-1 é o mês atual (0-based), m-2 é o anterior
+  return d.toISOString().slice(0, 7);
+}
+
 function calcSaldo(emp) {
   const pay = getEmpPay(emp.id);
   // Créditos fixos: usa override do mês se existir, senão usa cadastro
@@ -944,12 +951,16 @@ function calcSaldo(emp) {
     pay.bon_extra||0, pay.premissao_surpresa||0, pay.descanso_remunerado||0,
   ].reduce((a,b) => a+(parseFloat(b)||0), 0);
 
-  const monthAdvs = advances.filter(a => a.empId===emp.id && a.mes===currentMonth);
+  // ✅ Adiantamento do dia 20 foi lançado no MÊS ANTERIOR
+  // A folha de junho desconta o adiantamento de maio
+  const mesAdiant = prevMonth(currentMonth);
+  const monthAdvs = advances.filter(a => a.empId===emp.id && a.mes===mesAdiant);
   const totalAdv = monthAdvs.reduce((s,a) => s+(parseFloat(a.valor)||0), 0);
+
   const inss = pay.inss_mes !== undefined ? pay.inss_mes : (emp.inss||0);
   const consig = pay.consignado_mes !== undefined ? pay.consignado_mes : (emp.consignado||0);
   const deducoes = [inss, consig, pay.consignado_extra||0, pay.falta||0].reduce((a,b)=>a+(parseFloat(b)||0),0);
-  return { total:creditos, deducoes, adiantamento:totalAdv, saldo:creditos-deducoes-totalAdv };
+  return { total:creditos, deducoes, adiantamento:totalAdv, mesAdiant, saldo:creditos-deducoes-totalAdv };
 }
 
 // ══════ RENDER ════════════════════════════════════════════
@@ -1063,7 +1074,10 @@ function openDetail(id, tab) {
 // ── Aba Folha (créditos fixos EDITÁVEIS) ──
 function renderDetailFolha(emp, pay, c) {
   const id = emp.id;
-  const monthAdvs = advances.filter(a=>a.empId===id&&a.mes===currentMonth);
+  // Adiantamentos do mês anterior (dia 20) descontam na folha atual
+  const mesAdiant = prevMonth(currentMonth);
+  const monthAdvs = advances.filter(a=>a.empId===id&&a.mes===mesAdiant);
+  const mesAdiantLabel = (() => { const d = new Date(mesAdiant+'-15'); return d.toLocaleDateString('pt-BR',{month:'long'}); })();
 
   // Créditos fixos com valor do mês ou cadastro
   const salario     = pay.fix_salario     !== undefined ? pay.fix_salario     : emp.salario;
@@ -1171,7 +1185,7 @@ function renderDetailFolha(emp, pay, c) {
 
     <div class="pay-section" style="margin-bottom:12px">
       <div class="pay-section-header yellow">
-        <span>💳 Adiantamentos — ${fmt(c.adiantamento)}</span>
+        <span>💳 Adiantamentos de ${mesAdiantLabel} — ${fmt(c.adiantamento)}</span>
         <button class="btn btn-ghost btn-sm" onclick="openAddAdvEmp(${id})" style="font-size:11px;padding:3px 8px">+ Add</button>
       </div>
       ${advsHtml}
