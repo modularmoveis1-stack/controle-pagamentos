@@ -87,7 +87,6 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); min-
 .stat-value.blue { color: var(--accent); }
 .stat-sub { font-size: 11px; color: var(--text3); margin-top: 4px; }
 
-/* EMPLOYEE CARDS */
 .emp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
 .emp-card {
   background: var(--surface); border: 1px solid var(--border);
@@ -110,7 +109,6 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); min-
 .emp-stat-value.green { color: var(--green); }
 .emp-stat-value.red { color: var(--red); }
 
-/* DETAIL PANEL */
 #detailPanel {
   position: fixed; right: 0; top: 0; bottom: 0; width: 560px;
   background: var(--surface); border-left: 1px solid var(--border);
@@ -154,7 +152,6 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); min-
 .total-label { font-size: 13px; font-weight: 600; }
 .total-value { font-size: 18px; font-weight: 700; font-family: var(--mono); }
 
-/* MODAL */
 .modal-overlay {
   position: fixed; inset: 0; background: rgba(0,0,0,0.7);
   display: flex; align-items: center; justify-content: center;
@@ -184,7 +181,6 @@ input[type="number"] { font-family: var(--mono); }
 .form-group { display: flex; flex-direction: column; gap: 5px; }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
-/* TOAST */
 .toast {
   position: fixed; bottom: 20px; right: 24px; z-index: 999;
   background: var(--surface2); border: 1px solid var(--border2);
@@ -194,24 +190,20 @@ input[type="number"] { font-family: var(--mono); }
 }
 .toast.show { transform: translateY(0); opacity: 1; }
 
-/* HISTORY TABLE */
 .hist-table { width: 100%; border-collapse: collapse; font-size: 12px; }
 .hist-table th { background: var(--surface2); color: var(--text3); font-size: 10px; font-weight: 600; text-transform: uppercase; padding: 7px 10px; text-align: left; border-bottom: 1px solid var(--border); }
 .hist-table td { padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
 .hist-table tr:hover td { background: var(--surface2); }
 
-/* ADVANCE LIST */
 .adv-item { display: flex; align-items: center; gap: 10px; padding: 8px 14px; border-top: 1px solid var(--border); }
 .adv-item:first-of-type { border-top: none; }
 .adv-date { font-family: var(--mono); font-size: 11px; color: var(--text3); min-width: 80px; }
 .adv-desc { flex: 1; font-size: 12px; color: var(--text2); }
 .adv-val { font-family: var(--mono); font-size: 12px; font-weight: 600; color: var(--red); }
 
-/* FILTERS */
 .filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
 .filters input, .filters select { width: auto; min-width: 160px; font-size: 13px; }
 
-/* LOADING */
 #loadingOverlay {
   position: fixed; inset: 0; background: rgba(15,17,23,0.85);
   display: flex; align-items: center; justify-content: center;
@@ -224,7 +216,85 @@ input[type="number"] { font-family: var(--mono); }
 .month-selector { display: flex; align-items: center; gap: 8px; }
 .month-selector select { font-size: 13px; padding: 6px 10px; width: auto; }
 
-.section-divider { margin: 6px 0; height: 1px; background: var(--border); }
+/* ── BONIFICAÇÕES ─────────────────────────── */
+.bonif-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
+.bonif-tab {
+  padding: 9px 20px; font-size: 13px; font-weight: 500;
+  cursor: pointer; border: none; background: none; color: var(--text2);
+  border-bottom: 2px solid transparent; margin-bottom: -1px;
+  font-family: var(--font); transition: color 0.15s;
+}
+.bonif-tab:hover { color: var(--text); }
+.bonif-tab.active { color: var(--purple); border-bottom-color: var(--purple); }
+.bonif-section { display: none; }
+.bonif-section.active { display: block; }
+
+.mont-block {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px 18px; margin-bottom: 14px;
+}
+.mont-header { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.mont-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; flex-shrink: 0;
+}
+.mont-name { font-size: 14px; font-weight: 600; }
+.mont-sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.mont-badge {
+  margin-left: auto; font-size: 11px; font-weight: 600;
+  padding: 4px 12px; border-radius: 99px;
+}
+.mont-badge-ok { background: var(--green-dim); color: var(--green); }
+.mont-badge-warn { background: var(--yellow-dim); color: var(--yellow); }
+
+.proj-grid-header {
+  display: grid;
+  grid-template-columns: 1.4fr 1.2fr 70px 120px 32px;
+  gap: 6px; margin-bottom: 4px;
+}
+.proj-grid-row {
+  display: grid;
+  grid-template-columns: 1.4fr 1.2fr 70px 120px 32px;
+  gap: 6px; margin-bottom: 6px;
+}
+.proj-grid-header div {
+  font-size: 10px; font-weight: 600; color: var(--text3);
+  text-transform: uppercase; letter-spacing: 0.05em; padding: 0 4px;
+}
+.proj-input {
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: var(--radius-sm); color: var(--text);
+  font-family: var(--font); font-size: 12px;
+  padding: 6px 8px; width: 100%; transition: border-color 0.15s;
+}
+.proj-input:focus { outline: none; border-color: var(--accent); }
+.proj-input[type=number] { font-family: var(--mono); }
+
+.jean-grid-header {
+  display: grid;
+  grid-template-columns: 1.3fr 0.9fr 1.1fr 130px 32px;
+  gap: 6px; margin-bottom: 4px;
+}
+.jean-grid-row {
+  display: grid;
+  grid-template-columns: 1.3fr 0.9fr 1.1fr 130px 32px;
+  gap: 6px; margin-bottom: 6px;
+}
+.jean-grid-header div {
+  font-size: 10px; font-weight: 600; color: var(--text3);
+  text-transform: uppercase; letter-spacing: 0.05em; padding: 0 4px;
+}
+.faixa-ref {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 10px 14px; margin-top: 14px;
+}
+.faixa-ref-title { font-size: 10px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+.faixa-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+.faixa-pill {
+  font-size: 11px; padding: 3px 10px; border-radius: 99px;
+  background: var(--surface2); border: 1px solid var(--border); color: var(--text2);
+}
 
 @media (max-width: 900px) {
   .sidebar { width: 52px; }
@@ -232,6 +302,8 @@ input[type="number"] { font-family: var(--mono); }
   .nav-item { justify-content: center; padding: 10px; }
   .main { margin-left: 52px; }
   #detailPanel { width: 100%; }
+  .proj-grid-header, .proj-grid-row { grid-template-columns: 1fr 1fr 60px 100px 28px; }
+  .jean-grid-header, .jean-grid-row { grid-template-columns: 1fr 0.8fr 1fr 110px 28px; }
 }
 </style>
 </head>
@@ -327,14 +399,11 @@ input[type="number"] { font-family: var(--mono); }
       <div class="emp-grid" id="empGrid"></div>
     </div>
 
-    <!-- ADIANTAMENTOS placeholder -->
     <div id="page-adiantamentos" style="display:none"></div>
 
-    <!-- DIA 20 UNIFICADO -->
+    <!-- DIA 20 -->
     <div id="page-dia20" style="display:none">
       <div class="stats-grid" id="dia20Stats"></div>
-
-      <!-- PREVISÃO -->
       <div class="card" style="margin-bottom:16px">
         <div class="card-header">
           <span class="card-title">📅 Previsão — Dia 20</span>
@@ -347,8 +416,7 @@ input[type="number"] { font-family: var(--mono); }
           <div style="overflow-x:auto">
             <table class="hist-table">
               <thead><tr>
-                <th>Funcionário</th>
-                <th>Função</th>
+                <th>Funcionário</th><th>Função</th>
                 <th style="text-align:right">Valor Padrão</th>
                 <th style="text-align:right">Valor do Mês</th>
                 <th style="text-align:center">Status</th>
@@ -359,8 +427,6 @@ input[type="number"] { font-family: var(--mono); }
           </div>
         </div>
       </div>
-
-      <!-- HISTÓRICO DO MÊS -->
       <div class="card">
         <div class="card-header">
           <span class="card-title">📋 Histórico de Adiantamentos do Mês</span>
@@ -377,37 +443,72 @@ input[type="number"] { font-family: var(--mono); }
       </div>
     </div>
 
-    <!-- BONIFICAÇÕES E COMISSÕES -->
+    <!-- ══════ BONIFICAÇÕES ══════ -->
     <div id="page-bonificacoes" style="display:none">
 
-      <!-- MONTADORES -->
-      <div class="card" style="margin-bottom:16px">
-        <div class="card-header">
-          <span class="card-title">⭐ Projetos por Montador — Bonificações</span>
-        </div>
-        <div class="card-body">
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px" id="bonif-stats"></div>
-          <div id="bonif-montadores"></div>
-        </div>
+      <!-- Resumo geral -->
+      <div class="stats-grid" id="bonif-resumo-geral" style="margin-bottom:20px"></div>
+
+      <!-- Tabs -->
+      <div class="bonif-tabs">
+        <button class="bonif-tab active" id="btab-montadores" onclick="switchBonifTab('montadores')">
+          ⚒️ Montadores
+        </button>
+        <button class="bonif-tab" id="btab-vendas" onclick="switchBonifTab('vendas')">
+          💼 Jean — Vendas
+        </button>
       </div>
 
-      <!-- JEAN -->
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title">💼 Jean — Comissões de Vendas</span>
-          <div style="display:flex;gap:12px;align-items:center">
-            <span style="font-size:11px;color:var(--text3)">R$160–199k: 1,1% | 200–249k: 1,2% | 250–299k: 1,3% | 300–349k: 1,4% | 350k+: 1,5%</span>
+      <!-- MONTADORES -->
+      <div class="bonif-section active" id="bsec-montadores">
+        <div class="stats-grid" id="bonif-mont-stats"></div>
+        <div id="bonif-montadores-list"></div>
+      </div>
+
+      <!-- JEAN VENDAS -->
+      <div class="bonif-section" id="bsec-vendas">
+        <div class="stats-grid" id="bonif-jean-stats"></div>
+
+        <div class="mont-block">
+          <div class="mont-header">
+            <div class="mont-avatar" style="background:rgba(168,85,247,0.18);color:var(--purple)">JN</div>
+            <div style="flex:1">
+              <div class="mont-name">Jean</div>
+              <div class="mont-sub">Consultor de Vendas — comissão calculada automaticamente</div>
+            </div>
             <button class="btn btn-primary btn-sm" onclick="bonifAddVenda()">+ Venda</button>
           </div>
-        </div>
-        <div class="card-body">
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px" id="jean-stats"></div>
+
+          <!-- Header colunas -->
+          <div class="jean-grid-header">
+            <div>Cliente</div>
+            <div>Contrato</div>
+            <div>Ambiente</div>
+            <div>Valor ambiente</div>
+            <div></div>
+          </div>
+
           <div id="jean-form-rows"></div>
+
+          <!-- Tabela resumo -->
           <div id="jean-tabela" style="margin-top:16px"></div>
+
+          <!-- Faixas de referência -->
+          <div class="faixa-ref">
+            <div class="faixa-ref-title">Tabela de comissão</div>
+            <div class="faixa-pills">
+              <span class="faixa-pill">R$160k–199.999 → 1,1%</span>
+              <span class="faixa-pill">R$200k–249.999 → 1,2%</span>
+              <span class="faixa-pill">R$250k–299.999 → 1,3%</span>
+              <span class="faixa-pill">R$300k–349.999 → 1,4%</span>
+              <span class="faixa-pill">A partir de R$350k → 1,5%</span>
+            </div>
+          </div>
         </div>
       </div>
 
     </div>
+    <!-- fim bonificações -->
 
   </div>
 </div>
@@ -493,13 +594,9 @@ input[type="number"] { font-family: var(--mono); }
       <button class="modal-close" onclick="closeModal('modalAdv')">✕</button>
     </div>
     <div class="modal-body">
-      <div class="form-group">
-        <label>Funcionário *</label>
-        <select id="adv_emp"></select>
-      </div>
+      <div class="form-group"><label>Funcionário *</label><select id="adv_emp"></select></div>
       <div class="form-row">
-        <div class="form-group">
-          <label>Tipo</label>
+        <div class="form-group"><label>Tipo</label>
           <select id="adv_tipo">
             <option value="Adiantamento Quinzena">Adiantamento Quinzena</option>
             <option value="Adiantamento Extra">Adiantamento Extra</option>
@@ -507,10 +604,7 @@ input[type="number"] { font-family: var(--mono); }
             <option value="Desconto">Desconto</option>
           </select>
         </div>
-        <div class="form-group">
-          <label>Data</label>
-          <input type="date" id="adv_data">
-        </div>
+        <div class="form-group"><label>Data</label><input type="date" id="adv_data"></div>
       </div>
       <div class="form-group"><label>Valor (R$) *</label><input type="number" id="adv_valor" placeholder="0,00"></div>
       <div class="form-group"><label>Observação</label><input type="text" id="adv_obs" placeholder="Motivo ou referência"></div>
@@ -534,7 +628,6 @@ input[type="number"] { font-family: var(--mono); }
         <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;margin-bottom:6px">Mês de referência</div>
         <div id="lancMesLabel" style="font-size:14px;font-weight:600;color:var(--accent)"></div>
       </div>
-
       <div style="border-top:1px solid var(--border);padding-top:14px">
         <div style="font-size:11px;font-weight:600;color:var(--yellow);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px">💳 Adiantamentos Fixos (dia 20)</div>
         <div id="lancAdvList" style="display:flex;flex-direction:column;gap:6px;max-height:280px;overflow-y:auto"></div>
@@ -542,16 +635,11 @@ input[type="number"] { font-family: var(--mono); }
           Lançar adiantamento de todos (dia 20)
         </button>
       </div>
-
       <div style="border-top:1px solid var(--border);padding-top:14px;margin-top:4px">
         <div style="font-size:11px;font-weight:600;color:var(--purple);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px">⭐ Bônus e Variáveis do Mês</div>
         <div class="form-row">
-          <div class="form-group">
-            <label>Funcionário</label>
-            <select id="lanc_emp" style="font-size:13px"></select>
-          </div>
-          <div class="form-group">
-            <label>Tipo</label>
+          <div class="form-group"><label>Funcionário</label><select id="lanc_emp" style="font-size:13px"></select></div>
+          <div class="form-group"><label>Tipo</label>
             <select id="lanc_tipo" style="font-size:13px">
               <option value="bon_projeto">Bônus de Projeto</option>
               <option value="bon_supervisao">Bônus Supervisão</option>
@@ -565,10 +653,7 @@ input[type="number"] { font-family: var(--mono); }
             </select>
           </div>
         </div>
-        <div class="form-group" style="margin-top:8px">
-          <label>Valor (R$)</label>
-          <input type="number" id="lanc_valor" placeholder="0,00">
-        </div>
+        <div class="form-group" style="margin-top:8px"><label>Valor (R$)</label><input type="number" id="lanc_valor" placeholder="0,00"></div>
         <button class="btn btn-primary" style="width:100%;margin-top:8px;justify-content:center" onclick="lancarVariavel()">Lançar</button>
       </div>
     </div>
@@ -586,11 +671,13 @@ const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw-stqpgT7vVbVRZt0VN
 const SHEET_ID = '1wvHKPX-7RT6SUAeMUhmlrsu-xjnJIIL-g-BOlQUulqo';
 const DB_KEY = 'modular_pag_v2';
 const ADV_KEY = 'modular_adv_v2';
-const PAY_KEY = 'modular_pay_v2'; // monthly payment data
+const PAY_KEY = 'modular_pay_v2';
+const BONIF_KEY = 'mm_bonificacoes';
 
 let employees = [];
 let advances = [];
-let payData = {}; // { 'YYYY-MM': { empId: { creditos: {}, debitos: {} } } }
+let payData = {};
+let bonifData = {};
 let currentMonth = '';
 let selectedEmpId = null;
 
@@ -601,7 +688,6 @@ async function gasCall(params) {
     const r = await fetch(url);
     return r.json();
   }
-  // POST para saves (evita limite de URL)
   const r = await fetch(SCRIPT_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'text/plain' },
@@ -614,24 +700,18 @@ async function loadFromSheets() {
   try {
     const res = await gasCall({ action: 'list', sheetId: SHEET_ID });
     if (res.ok) {
-      // Funcionários: só atualiza se a planilha tiver dados
       if (res.data.employees && res.data.employees.length > 0) {
         employees = res.data.employees;
         localStorage.setItem(DB_KEY, JSON.stringify(employees));
       } else {
-        // Planilha vazia — carrega padrão e sobe para o Sheets agora
         if (!employees.length) seedEmployees();
         await gasCall({ action: 'save', sheetId: SHEET_ID, collection: 'employees', records: JSON.stringify(employees) });
         localStorage.setItem(DB_KEY, JSON.stringify(employees));
       }
-
-      // Adiantamentos: sempre carrega tudo (todos os meses)
       if (res.data.advances) {
         advances = res.data.advances;
         localStorage.setItem(ADV_KEY, JSON.stringify(advances));
       }
-
-      // PayData mensal: sempre carrega tudo
       if (res.data.paydata) {
         payData = {};
         res.data.paydata.forEach(row => {
@@ -639,7 +719,6 @@ async function loadFromSheets() {
         });
         localStorage.setItem(PAY_KEY, JSON.stringify(payData));
       }
-
       return true;
     }
   } catch(e) { console.warn('Sheets load failed', e); }
@@ -653,22 +732,16 @@ async function saveToSheets() {
     const pdRows = Object.entries(payData).map(([key, value]) => ({ key, value: JSON.stringify(value) }));
     await gasCall({ action: 'save', sheetId: SHEET_ID, collection: 'paydata', records: JSON.stringify(pdRows) });
     updateSyncStatus(true);
-  } catch(e) {
-    console.warn('Sheets save failed', e);
-    updateSyncStatus(false);
-  }
+  } catch(e) { console.warn('Sheets save failed', e); updateSyncStatus(false); }
 }
 
-// Salva só adiantamentos e paydata (não toca nos funcionários)
 async function saveMonthlyData() {
   try {
     await gasCall({ action: 'save', sheetId: SHEET_ID, collection: 'advances', records: JSON.stringify(advances) });
     const pdRows = Object.entries(payData).map(([key, value]) => ({ key, value: JSON.stringify(value) }));
     await gasCall({ action: 'save', sheetId: SHEET_ID, collection: 'paydata', records: JSON.stringify(pdRows) });
     updateSyncStatus(true);
-  } catch(e) {
-    updateSyncStatus(false);
-  }
+  } catch(e) { updateSyncStatus(false); }
 }
 
 function updateSyncStatus(ok) {
@@ -683,6 +756,7 @@ function load() {
   try { employees = JSON.parse(localStorage.getItem(DB_KEY)) || []; } catch { employees = []; }
   try { advances  = JSON.parse(localStorage.getItem(ADV_KEY)) || []; } catch { advances = []; }
   try { payData   = JSON.parse(localStorage.getItem(PAY_KEY)) || {}; } catch { payData = {}; }
+  try { bonifData = JSON.parse(localStorage.getItem(BONIF_KEY)) || {}; } catch { bonifData = {}; }
   if (!employees.length) seedEmployees();
 }
 
@@ -690,12 +764,16 @@ function save() {
   localStorage.setItem(DB_KEY, JSON.stringify(employees));
   localStorage.setItem(ADV_KEY, JSON.stringify(advances));
   localStorage.setItem(PAY_KEY, JSON.stringify(payData));
-  saveMonthlyData(); // salva adiantamentos e paydata
+  saveMonthlyData();
+}
+
+function saveBonif() {
+  localStorage.setItem(BONIF_KEY, JSON.stringify(bonifData));
 }
 
 function saveEmployees() {
   localStorage.setItem(DB_KEY, JSON.stringify(employees));
-  saveToSheets(); // salva tudo incluindo funcionários
+  saveToSheets();
 }
 
 function seedEmployees() {
@@ -708,14 +786,12 @@ function initMonths() {
   const sel = document.getElementById('monthSel');
   const now = new Date();
   sel.innerHTML = '';
-  // 2 meses atrás + mês atual + 36 meses à frente (~3 anos)
   for (let i = -2; i <= 36; i++) {
     const d = new Date(now.getFullYear(), now.getMonth() + i, 1);
     const key = d.toISOString().slice(0, 7);
     const label = d.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
     const opt = document.createElement('option');
-    opt.value = key;
-    opt.textContent = label.charAt(0).toUpperCase() + label.slice(1);
+    opt.value = key; opt.textContent = label.charAt(0).toUpperCase() + label.slice(1);
     if (i === 0) opt.selected = true;
     sel.appendChild(opt);
   }
@@ -731,16 +807,12 @@ function changeMonth() {
 function getEmpPay(empId) {
   if (!payData[currentMonth]) payData[currentMonth] = {};
   if (!payData[currentMonth][empId]) {
-    const emp = employees.find(e => e.id === empId);
-    if (!emp) return {};
     payData[currentMonth][empId] = {
-      // variáveis do mês
-      hora_extra: 0, hora_extra_noturno: 0, bon_projeto: 0,
-      bon_supervisao: 0, bon_meta_equipe: 0, bon_elpi: 0,
-      bon_removedor: 0, bon_desempenho: 0, bon_extra: 0,
-      premissao_surpresa: 0, descanso_remunerado: 0,
-      falta: 0, consignado_extra: 0, faltas_obs: '',
-      obs_mes: '', presenca: true,
+      hora_extra:0, hora_extra_noturno:0, bon_projeto:0,
+      bon_supervisao:0, bon_meta_equipe:0, bon_elpi:0,
+      bon_removedor:0, bon_desempenho:0, bon_extra:0,
+      premissao_surpresa:0, descanso_remunerado:0,
+      falta:0, consignado_extra:0, faltas_obs:'', obs_mes:'', presenca:true,
     };
   }
   return payData[currentMonth][empId];
@@ -755,48 +827,28 @@ function saveEmpPay(empId, data) {
 function calcSaldo(emp) {
   const pay = getEmpPay(emp.id);
   const creditos = [
-    emp.salario,
-    emp.sal_familia || 0,
-    emp.cesta || 0,
-    pay.presenca ? (emp.prem_presenca || 0) : 0,
-    emp.ajuda_custo || 0,
-    emp.gratificacao || 0,
-    pay.hora_extra || 0,
-    pay.hora_extra_noturno || 0,
-    pay.bon_projeto || 0,
-    pay.bon_supervisao || 0,
-    pay.bon_meta_equipe || 0,
-    pay.bon_elpi || 0,
-    pay.bon_removedor || 0,
-    pay.bon_desempenho || 0,
-    pay.bon_extra || 0,
-    pay.premissao_surpresa || 0,
-    pay.descanso_remunerado || 0,
-  ].reduce((a, b) => a + (parseFloat(b) || 0), 0);
-
-  const monthAdvs = advances.filter(a => a.empId === emp.id && a.mes === currentMonth);
-  const totalAdv = monthAdvs.reduce((s, a) => s + (parseFloat(a.valor) || 0), 0);
-
-  const deducoes = [
-    emp.inss || 0,
-    emp.consignado || 0,
-    pay.consignado_extra || 0,
-    pay.falta || 0,
-  ].reduce((a, b) => a + (parseFloat(b) || 0), 0);
-
-  return {
-    total: creditos,
-    deducoes,
-    adiantamento: totalAdv,
-    saldo: creditos - deducoes - totalAdv,
-  };
+    emp.salario, emp.sal_familia||0, emp.cesta||0,
+    pay.presenca ? (emp.prem_presenca||0) : 0,
+    emp.ajuda_custo||0, emp.gratificacao||0,
+    pay.hora_extra||0, pay.hora_extra_noturno||0,
+    pay.bon_projeto||0, pay.bon_supervisao||0, pay.bon_meta_equipe||0,
+    pay.bon_elpi||0, pay.bon_removedor||0, pay.bon_desempenho||0,
+    pay.bon_extra||0, pay.premissao_surpresa||0, pay.descanso_remunerado||0,
+  ].reduce((a,b) => a+(parseFloat(b)||0), 0);
+  const monthAdvs = advances.filter(a => a.empId===emp.id && a.mes===currentMonth);
+  const totalAdv = monthAdvs.reduce((s,a) => s+(parseFloat(a.valor)||0), 0);
+  // INSS e Consignado: usa valor do mês (editável) se existir, senão cai no cadastro
+  const inss = pay.inss_mes !== undefined ? pay.inss_mes : (emp.inss||0);
+  const consig = pay.consignado_mes !== undefined ? pay.consignado_mes : (emp.consignado||0);
+  const deducoes = [inss, consig, pay.consignado_extra||0, pay.falta||0].reduce((a,b)=>a+(parseFloat(b)||0),0);
+  return { total:creditos, deducoes, adiantamento:totalAdv, saldo:creditos-deducoes-totalAdv };
 }
 
 // ══════ RENDER ════════════════════════════════════════════
 const COLORS = ['#4f7bff','#22c55e','#f59e0b','#a855f7','#14b8a6','#f97316','#ef4444','#ec4899'];
-function avatarColor(name) { let h = 0; for (let c of name) h += c.charCodeAt(0); return COLORS[h % COLORS.length]; }
+function avatarColor(name) { let h=0; for(let c of name) h+=c.charCodeAt(0); return COLORS[h%COLORS.length]; }
 function initials(name) { return name.split(' ').slice(0,2).map(n=>n[0]).join('').toUpperCase(); }
-function fmt(v) { return 'R$ ' + (parseFloat(v)||0).toLocaleString('pt-BR', {minimumFractionDigits:2,maximumFractionDigits:2}); }
+function fmt(v) { return 'R$ '+(parseFloat(v)||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
 
 function renderAll() {
   renderDashboard();
@@ -805,19 +857,13 @@ function renderAll() {
   if (selectedEmpId) openDetail(selectedEmpId);
 }
 
-function renderAdvances() {} // mantido para compatibilidade
-
 function renderDashboard() {
-  let totalFolha = 0, totalAdv = 0, totalDed = 0, totalSaldo = 0;
-  let rows = '';
-  employees.filter(e => e.ativo !== false).forEach(emp => {
+  let totalFolha=0, totalAdv=0, totalDed=0, totalSaldo=0, rows='';
+  employees.filter(e=>e.ativo!==false).forEach(emp => {
     const c = calcSaldo(emp);
-    totalFolha += c.total;
-    totalDed += c.deducoes;
-    totalAdv += c.adiantamento;
-    totalSaldo += c.saldo;
-    const sc = c.saldo >= 0 ? 'green' : 'red';
-    rows += `<tr style="cursor:pointer" onclick="openDetail(${emp.id})">
+    totalFolha+=c.total; totalDed+=c.deducoes; totalAdv+=c.adiantamento; totalSaldo+=c.saldo;
+    const sc = c.saldo>=0?'green':'red';
+    rows+=`<tr style="cursor:pointer" onclick="openDetail(${emp.id})">
       <td><div style="display:flex;align-items:center;gap:8px">
         <div style="width:28px;height:28px;border-radius:50%;background:${avatarColor(emp.nome)};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0">${initials(emp.nome)}</div>
         <span style="font-weight:500">${emp.nome}</span>
@@ -846,58 +892,33 @@ function renderEmployees() {
   const funcoes = [...new Set(employees.map(e=>e.funcao))].sort();
   const sel = document.getElementById('filterFunc');
   const prev = sel.value;
-  sel.innerHTML = '<option value="">Todas as funções</option>' + funcoes.map(f=>`<option value="${f}" ${f===prev?'selected':''}>${f}</option>`).join('');
-
-  const filtered = employees.filter(e =>
-    e.ativo !== false &&
-    e.nome.toLowerCase().includes(q) &&
-    (!ff || e.funcao === ff)
-  );
-
-  document.getElementById('empGrid').innerHTML = filtered.map(emp => {
-    const c = calcSaldo(emp);
-    const col = avatarColor(emp.nome);
+  sel.innerHTML = '<option value="">Todas as funções</option>'+funcoes.map(f=>`<option value="${f}" ${f===prev?'selected':''}>${f}</option>`).join('');
+  const filtered = employees.filter(e=>e.ativo!==false&&e.nome.toLowerCase().includes(q)&&(!ff||e.funcao===ff));
+  document.getElementById('empGrid').innerHTML = filtered.map(emp=>{
+    const c=calcSaldo(emp); const col=avatarColor(emp.nome);
     return `<div class="emp-card" onclick="openDetail(${emp.id})">
       <div class="emp-header">
         <div class="emp-avatar" style="background:${col};color:#fff">${initials(emp.nome)}</div>
-        <div>
-          <div class="emp-name">${emp.nome.split(' ').slice(0,3).join(' ')}</div>
-          <div class="emp-role">${emp.funcao}${emp.equipe?' · '+emp.equipe:''}</div>
-        </div>
+        <div><div class="emp-name">${emp.nome.split(' ').slice(0,3).join(' ')}</div><div class="emp-role">${emp.funcao}${emp.equipe?' · '+emp.equipe:''}</div></div>
       </div>
       <div class="emp-stats">
-        <div class="emp-stat">
-          <div class="emp-stat-label">Total Mês</div>
-          <div class="emp-stat-value green">${fmt(c.total)}</div>
-        </div>
-        <div class="emp-stat">
-          <div class="emp-stat-label">Saldo Final</div>
-          <div class="emp-stat-value ${c.saldo>=0?'green':'red'}">${fmt(c.saldo)}</div>
-        </div>
-        <div class="emp-stat">
-          <div class="emp-stat-label">Adiantamentos</div>
-          <div class="emp-stat-value" style="color:var(--yellow)">${fmt(c.adiantamento)}</div>
-        </div>
-        <div class="emp-stat">
-          <div class="emp-stat-label">Deduções</div>
-          <div class="emp-stat-value red">${fmt(c.deducoes)}</div>
-        </div>
+        <div class="emp-stat"><div class="emp-stat-label">Total Mês</div><div class="emp-stat-value green">${fmt(c.total)}</div></div>
+        <div class="emp-stat"><div class="emp-stat-label">Saldo Final</div><div class="emp-stat-value ${c.saldo>=0?'green':'red'}">${fmt(c.saldo)}</div></div>
+        <div class="emp-stat"><div class="emp-stat-label">Adiantamentos</div><div class="emp-stat-value" style="color:var(--yellow)">${fmt(c.adiantamento)}</div></div>
+        <div class="emp-stat"><div class="emp-stat-label">Deduções</div><div class="emp-stat-value red">${fmt(c.deducoes)}</div></div>
       </div>
     </div>`;
   }).join('');
 }
 
 function renderAdvances() {
-  const monthAdvs = advances.filter(a => a.mes === currentMonth);
-  if (!monthAdvs.length) {
-    document.getElementById('advBody').innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:40px">Nenhum adiantamento registrado neste mês.</td></tr>';
-    return;
-  }
-  document.getElementById('advBody').innerHTML = monthAdvs.map(a => {
-    const emp = employees.find(e => e.id === a.empId);
+  const monthAdvs = advances.filter(a=>a.mes===currentMonth);
+  if (!monthAdvs.length) { document.getElementById('advBody').innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:40px">Nenhum adiantamento registrado neste mês.</td></tr>'; return; }
+  document.getElementById('advBody').innerHTML = monthAdvs.map(a=>{
+    const emp=employees.find(e=>e.id===a.empId);
     return `<tr>
       <td style="font-family:var(--mono);font-size:12px;color:var(--text3)">${a.data||'—'}</td>
-      <td style="font-weight:500">${emp?.nome.split(' ').slice(0,2).join(' ') || '—'}</td>
+      <td style="font-weight:500">${emp?.nome.split(' ').slice(0,2).join(' ')||'—'}</td>
       <td><span class="badge badge-yellow">${a.tipo}</span></td>
       <td style="font-family:var(--mono);font-weight:600;color:var(--red)">${fmt(a.valor)}</td>
       <td style="color:var(--text2);font-size:12px">${a.obs||'—'}</td>
@@ -908,524 +929,322 @@ function renderAdvances() {
 
 // ══════ DETAIL PANEL ══════════════════════════════════════
 function openDetail(id) {
-  const emp = employees.find(e => e.id === id);
-  if (!emp) return;
-  selectedEmpId = id;
-  const pay = getEmpPay(id);
-  const c = calcSaldo(emp);
-  const monthAdvs = advances.filter(a => a.empId === id && a.mes === currentMonth);
-
-  document.getElementById('dp-name').textContent = emp.nome;
-  document.getElementById('dp-meta').innerHTML = `
+  const emp=employees.find(e=>e.id===id); if(!emp) return;
+  selectedEmpId=id;
+  const pay=getEmpPay(id); const c=calcSaldo(emp);
+  const monthAdvs=advances.filter(a=>a.empId===id&&a.mes===currentMonth);
+  document.getElementById('dp-name').textContent=emp.nome;
+  document.getElementById('dp-meta').innerHTML=`
     <span class="badge badge-blue">${emp.funcao}</span>
-    ${emp.equipe ? `<span class="badge badge-gray">👥 ${emp.equipe}</span>` : ''}
+    ${emp.equipe?`<span class="badge badge-gray">👥 ${emp.equipe}</span>`:''}
     <span class="badge ${c.saldo>=0?'badge-green':'badge-red'}">${c.saldo>=0?'✓':'⚠'} ${fmt(c.saldo)}</span>
   `;
-
-  const presLabel = pay.presenca !== false ? '✅ Presente' : '❌ Faltou';
-  const presBadge = pay.presenca !== false ? 'badge-green' : 'badge-red';
-
-  const rows = (items) => items.map(([label, val, cls='']) => `
-    <div class="pay-row">
-      <div class="pay-label">${label}</div>
-      <div class="pay-value ${cls}">${fmt(val)}</div>
-    </div>`).join('');
-
-  const editRow = (label, key, val) => `
-    <div class="pay-row">
-      <div class="pay-label">${label}</div>
-      <input class="pay-input" type="number" value="${val||0}" onchange="updatePay(${id},'${key}',this.value)" style="background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text)">
-    </div>`;
-
-  const advsHtml = monthAdvs.length ? monthAdvs.map(a => `
-    <div class="adv-item">
-      <div class="adv-date">${a.data||''}</div>
-      <div class="adv-desc">${a.tipo}</div>
-      <div class="adv-val">-${fmt(a.valor)}</div>
-      <button class="btn btn-ghost btn-sm" onclick="deleteAdv('${a.id}')" style="padding:2px 6px;font-size:11px">✕</button>
-    </div>`).join('') : '<div style="padding:12px 14px;font-size:12px;color:var(--text3)">Nenhum adiantamento este mês</div>';
-
-  document.getElementById('dp-body').innerHTML = `
-    <!-- PRESENÇA -->
+  const presLabel=pay.presenca!==false?'✅ Presente':'❌ Faltou';
+  const presBadge=pay.presenca!==false?'badge-green':'badge-red';
+  const rows=(items)=>items.map(([label,val,cls=''])=>`<div class="pay-row"><div class="pay-label">${label}</div><div class="pay-value ${cls}">${fmt(val)}</div></div>`).join('');
+  const editRow=(label,key,val)=>`<div class="pay-row"><div class="pay-label">${label}</div><input class="pay-input" type="number" value="${val||0}" onchange="updatePay(${id},'${key}',this.value)" style="background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text)"></div>`;
+  const advsHtml=monthAdvs.length?monthAdvs.map(a=>`<div class="adv-item"><div class="adv-date">${a.data||''}</div><div class="adv-desc">${a.tipo}</div><div class="adv-val">-${fmt(a.valor)}</div><button class="btn btn-ghost btn-sm" onclick="deleteAdv('${a.id}')" style="padding:2px 6px;font-size:11px">✕</button></div>`).join(''):'<div style="padding:12px 14px;font-size:12px;color:var(--text3)">Nenhum adiantamento este mês</div>';
+  document.getElementById('dp-body').innerHTML=`
+    <div class="pay-section" style="margin-bottom:12px"><div class="pay-section-header blue" style="cursor:pointer" onclick="togglePresenca(${id})"><span>👤 Presença no Mês</span><span class="badge ${presBadge}">${presLabel}</span></div></div>
     <div class="pay-section" style="margin-bottom:12px">
-      <div class="pay-section-header blue" style="cursor:pointer" onclick="togglePresenca(${id})">
-        <span>👤 Presença no Mês</span>
-        <span class="badge ${presBadge}">${presLabel}</span>
-      </div>
+      <div class="pay-section-header green"><span>✅ Créditos Fixos</span><span style="font-size:12px">${fmt(emp.salario+(emp.sal_familia||0)+(emp.cesta||0)+(pay.presenca!==false?(emp.prem_presenca||0):0)+(emp.ajuda_custo||0)+(emp.gratificacao||0))}</span></div>
+      ${rows([['Salário Contratual',emp.salario,'green'],...(emp.sal_familia?[['Salário Família',emp.sal_familia,'green']]:[]),(emp.cesta?[['Cesta / Cartão Ticket',emp.cesta,'green']]:[]),...(emp.ajuda_custo?[['Ajuda de Custo',emp.ajuda_custo,'green']]:[]),(emp.gratificacao?[['Gratificação',emp.gratificacao,'green']]:[]),...(pay.presenca!==false&&emp.prem_presenca?[['Premiação por Presença',emp.prem_presenca,'green']]:[])])}
     </div>
-
-    <!-- CRÉDITOS FIXOS -->
-    <div class="pay-section" style="margin-bottom:12px">
-      <div class="pay-section-header green"><span>✅ Créditos Fixos</span><span style="font-size:12px">${fmt(emp.salario + (emp.sal_familia||0) + (emp.cesta||0) + (pay.presenca!==false?(emp.prem_presenca||0):0) + (emp.ajuda_custo||0) + (emp.gratificacao||0))}</span></div>
-      ${rows([
-        ['Salário Contratual', emp.salario, 'green'],
-        ...(emp.sal_familia ? [['Salário Família', emp.sal_familia, 'green']] : []),
-        ...(emp.cesta ? [['Cesta / Cartão Ticket', emp.cesta, 'green']] : []),
-        ...(emp.ajuda_custo ? [['Ajuda de Custo', emp.ajuda_custo, 'green']] : []),
-        ...(emp.gratificacao ? [['Gratificação', emp.gratificacao, 'green']] : []),
-        ...(pay.presenca !== false && emp.prem_presenca ? [['Premiação por Presença', emp.prem_presenca, 'green']] : []),
-        ...(!pay.presenca && emp.prem_presenca ? [['Premiação por Presença (suspensa)', 0, 'muted']] : []),
-      ])}
-    </div>
-
-    <!-- CRÉDITOS VARIÁVEIS -->
     <div class="pay-section" style="margin-bottom:12px">
       <div class="pay-section-header purple"><span>⭐ Variáveis do Mês</span></div>
-      ${editRow('Hora Extra (R$)', 'hora_extra', pay.hora_extra)}
-      ${editRow('Hora Extra Noturna (R$)', 'hora_extra_noturno', pay.hora_extra_noturno)}
-      ${editRow('Descanso Semanal Rem. (R$)', 'descanso_remunerado', pay.descanso_remunerado)}
-      ${editRow('Bonif. de Projeto (R$)', 'bon_projeto', pay.bon_projeto)}
-      ${editRow('Bonif. Supervisão (R$)', 'bon_supervisao', pay.bon_supervisao)}
-      ${editRow('Bonif. Meta Equipe (R$)', 'bon_meta_equipe', pay.bon_meta_equipe)}
-      ${editRow('Bonif. Elpi (R$)', 'bon_elpi', pay.bon_elpi)}
-      ${editRow('Bonif. Removedor (R$)', 'bon_removedor', pay.bon_removedor)}
-      ${editRow('Bonif. Extra / Surpresa (R$)', 'bon_extra', pay.bon_extra)}
+      ${editRow('Hora Extra (R$)','hora_extra',pay.hora_extra)}
+      ${editRow('Hora Extra Noturna (R$)','hora_extra_noturno',pay.hora_extra_noturno)}
+      ${editRow('Descanso Semanal Rem. (R$)','descanso_remunerado',pay.descanso_remunerado)}
+      ${editRow('Bonif. de Projeto (R$)','bon_projeto',pay.bon_projeto)}
+      ${editRow('Bonif. Supervisão (R$)','bon_supervisao',pay.bon_supervisao)}
+      ${editRow('Bonif. Meta Equipe (R$)','bon_meta_equipe',pay.bon_meta_equipe)}
+      ${editRow('Bonif. Elpi (R$)','bon_elpi',pay.bon_elpi)}
+      ${editRow('Bonif. Removedor (R$)','bon_removedor',pay.bon_removedor)}
+      ${editRow('Bonif. Extra / Surpresa (R$)','bon_extra',pay.bon_extra)}
     </div>
-
-    <!-- DEDUÇÕES -->
     <div class="pay-section" style="margin-bottom:12px">
       <div class="pay-section-header red"><span>❌ Deduções</span><span style="font-size:12px">-${fmt(c.deducoes)}</span></div>
-      ${rows([
-        ...(emp.inss ? [['INSS', emp.inss, 'red']] : []),
-        ...(emp.consignado ? [['Consignado Fixo', emp.consignado, 'red']] : []),
-      ])}
-      ${editRow('Consignado Extra / Parcela (R$)', 'consignado_extra', pay.consignado_extra)}
-      ${editRow('Desconto Falta / DSR (R$)', 'falta', pay.falta)}
-    </div>
-
-    <!-- ADIANTAMENTOS -->
-    <div class="pay-section" style="margin-bottom:12px">
-      <div class="pay-section-header yellow">
-        <span>💳 Adiantamentos — ${fmt(c.adiantamento)}</span>
-        <button class="btn btn-ghost btn-sm" onclick="openAddAdvEmp(${id})" style="font-size:11px;padding:3px 8px">+ Add</button>
+      <div class="pay-row">
+        <div class="pay-label">INSS <span style="font-size:10px;color:var(--text3)">(padrão: ${fmt(emp.inss||0)})</span></div>
+        <input class="pay-input" type="number" value="${pay.inss_mes !== undefined ? pay.inss_mes : (emp.inss||0)}" onchange="updatePay(${id},'inss_mes',this.value)" style="background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--red)">
       </div>
+      <div class="pay-row">
+        <div class="pay-label">Consignado Fixo <span style="font-size:10px;color:var(--text3)">(padrão: ${fmt(emp.consignado||0)})</span></div>
+        <input class="pay-input" type="number" value="${pay.consignado_mes !== undefined ? pay.consignado_mes : (emp.consignado||0)}" onchange="updatePay(${id},'consignado_mes',this.value)" style="background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--red)">
+      </div>
+      ${editRow('Consignado Extra / Parcela (R$)','consignado_extra',pay.consignado_extra)}
+      ${editRow('Desconto Falta / DSR (R$)','falta',pay.falta)}
+    </div>
+    <div class="pay-section" style="margin-bottom:12px">
+      <div class="pay-section-header yellow"><span>💳 Adiantamentos — ${fmt(c.adiantamento)}</span><button class="btn btn-ghost btn-sm" onclick="openAddAdvEmp(${id})" style="font-size:11px;padding:3px 8px">+ Add</button></div>
       ${advsHtml}
     </div>
-
-    <!-- TOTAL -->
     <div class="total-row">
-      <div>
-        <div class="total-label">Saldo Final</div>
-        <div style="font-size:11px;color:var(--text3)">Total ${fmt(c.total)} − Deduções ${fmt(c.deducoes)} − Adiant. ${fmt(c.adiantamento)}</div>
-      </div>
+      <div><div class="total-label">Saldo Final</div><div style="font-size:11px;color:var(--text3)">Total ${fmt(c.total)} − Deduções ${fmt(c.deducoes)} − Adiant. ${fmt(c.adiantamento)}</div></div>
       <div class="total-value" style="color:${c.saldo>=0?'var(--green)':'var(--red)'}">${fmt(c.saldo)}</div>
     </div>
-    ${emp.pix ? `<div style="margin-top:8px;font-size:12px;color:var(--text3)">PIX: ${emp.pix}</div>` : ''}
-    ${emp.obs ? `<div style="margin-top:10px;padding:10px 12px;background:var(--surface2);border-radius:var(--radius-sm);font-size:12px;color:var(--text2)">${emp.obs}</div>` : ''}
-
+    ${emp.pix?`<div style="margin-top:8px;font-size:12px;color:var(--text3)">PIX: ${emp.pix}</div>`:''}
+    ${emp.obs?`<div style="margin-top:10px;padding:10px 12px;background:var(--surface2);border-radius:var(--radius-sm);font-size:12px;color:var(--text2)">${emp.obs}</div>`:''}
     <div style="margin-top:16px;display:flex;gap:8px;justify-content:flex-end">
       <button class="btn btn-ghost btn-sm" onclick="openEditEmployee(${id})">✏️ Editar Ficha</button>
       <button class="btn btn-danger btn-sm" onclick="removeEmployee(${id})">🗑 Remover</button>
     </div>
   `;
-
   document.getElementById('detailPanel').classList.add('open');
 }
 
-function closeDetail() {
-  document.getElementById('detailPanel').classList.remove('open');
-  selectedEmpId = null;
-}
+function closeDetail() { document.getElementById('detailPanel').classList.remove('open'); selectedEmpId=null; }
 
 function togglePresenca(empId) {
-  const pay = getEmpPay(empId);
-  pay.presenca = !pay.presenca;
-  saveEmpPay(empId, pay);
-  openDetail(empId);
-  renderAll();
+  const pay=getEmpPay(empId); pay.presenca=!pay.presenca;
+  saveEmpPay(empId,pay); openDetail(empId); renderAll();
 }
 
-function updatePay(empId, key, val) {
-  const pay = getEmpPay(empId);
-  pay[key] = parseFloat(val) || 0;
-  saveEmpPay(empId, pay);
-  // Re-render totals without closing panel
-  const c = calcSaldo(employees.find(e=>e.id===empId));
-  renderDashboard();
-  renderEmployees();
-  // Update total row in detail
-  const totalEl = document.querySelector('.total-value');
-  if (totalEl) {
-    totalEl.textContent = fmt(c.saldo);
-    totalEl.style.color = c.saldo >= 0 ? 'var(--green)' : 'var(--red)';
-  }
+function updatePay(empId,key,val) {
+  const pay=getEmpPay(empId); pay[key]=parseFloat(val)||0;
+  saveEmpPay(empId,pay);
+  const c=calcSaldo(employees.find(e=>e.id===empId));
+  renderDashboard(); renderEmployees();
+  const totalEl=document.querySelector('.total-value');
+  if(totalEl){totalEl.textContent=fmt(c.saldo);totalEl.style.color=c.saldo>=0?'var(--green)':'var(--red)';}
 }
 
 // ══════ EMPLOYEES CRUD ════════════════════════════════════
 function openAddEmployee() {
-  document.getElementById('modalEmpTitle').textContent = 'Novo Funcionário';
-  document.getElementById('emp_id').value = '';
-  ['emp_nome','emp_cpf','emp_equipe','emp_pix','emp_obs'].forEach(id => document.getElementById(id).value = '');
-  ['emp_salario','emp_sal_familia','emp_ajuda_custo','emp_cesta','emp_prem_presenca','emp_gratificacao','emp_inss','emp_consignado','emp_adiant_quinzena'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('modalEmpTitle').textContent='Novo Funcionário';
+  document.getElementById('emp_id').value='';
+  ['emp_nome','emp_cpf','emp_equipe','emp_pix','emp_obs'].forEach(id=>document.getElementById(id).value='');
+  ['emp_salario','emp_sal_familia','emp_ajuda_custo','emp_cesta','emp_prem_presenca','emp_gratificacao','emp_inss','emp_consignado','emp_adiant_quinzena'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('modalEmp').classList.add('open');
 }
 
 function openEditEmployee(id) {
-  const emp = employees.find(e => e.id === id);
-  if (!emp) return;
-  document.getElementById('modalEmpTitle').textContent = 'Editar Funcionário';
-  document.getElementById('emp_id').value = id;
-  document.getElementById('emp_nome').value = emp.nome;
-  document.getElementById('emp_cpf').value = emp.cpf||'';
-  document.getElementById('emp_funcao').value = emp.funcao;
-  document.getElementById('emp_equipe').value = emp.equipe||'';
-  document.getElementById('emp_salario').value = emp.salario||'';
-  document.getElementById('emp_sal_familia').value = emp.sal_familia||'';
-  document.getElementById('emp_ajuda_custo').value = emp.ajuda_custo||'';
-  document.getElementById('emp_cesta').value = emp.cesta||'';
-  document.getElementById('emp_prem_presenca').value = emp.prem_presenca||'';
-  document.getElementById('emp_gratificacao').value = emp.gratificacao||'';
-  document.getElementById('emp_inss').value = emp.inss||'';
-  document.getElementById('emp_consignado').value = emp.consignado||'';
-  document.getElementById('emp_adiant_quinzena').value = emp.adiant_quinzena||'';
-  document.getElementById('emp_pix').value = emp.pix||'';
-  document.getElementById('emp_obs').value = emp.obs||'';
+  const emp=employees.find(e=>e.id===id); if(!emp) return;
+  document.getElementById('modalEmpTitle').textContent='Editar Funcionário';
+  document.getElementById('emp_id').value=id;
+  document.getElementById('emp_nome').value=emp.nome;
+  document.getElementById('emp_cpf').value=emp.cpf||'';
+  document.getElementById('emp_funcao').value=emp.funcao;
+  document.getElementById('emp_equipe').value=emp.equipe||'';
+  document.getElementById('emp_salario').value=emp.salario||'';
+  document.getElementById('emp_sal_familia').value=emp.sal_familia||'';
+  document.getElementById('emp_ajuda_custo').value=emp.ajuda_custo||'';
+  document.getElementById('emp_cesta').value=emp.cesta||'';
+  document.getElementById('emp_prem_presenca').value=emp.prem_presenca||'';
+  document.getElementById('emp_gratificacao').value=emp.gratificacao||'';
+  document.getElementById('emp_inss').value=emp.inss||'';
+  document.getElementById('emp_consignado').value=emp.consignado||'';
+  document.getElementById('emp_adiant_quinzena').value=emp.adiant_quinzena||'';
+  document.getElementById('emp_pix').value=emp.pix||'';
+  document.getElementById('emp_obs').value=emp.obs||'';
   document.getElementById('modalEmp').classList.add('open');
 }
 
 function saveEmployee() {
-  const nome = document.getElementById('emp_nome').value.trim();
-  if (!nome) { showToast('Informe o nome'); return; }
-  const id = document.getElementById('emp_id').value;
-  const data = {
-    nome, cpf: document.getElementById('emp_cpf').value.trim(),
-    funcao: document.getElementById('emp_funcao').value,
-    equipe: document.getElementById('emp_equipe').value.trim(),
-    salario: parseFloat(document.getElementById('emp_salario').value)||0,
-    sal_familia: parseFloat(document.getElementById('emp_sal_familia').value)||0,
-    ajuda_custo: parseFloat(document.getElementById('emp_ajuda_custo').value)||0,
-    cesta: parseFloat(document.getElementById('emp_cesta').value)||0,
-    prem_presenca: parseFloat(document.getElementById('emp_prem_presenca').value)||0,
-    gratificacao: parseFloat(document.getElementById('emp_gratificacao').value)||0,
-    inss: parseFloat(document.getElementById('emp_inss').value)||0,
-    consignado: parseFloat(document.getElementById('emp_consignado').value)||0,
-    adiant_quinzena: parseFloat(document.getElementById('emp_adiant_quinzena').value)||0,
-    pix: document.getElementById('emp_pix').value.trim(),
-    obs: document.getElementById('emp_obs').value.trim(),
-    ativo: true,
-  };
-  if (id) {
-    const idx = employees.findIndex(e => e.id == id);
-    if (idx !== -1) employees[idx] = { ...employees[idx], ...data };
-  } else {
-    const maxId = employees.reduce((m,e) => Math.max(m, e.id||0), 0);
-    employees.push({ id: maxId + 1, ...data });
-  }
-  saveEmployees();
-  closeModal('modalEmp');
-  renderAll();
-  showToast('Salvo!');
+  const nome=document.getElementById('emp_nome').value.trim();
+  if(!nome){showToast('Informe o nome');return;}
+  const id=document.getElementById('emp_id').value;
+  const data={nome,cpf:document.getElementById('emp_cpf').value.trim(),funcao:document.getElementById('emp_funcao').value,equipe:document.getElementById('emp_equipe').value.trim(),salario:parseFloat(document.getElementById('emp_salario').value)||0,sal_familia:parseFloat(document.getElementById('emp_sal_familia').value)||0,ajuda_custo:parseFloat(document.getElementById('emp_ajuda_custo').value)||0,cesta:parseFloat(document.getElementById('emp_cesta').value)||0,prem_presenca:parseFloat(document.getElementById('emp_prem_presenca').value)||0,gratificacao:parseFloat(document.getElementById('emp_gratificacao').value)||0,inss:parseFloat(document.getElementById('emp_inss').value)||0,consignado:parseFloat(document.getElementById('emp_consignado').value)||0,adiant_quinzena:parseFloat(document.getElementById('emp_adiant_quinzena').value)||0,pix:document.getElementById('emp_pix').value.trim(),obs:document.getElementById('emp_obs').value.trim(),ativo:true};
+  if(id){const idx=employees.findIndex(e=>e.id==id);if(idx!==-1)employees[idx]={...employees[idx],...data};}
+  else{const maxId=employees.reduce((m,e)=>Math.max(m,e.id||0),0);employees.push({id:maxId+1,...data});}
+  saveEmployees(); closeModal('modalEmp'); renderAll(); showToast('Salvo!');
 }
 
 function removeEmployee(id) {
-  if (!confirm('Remover este funcionário?')) return;
-  employees = employees.filter(e => e.id !== id);
-  saveEmployees();
-  closeDetail();
-  renderAll();
-  showToast('Removido.');
+  if(!confirm('Remover este funcionário?'))return;
+  employees=employees.filter(e=>e.id!==id);
+  saveEmployees(); closeDetail(); renderAll(); showToast('Removido.');
 }
 
 // ══════ ADVANCES ══════════════════════════════════════════
 function openAddAdv() {
-  const sel = document.getElementById('adv_emp');
-  sel.innerHTML = employees.filter(e=>e.ativo!==false).map(e=>`<option value="${e.id}">${e.nome.split(' ').slice(0,3).join(' ')}</option>`).join('');
-  document.getElementById('adv_data').value = new Date().toISOString().split('T')[0];
-  document.getElementById('adv_valor').value = '';
-  document.getElementById('adv_obs').value = '';
+  const sel=document.getElementById('adv_emp');
+  sel.innerHTML=employees.filter(e=>e.ativo!==false).map(e=>`<option value="${e.id}">${e.nome.split(' ').slice(0,3).join(' ')}</option>`).join('');
+  document.getElementById('adv_data').value=new Date().toISOString().split('T')[0];
+  document.getElementById('adv_valor').value='';
+  document.getElementById('adv_obs').value='';
   document.getElementById('modalAdv').classList.add('open');
 }
 
-function openAddAdvEmp(empId) {
-  openAddAdv();
-  document.getElementById('adv_emp').value = empId;
-}
+function openAddAdvEmp(empId) { openAddAdv(); document.getElementById('adv_emp').value=empId; }
 
 function saveAdv() {
-  const empId = parseInt(document.getElementById('adv_emp').value);
-  const valor = parseFloat(document.getElementById('adv_valor').value);
-  if (!valor || valor <= 0) { showToast('Informe o valor'); return; }
-  advances.push({
-    id: Date.now().toString(),
-    empId,
-    mes: currentMonth,
-    data: document.getElementById('adv_data').value,
-    tipo: document.getElementById('adv_tipo').value,
-    valor,
-    obs: document.getElementById('adv_obs').value.trim(),
-  });
-  save();
-  closeModal('modalAdv');
-  renderAll();
-  if (selectedEmpId === empId) openDetail(empId);
+  const empId=parseInt(document.getElementById('adv_emp').value);
+  const valor=parseFloat(document.getElementById('adv_valor').value);
+  if(!valor||valor<=0){showToast('Informe o valor');return;}
+  advances.push({id:Date.now().toString(),empId,mes:currentMonth,data:document.getElementById('adv_data').value,tipo:document.getElementById('adv_tipo').value,valor,obs:document.getElementById('adv_obs').value.trim()});
+  save(); closeModal('modalAdv'); renderAll();
+  if(selectedEmpId===empId)openDetail(empId);
   showToast('Adiantamento registrado!');
 }
 
 function deleteAdv(advId) {
-  if (!confirm('Remover este adiantamento?')) return;
-  advances = advances.filter(a => a.id !== advId);
-  save();
-  renderAll();
-  if (selectedEmpId) openDetail(selectedEmpId);
+  if(!confirm('Remover este adiantamento?'))return;
+  advances=advances.filter(a=>a.id!==advId);
+  save(); renderAll();
+  if(selectedEmpId)openDetail(selectedEmpId);
   showToast('Removido.');
 }
 
 // ══════ UTILS ═════════════════════════════════════════════
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function closeModal(id){document.getElementById(id).classList.remove('open');}
 
-const pageTitles = { dashboard:'Dashboard', funcionarios:'Funcionários', dia20:'Dia 20 — Adiantamentos', bonificacoes:'Bonificações & Comissões' };
-function showPage(name) {
-  ['dashboard','funcionarios','adiantamentos','dia20','bonificacoes'].forEach(p => {
-    const el = document.getElementById('page-'+p);
-    if (el) el.style.display = p===name?'':'none';
-    document.getElementById('nav-'+p)?.classList.toggle('active', p===name);
+const pageTitles={dashboard:'Dashboard',funcionarios:'Funcionários',dia20:'Dia 20 — Adiantamentos',bonificacoes:'Bonificações & Comissões'};
+function showPage(name){
+  ['dashboard','funcionarios','adiantamentos','dia20','bonificacoes'].forEach(p=>{
+    const el=document.getElementById('page-'+p);
+    if(el)el.style.display=p===name?'':'none';
+    document.getElementById('nav-'+p)?.classList.toggle('active',p===name);
   });
-  document.getElementById('pageTitle').textContent = pageTitles[name]||'';
-  if (name === 'dia20') renderDia20();
-  if (name === 'bonificacoes') renderBonificacoes();
+  document.getElementById('pageTitle').textContent=pageTitles[name]||'';
+  if(name==='dia20')renderDia20();
+  if(name==='bonificacoes')renderBonificacoes();
 }
 
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2600);
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2600);
 }
 
-// ══════ DIA 20 ═══════════════════════════════════════════
-function getDia20Status(empId) {
-  // Pago = existe adiantamento lançado do tipo Adiantamento Quinzena neste mês
-  return advances.some(a => a.empId === empId && a.mes === currentMonth && a.tipo === 'Adiantamento Quinzena');
-}
+// ══════ DIA 20 ════════════════════════════════════════════
+function getDia20Status(empId){return advances.some(a=>a.empId===empId&&a.mes===currentMonth&&a.tipo==='Adiantamento Quinzena');}
+function getDia20Valor(empId){const pay=getEmpPay(empId);return pay.adiant_dia20_valor!==undefined?pay.adiant_dia20_valor:(employees.find(e=>e.id===empId)?.adiant_quinzena||0);}
 
-function getDia20Valor(empId) {
-  // Verifica se há valor personalizado salvo para o mês
-  const pay = getEmpPay(empId);
-  return pay.adiant_dia20_valor !== undefined ? pay.adiant_dia20_valor : (employees.find(e=>e.id===empId)?.adiant_quinzena || 0);
-}
-
-function renderDia20() {
-  const ativos = employees.filter(e => e.ativo !== false && e.adiant_quinzena > 0);
-  const pagos = ativos.filter(e => getDia20Status(e.id));
-  const pendentes = ativos.filter(e => !getDia20Status(e.id));
-  const totalGeral = ativos.reduce((s,e) => s + getDia20Valor(e.id), 0);
-  const totalPago = pagos.reduce((s,e) => s + getDia20Valor(e.id), 0);
-  const totalPendente = pendentes.reduce((s,e) => s + getDia20Valor(e.id), 0);
-
-  document.getElementById('dia20Stats').innerHTML = `
+function renderDia20(){
+  const ativos=employees.filter(e=>e.ativo!==false&&e.adiant_quinzena>0);
+  const pagos=ativos.filter(e=>getDia20Status(e.id));
+  const pendentes=ativos.filter(e=>!getDia20Status(e.id));
+  const totalGeral=ativos.reduce((s,e)=>s+getDia20Valor(e.id),0);
+  const totalPago=pagos.reduce((s,e)=>s+getDia20Valor(e.id),0);
+  const totalPendente=pendentes.reduce((s,e)=>s+getDia20Valor(e.id),0);
+  document.getElementById('dia20Stats').innerHTML=`
     <div class="stat-card"><div class="stat-label">Total Geral</div><div class="stat-value blue">${fmt(totalGeral)}</div><div class="stat-sub">${ativos.length} funcionários</div></div>
     <div class="stat-card"><div class="stat-label">Já Pago</div><div class="stat-value green">${fmt(totalPago)}</div><div class="stat-sub">${pagos.length} confirmados</div></div>
     <div class="stat-card"><div class="stat-label">Pendente</div><div class="stat-value yellow">${fmt(totalPendente)}</div><div class="stat-sub">${pendentes.length} aguardando</div></div>
   `;
-  document.getElementById('dia20Total').textContent = fmt(totalPendente) + ' pendente';
-
-  const rows = ativos.map(emp => {
-    const pago = getDia20Status(emp.id);
-    const valor = getDia20Valor(emp.id);
-    return `<tr style="${pago ? 'opacity:0.55' : ''}">
-      <td>
-        <div style="display:flex;align-items:center;gap:8px">
-          <div style="width:28px;height:28px;border-radius:50%;background:${avatarColor(emp.nome)};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0">${initials(emp.nome)}</div>
-          <span style="font-weight:500">${emp.nome.split(' ').slice(0,3).join(' ')}</span>
-        </div>
-      </td>
+  document.getElementById('dia20Total').textContent=fmt(totalPendente)+' pendente';
+  const rows=ativos.map(emp=>{
+    const pago=getDia20Status(emp.id);const valor=getDia20Valor(emp.id);
+    return `<tr style="${pago?'opacity:0.55':''}">
+      <td><div style="display:flex;align-items:center;gap:8px">
+        <div style="width:28px;height:28px;border-radius:50%;background:${avatarColor(emp.nome)};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0">${initials(emp.nome)}</div>
+        <span style="font-weight:500">${emp.nome.split(' ').slice(0,3).join(' ')}</span>
+      </div></td>
       <td><span class="badge badge-gray">${emp.funcao}</span></td>
       <td style="text-align:right;font-family:var(--mono);font-size:12px;color:var(--text3)">${fmt(emp.adiant_quinzena)}</td>
-      <td style="text-align:right">
-        ${pago
-          ? `<span style="font-family:var(--mono);font-size:12px;font-weight:600;color:var(--green)">${fmt(valor)}</span>`
-          : `<input type="number" value="${valor}" onchange="setDia20Valor(${emp.id}, this.value)"
-              style="width:110px;text-align:right;font-family:var(--mono);font-size:12px;padding:4px 8px;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text)">`
-        }
-      </td>
-      <td style="text-align:center">
-        ${pago
-          ? `<span class="badge badge-green">✓ Pago</span>`
-          : `<span class="badge badge-yellow">⏳ Pendente</span>`
-        }
-      </td>
-      <td style="text-align:right">
-        ${pago
-          ? `<button class="btn btn-ghost btn-sm" onclick="estornarDia20(${emp.id})" style="font-size:11px;color:var(--red)">Estornar</button>`
-          : `<button class="btn btn-primary btn-sm" onclick="confirmarDia20(${emp.id})">✓ Pago</button>`
-        }
-      </td>
+      <td style="text-align:right">${pago?`<span style="font-family:var(--mono);font-size:12px;font-weight:600;color:var(--green)">${fmt(valor)}</span>`:`<input type="number" value="${valor}" onchange="setDia20Valor(${emp.id},this.value)" style="width:110px;text-align:right;font-family:var(--mono);font-size:12px;padding:4px 8px;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text)">`}</td>
+      <td style="text-align:center">${pago?`<span class="badge badge-green">✓ Pago</span>`:`<span class="badge badge-yellow">⏳ Pendente</span>`}</td>
+      <td style="text-align:right">${pago?`<button class="btn btn-ghost btn-sm" onclick="estornarDia20(${emp.id})" style="font-size:11px;color:var(--red)">Estornar</button>`:`<button class="btn btn-primary btn-sm" onclick="confirmarDia20(${emp.id})">✓ Pago</button>`}</td>
     </tr>`;
   }).join('');
-
-  document.getElementById('dia20BodyRows').innerHTML = rows || '<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text3)">Nenhum funcionário com adiantamento cadastrado.</td></tr>';
-
-  // Render histórico
-  const monthAdvs = advances.filter(a => a.mes === currentMonth);
-  const advRows = monthAdvs.length ? monthAdvs.map(a => {
-    const emp = employees.find(e => e.id === a.empId);
+  document.getElementById('dia20BodyRows').innerHTML=rows||'<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text3)">Nenhum funcionário com adiantamento cadastrado.</td></tr>';
+  const monthAdvs=advances.filter(a=>a.mes===currentMonth);
+  const advRows=monthAdvs.length?monthAdvs.map(a=>{
+    const emp=employees.find(e=>e.id===a.empId);
     return `<tr>
       <td style="font-family:var(--mono);font-size:12px;color:var(--text3)">${a.data||'—'}</td>
-      <td style="font-weight:500">${emp?.nome.split(' ').slice(0,2).join(' ') || '—'}</td>
+      <td style="font-weight:500">${emp?.nome.split(' ').slice(0,2).join(' ')||'—'}</td>
       <td><span class="badge badge-yellow">${a.tipo}</span></td>
       <td style="font-family:var(--mono);font-weight:600;color:var(--red)">${fmt(a.valor)}</td>
       <td style="color:var(--text2);font-size:12px">${a.obs||'—'}</td>
       <td><button class="btn btn-danger btn-sm" onclick="deleteAdv('${a.id}');renderDia20()">✕</button></td>
     </tr>`;
-  }).join('') : '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text3)">Nenhum adiantamento registrado neste mês.</td></tr>';
-
-  document.getElementById('advBody').innerHTML = advRows;
+  }).join(''):'<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text3)">Nenhum adiantamento registrado neste mês.</td></tr>';
+  document.getElementById('advBody').innerHTML=advRows;
 }
 
-function setDia20Valor(empId, val) {
-  const pay = getEmpPay(empId);
-  pay.adiant_dia20_valor = parseFloat(val) || 0;
-  saveEmpPay(empId, pay);
+function setDia20Valor(empId,val){const pay=getEmpPay(empId);pay.adiant_dia20_valor=parseFloat(val)||0;saveEmpPay(empId,pay);}
+
+function confirmarDia20(empId){
+  const valor=getDia20Valor(empId);
+  advances.push({id:Date.now().toString()+empId,empId,mes:currentMonth,data:currentMonth+'-20',tipo:'Adiantamento Quinzena',valor,obs:'Dia 20'});
+  save();renderDia20();renderDashboard();showToast('Adiantamento confirmado!');
 }
 
-function confirmarDia20(empId) {
-  const valor = getDia20Valor(empId);
-  advances.push({
-    id: Date.now().toString() + empId,
-    empId,
-    mes: currentMonth,
-    data: currentMonth + '-20',
-    tipo: 'Adiantamento Quinzena',
-    valor,
-    obs: 'Dia 20',
-  });
-  save();
-  renderDia20();
-  renderDashboard();
-  showToast('Adiantamento confirmado!');
+function estornarDia20(empId){
+  if(!confirm('Estornar este adiantamento?'))return;
+  advances=advances.filter(a=>!(a.empId===empId&&a.mes===currentMonth&&a.tipo==='Adiantamento Quinzena'));
+  save();renderDia20();renderDashboard();showToast('Estornado.');
 }
 
-function estornarDia20(empId) {
-  if (!confirm('Estornar este adiantamento?')) return;
-  advances = advances.filter(a => !(a.empId === empId && a.mes === currentMonth && a.tipo === 'Adiantamento Quinzena'));
-  save();
-  renderDia20();
-  renderDashboard();
-  showToast('Estornado.');
-}
-
-function pagarTodosDia20() {
-  const pendentes = employees.filter(e => e.ativo !== false && e.adiant_quinzena > 0 && !getDia20Status(e.id));
-  if (!pendentes.length) { showToast('Todos já confirmados!'); return; }
-  if (!confirm(`Confirmar adiantamento de ${pendentes.length} funcionários?`)) return;
-  pendentes.forEach(emp => {
-    advances.push({
-      id: Date.now().toString() + emp.id,
-      empId: emp.id,
-      mes: currentMonth,
-      data: currentMonth + '-20',
-      tipo: 'Adiantamento Quinzena',
-      valor: getDia20Valor(emp.id),
-      obs: 'Dia 20',
-    });
-  });
-  save();
-  renderDia20();
-  renderDashboard();
-  showToast(`${pendentes.length} adiantamentos confirmados!`);
+function pagarTodosDia20(){
+  const pendentes=employees.filter(e=>e.ativo!==false&&e.adiant_quinzena>0&&!getDia20Status(e.id));
+  if(!pendentes.length){showToast('Todos já confirmados!');return;}
+  if(!confirm(`Confirmar adiantamento de ${pendentes.length} funcionários?`))return;
+  pendentes.forEach(emp=>{advances.push({id:Date.now().toString()+emp.id,empId:emp.id,mes:currentMonth,data:currentMonth+'-20',tipo:'Adiantamento Quinzena',valor:getDia20Valor(emp.id),obs:'Dia 20'});});
+  save();renderDia20();renderDashboard();showToast(`${pendentes.length} adiantamentos confirmados!`);
 }
 
 // ══════ LANÇAMENTO MENSAL ════════════════════════════════
-function openLancamento() {
-  // Label do mês
-  const d = new Date(currentMonth + '-15');
-  const label = d.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
-  document.getElementById('lancMesLabel').textContent = label.charAt(0).toUpperCase() + label.slice(1);
-
-  // Lista de adiantamentos fixos
-  const dia20 = currentMonth + '-20';
-  const list = document.getElementById('lancAdvList');
-  list.innerHTML = employees.filter(e => e.ativo !== false).map(emp => {
-    const jaLancado = advances.some(a => a.empId === emp.id && a.mes === currentMonth && a.tipo === 'Adiantamento Quinzena');
-    return `<div style="display:flex;align-items:center;gap:10px;padding:6px 10px;background:var(--surface);border-radius:var(--radius-sm);border:1px solid ${jaLancado ? 'var(--green)' : 'var(--border)'}">
+function openLancamento(){
+  const d=new Date(currentMonth+'-15');
+  const label=d.toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
+  document.getElementById('lancMesLabel').textContent=label.charAt(0).toUpperCase()+label.slice(1);
+  const list=document.getElementById('lancAdvList');
+  list.innerHTML=employees.filter(e=>e.ativo!==false).map(emp=>{
+    const jaLancado=advances.some(a=>a.empId===emp.id&&a.mes===currentMonth&&a.tipo==='Adiantamento Quinzena');
+    return `<div style="display:flex;align-items:center;gap:10px;padding:6px 10px;background:var(--surface);border-radius:var(--radius-sm);border:1px solid ${jaLancado?'var(--green)':'var(--border)'}">
       <div style="flex:1;font-size:12px;font-weight:500">${emp.nome.split(' ').slice(0,3).join(' ')}</div>
       <div style="font-family:var(--mono);font-size:12px;color:var(--yellow)">R$ ${(emp.adiant_quinzena||0).toLocaleString('pt-BR',{minimumFractionDigits:2})}</div>
-      ${jaLancado
-        ? '<span style="font-size:11px;color:var(--green)">✓ lançado</span>'
-        : `<button class="btn btn-ghost btn-sm" style="font-size:11px" onclick="lancarAdiantamentoUm(${emp.id})">Lançar</button>`
-      }
+      ${jaLancado?'<span style="font-size:11px;color:var(--green)">✓ lançado</span>':`<button class="btn btn-ghost btn-sm" style="font-size:11px" onclick="lancarAdiantamentoUm(${emp.id})">Lançar</button>`}
     </div>`;
   }).join('');
-
-  // Select de funcionários para variáveis
-  const sel = document.getElementById('lanc_emp');
-  sel.innerHTML = employees.filter(e => e.ativo !== false)
-    .map(e => `<option value="${e.id}">${e.nome.split(' ').slice(0,3).join(' ')}</option>`).join('');
-
+  const sel=document.getElementById('lanc_emp');
+  sel.innerHTML=employees.filter(e=>e.ativo!==false).map(e=>`<option value="${e.id}">${e.nome.split(' ').slice(0,3).join(' ')}</option>`).join('');
   document.getElementById('modalLancamento').classList.add('open');
 }
 
-function lancarAdiantamentoUm(empId) {
-  const emp = employees.find(e => e.id === empId);
-  if (!emp || !emp.adiant_quinzena) return;
-  const jaLancado = advances.some(a => a.empId === empId && a.mes === currentMonth && a.tipo === 'Adiantamento Quinzena');
-  if (jaLancado) { showToast('Já lançado!'); return; }
-  advances.push({
-    id: Date.now().toString() + empId,
-    empId,
-    mes: currentMonth,
-    data: currentMonth + '-20',
-    tipo: 'Adiantamento Quinzena',
-    valor: emp.adiant_quinzena,
-    obs: 'Adiantamento dia 20',
+function lancarAdiantamentoUm(empId){
+  const emp=employees.find(e=>e.id===empId);
+  if(!emp||!emp.adiant_quinzena)return;
+  const jaLancado=advances.some(a=>a.empId===empId&&a.mes===currentMonth&&a.tipo==='Adiantamento Quinzena');
+  if(jaLancado){showToast('Já lançado!');return;}
+  advances.push({id:Date.now().toString()+empId,empId,mes:currentMonth,data:currentMonth+'-20',tipo:'Adiantamento Quinzena',valor:emp.adiant_quinzena,obs:'Adiantamento dia 20'});
+  save();renderAll();openLancamento();showToast('Adiantamento lançado!');
+}
+
+function lancarAdiantamentosTodos(){
+  let count=0;
+  employees.filter(e=>e.ativo!==false&&e.adiant_quinzena).forEach(emp=>{
+    const jaLancado=advances.some(a=>a.empId===emp.id&&a.mes===currentMonth&&a.tipo==='Adiantamento Quinzena');
+    if(!jaLancado){advances.push({id:Date.now().toString()+emp.id,empId:emp.id,mes:currentMonth,data:currentMonth+'-20',tipo:'Adiantamento Quinzena',valor:emp.adiant_quinzena,obs:'Adiantamento dia 20'});count++;}
   });
-  save();
-  renderAll();
-  openLancamento(); // refresh modal
-  showToast('Adiantamento lançado!');
+  save();renderAll();openLancamento();
+  showToast(count>0?`${count} adiantamentos lançados!`:'Todos já foram lançados.');
 }
 
-function lancarAdiantamentosTodos() {
-  let count = 0;
-  employees.filter(e => e.ativo !== false && e.adiant_quinzena).forEach(emp => {
-    const jaLancado = advances.some(a => a.empId === emp.id && a.mes === currentMonth && a.tipo === 'Adiantamento Quinzena');
-    if (!jaLancado) {
-      advances.push({
-        id: Date.now().toString() + emp.id,
-        empId: emp.id,
-        mes: currentMonth,
-        data: currentMonth + '-20',
-        tipo: 'Adiantamento Quinzena',
-        valor: emp.adiant_quinzena,
-        obs: 'Adiantamento dia 20',
-      });
-      count++;
-    }
-  });
-  save();
-  renderAll();
-  openLancamento();
-  showToast(count > 0 ? `${count} adiantamentos lançados!` : 'Todos já foram lançados.');
+function lancarVariavel(){
+  const empId=parseInt(document.getElementById('lanc_emp').value);
+  const tipo=document.getElementById('lanc_tipo').value;
+  const valor=parseFloat(document.getElementById('lanc_valor').value);
+  if(!valor||valor<=0){showToast('Informe o valor');return;}
+  const pay=getEmpPay(empId);pay[tipo]=(parseFloat(pay[tipo])||0)+valor;
+  saveEmpPay(empId,pay);document.getElementById('lanc_valor').value='';renderAll();showToast('Lançado!');
 }
 
-function lancarVariavel() {
-  const empId = parseInt(document.getElementById('lanc_emp').value);
-  const tipo = document.getElementById('lanc_tipo').value;
-  const valor = parseFloat(document.getElementById('lanc_valor').value);
-  if (!valor || valor <= 0) { showToast('Informe o valor'); return; }
-  const pay = getEmpPay(empId);
-  pay[tipo] = (parseFloat(pay[tipo]) || 0) + valor;
-  saveEmpPay(empId, pay);
-  document.getElementById('lanc_valor').value = '';
-  renderAll();
-  showToast('Lançado!');
-}
+// ══════ BONIFICAÇÕES ══════════════════════════════════════
 
+// Montadores para bonificações: dinâmico, baseado nos funcionários ativos
 
-// ══════ BONIFICAÇÕES & COMISSÕES ══════════════════════════
-
-const BONIF_KEY = 'mm_bonificacoes';
-let bonifData = {};
-
-function loadBonif() {
-  try { bonifData = JSON.parse(localStorage.getItem(BONIF_KEY)) || {}; } catch { bonifData = {}; }
-}
-
-function saveBonif() {
-  localStorage.setItem(BONIF_KEY, JSON.stringify(bonifData));
+// Montadores para bonificações: dinâmico, baseado nos funcionários ativos
+function getBonifMontadores() {
+  return employees.filter(e =>
+    e.ativo !== false &&
+    (e.funcao === 'Montador' || e.funcao === 'Gerente de Montagem' || e.funcao === 'Aux. Marceneiro')
+  );
 }
 
 function getBonifMes() {
-  if (!bonifData[currentMonth]) bonifData[currentMonth] = { projetos: { arlem:[], tadeu:[], joao_victor:[] }, vendas:[] };
+  if (!bonifData[currentMonth]) bonifData[currentMonth] = { projetos: {}, vendas: [] };
+  if (!bonifData[currentMonth].projetos) bonifData[currentMonth].projetos = {};
+  if (!bonifData[currentMonth].vendas) bonifData[currentMonth].vendas = [];
+  // garante entrada para cada montador ativo
+  getBonifMontadores().forEach(m => {
+    const key = 'emp_' + m.id;
+    if (!bonifData[currentMonth].projetos[key])
+      bonifData[currentMonth].projetos[key] = [];
+  });
   return bonifData[currentMonth];
 }
 
@@ -1449,235 +1268,258 @@ function pctComissaoJean(val) {
   return '—';
 }
 
-const BONIF_MONTADORES = [
-  { id:'arlem',      nome:'Arlem',       sigla:'AL' },
-  { id:'tadeu',      nome:'Tadeu',       sigla:'TD' },
-  { id:'joao_victor',nome:'João Victor', sigla:'JV' },
-];
+function switchBonifTab(sec) {
+  ['montadores','vendas'].forEach(s => {
+    document.getElementById('bsec-'+s).classList.toggle('active', s===sec);
+    document.getElementById('btab-'+s).classList.toggle('active', s===sec);
+  });
+}
 
 function renderBonificacoes() {
   const mes = getBonifMes();
+  const monts = getBonifMontadores();
 
-  // Stats montadores
-  let totalProj = 0, totalValM = 0;
-  BONIF_MONTADORES.forEach(m => {
-    mes.projetos[m.id].forEach(p => {
-      totalProj++;
-      totalValM += parseFloat(p.valor) || 0;
-    });
+  let totProj=0, totValM=0;
+  monts.forEach(m => {
+    (mes.projetos['emp_'+m.id]||[]).forEach(p => { totProj++; totValM+=parseFloat(p.valor)||0; });
   });
-  document.getElementById('bonif-stats').innerHTML = `
-    <div class="stat-card"><div class="stat-label">Total Projetos</div><div class="stat-value blue">${totalProj}</div><div class="stat-sub">no mês</div></div>
-    <div class="stat-card"><div class="stat-label">Valor Total Projetos</div><div class="stat-value green">${fmt(totalValM)}</div></div>
+  let totJeanCom=0;
+  mes.vendas.forEach(v => totJeanCom+=calcComissaoJean(v.valor));
+
+  document.getElementById('bonif-resumo-geral').innerHTML = `
+    <div class="stat-card"><div class="stat-label">Projetos (montadores)</div><div class="stat-value blue">${totProj}</div><div class="stat-sub">no mês</div></div>
+    <div class="stat-card"><div class="stat-label">Valor total projetos</div><div class="stat-value green">${fmt(totValM)}</div></div>
+    <div class="stat-card"><div class="stat-label">Vendas Jean</div><div class="stat-value" style="color:var(--purple)">${mes.vendas.length}</div></div>
+    <div class="stat-card"><div class="stat-label">Comissão Jean</div><div class="stat-value yellow">${fmt(totJeanCom)}</div></div>
   `;
 
-  // Cards por montador
+  renderBonifMontadores();
+  renderBonifJean();
+}
+
+function renderBonifMontadores() {
+  const mes = getBonifMes();
+  const monts = getBonifMontadores();
+  let totProj=0, totValM=0;
+  monts.forEach(m => {
+    (mes.projetos['emp_'+m.id]||[]).forEach(p => { totProj++; totValM+=parseFloat(p.valor)||0; });
+  });
+
+  document.getElementById('bonif-mont-stats').innerHTML = `
+    <div class="stat-card"><div class="stat-label">Total de projetos</div><div class="stat-value blue">${totProj}</div></div>
+    <div class="stat-card"><div class="stat-label">Valor total</div><div class="stat-value green">${fmt(totValM)}</div></div>
+    <div class="stat-card"><div class="stat-label">Com projetos</div><div class="stat-value" style="color:var(--purple)">${monts.filter(m=>(mes.projetos['emp_'+m.id]||[]).length>0).length} / ${monts.length}</div></div>
+  `;
+
   let html = '';
-  BONIF_MONTADORES.forEach(m => {
-    const projs = mes.projetos[m.id];
-    const totalM = projs.reduce((a,p) => a + (parseFloat(p.valor)||0), 0);
-    html += `<div style="margin-bottom:16px;border:1px solid var(--border);border-radius:var(--radius);padding:14px">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
-        <div style="width:32px;height:32px;border-radius:50%;background:var(--accent-dim);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--accent)">${m.sigla}</div>
-        <div>
-          <div style="font-weight:600;font-size:14px">${m.nome}</div>
-          <div style="font-size:11px;color:var(--text3)">${projs.length} projeto(s) · ${fmt(totalM)}</div>
-        </div>
-        <button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="bonifAddProjeto('${m.id}')">+ Projeto</button>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 80px 110px 32px;gap:4px;margin-bottom:4px">
-        <div style="font-size:10px;font-weight:600;color:var(--text3);padding:0 4px">CLIENTE</div>
-        <div style="font-size:10px;font-weight:600;color:var(--text3);padding:0 4px">AMBIENTE</div>
-        <div style="font-size:10px;font-weight:600;color:var(--text3);padding:0 4px">M²</div>
-        <div style="font-size:10px;font-weight:600;color:var(--text3);padding:0 4px">VALOR (R$)</div>
-        <div></div>
-      </div>`;
-    projs.forEach((p, i) => {
-      html += `<div style="display:grid;grid-template-columns:1fr 1fr 80px 110px 32px;gap:4px;margin-bottom:4px">
-        <input class="pay-input" value="${p.cliente||''}" placeholder="Cliente" oninput="bonifUpdateProjeto('${m.id}',${i},'cliente',this.value)" style="background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);padding:4px 8px;font-size:12px;font-family:var(--font)">
-        <input class="pay-input" value="${p.ambiente||''}" placeholder="Ambiente" oninput="bonifUpdateProjeto('${m.id}',${i},'ambiente',this.value)" style="background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);padding:4px 8px;font-size:12px;font-family:var(--font)">
-        <input class="pay-input" type="number" value="${p.m2||''}" placeholder="m²" oninput="bonifUpdateProjeto('${m.id}',${i},'m2',this.value)" style="background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);padding:4px 8px;font-size:12px;font-family:var(--font)">
-        <input class="pay-input" type="number" value="${p.valor||''}" placeholder="0.00" oninput="bonifUpdateProjeto('${m.id}',${i},'valor',this.value)" style="background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);padding:4px 8px;font-size:12px;font-family:var(--font)">
-        <button class="btn btn-danger btn-sm" onclick="bonifDelProjeto('${m.id}',${i})" style="padding:2px 6px">✕</button>
-      </div>`;
-    });
-    if (!projs.length) html += `<div style="font-size:12px;color:var(--text3);padding:8px 4px">Nenhum projeto registrado. Clique em "+ Projeto" para adicionar.</div>`;
-    html += `</div>`;
-  });
-  document.getElementById('bonif-montadores').innerHTML = html;
+  monts.forEach(m => {
+    const key = 'emp_' + m.id;
+    const projs = mes.projetos[key] || [];
+    const cnt = projs.length;
+    const soma = projs.reduce((a,p)=>a+(parseFloat(p.valor)||0),0);
+    const badgeCls = cnt>=10 ? 'mont-badge-ok' : 'mont-badge-warn';
+    const badgeTxt = cnt>=10 ? `${cnt} proj. ✓` : `${cnt} / 10`;
+    const col = avatarColor(m.nome);
+    const ini = initials(m.nome);
 
-  // Jean stats
-  const vendas = mes.vendas;
-  let totalJeanVal = 0, totalJeanCom = 0;
-  vendas.forEach(v => {
-    totalJeanVal += parseFloat(v.valor) || 0;
-    totalJeanCom += calcComissaoJean(v.valor);
+    let rows = projs.map((p,i) => `
+      <div class="proj-grid-row">
+        <input class="proj-input" value="${esc(p.cliente)}" placeholder="Nome do cliente"
+          oninput="bonifUpdateProjeto(${m.id},${i},'cliente',this.value)">
+        <input class="proj-input" value="${esc(p.ambiente)}" placeholder="Ambiente"
+          oninput="bonifUpdateProjeto(${m.id},${i},'ambiente',this.value)">
+        <input class="proj-input" type="number" value="${p.m2||''}" placeholder="m²"
+          oninput="bonifUpdateProjeto(${m.id},${i},'m2',this.value)">
+        <input class="proj-input" type="number" value="${p.valor||''}" placeholder="0,00"
+          oninput="bonifUpdateProjeto(${m.id},${i},'valor',this.value)">
+        <button class="btn btn-danger btn-sm" onclick="bonifDelProjeto(${m.id},${i})" style="padding:3px 6px">✕</button>
+      </div>`).join('');
+
+    if (!rows) rows = `<div style="font-size:12px;color:var(--text3);padding:8px 0">Nenhum projeto. Clique em "+ Projeto".</div>`;
+
+    html += `
+      <div class="mont-block">
+        <div class="mont-header">
+          <div class="mont-avatar" style="background:${col}22;color:${col}">${ini}</div>
+          <div style="flex:1">
+            <div class="mont-name">${m.nome.split(' ').slice(0,3).join(' ')}</div>
+            <div class="mont-sub">${m.funcao}${m.equipe?' · '+m.equipe:''} · ${cnt} projeto(s) · ${fmt(soma)}</div>
+          </div>
+          <span class="mont-badge ${badgeCls}">${badgeTxt}</span>
+          <button class="btn btn-primary btn-sm" onclick="bonifAddProjeto(${m.id})">+ Projeto</button>
+        </div>
+        <div class="proj-grid-header">
+          <div>Cliente</div><div>Ambiente</div><div>m²</div><div>Valor (R$)</div><div></div>
+        </div>
+        ${rows}
+      </div>`;
   });
-  document.getElementById('jean-stats').innerHTML = `
-    <div class="stat-card"><div class="stat-label">Vendas</div><div class="stat-value blue">${vendas.length}</div></div>
-    <div class="stat-card"><div class="stat-label">Valor Total Vendido</div><div class="stat-value green">${fmt(totalJeanVal)}</div></div>
-    <div class="stat-card"><div class="stat-label">Comissão Total</div><div class="stat-value yellow">${fmt(totalJeanCom)}</div></div>
+
+  if (!monts.length) html = `<div style="font-size:13px;color:var(--text3);padding:20px 0">Nenhum montador ativo cadastrado.</div>`;
+  document.getElementById('bonif-montadores-list').innerHTML = html;
+}
+
+function renderBonifJean() {
+  const mes = getBonifMes();
+  const vendas = mes.vendas;
+  let totVal=0, totCom=0;
+  vendas.forEach(v => { totVal+=parseFloat(v.valor)||0; totCom+=calcComissaoJean(v.valor); });
+
+  document.getElementById('bonif-jean-stats').innerHTML = `
+    <div class="stat-card"><div class="stat-label">Vendas no mês</div><div class="stat-value blue">${vendas.length}</div></div>
+    <div class="stat-card"><div class="stat-label">Volume total</div><div class="stat-value green">${fmt(totVal)}</div></div>
+    <div class="stat-card"><div class="stat-label">Comissão total</div><div class="stat-value yellow">${fmt(totCom)}</div></div>
   `;
 
-  // Jean form rows
-  let formHtml = '';
-  vendas.forEach((v, i) => {
-    formHtml += `<div style="display:grid;grid-template-columns:1.2fr 1fr 1.2fr 130px 32px;gap:4px;margin-bottom:4px">
-      <input class="pay-input" value="${v.cliente||''}" placeholder="Cliente" oninput="bonifUpdateVenda(${i},'cliente',this.value)" style="background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);padding:4px 8px;font-size:12px;font-family:var(--font)">
-      <input class="pay-input" value="${v.contrato||''}" placeholder="Contrato" oninput="bonifUpdateVenda(${i},'contrato',this.value)" style="background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);padding:4px 8px;font-size:12px;font-family:var(--font)">
-      <input class="pay-input" value="${v.ambiente||''}" placeholder="Ambiente(s)" oninput="bonifUpdateVenda(${i},'ambiente',this.value)" style="background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);padding:4px 8px;font-size:12px;font-family:var(--font)">
-      <input class="pay-input" type="number" value="${v.valor||''}" placeholder="Valor R$" oninput="bonifUpdateVenda(${i},'valor',this.value)" style="background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);padding:4px 8px;font-size:12px;font-family:var(--font)">
-      <button class="btn btn-danger btn-sm" onclick="bonifDelVenda(${i})" style="padding:2px 6px">✕</button>
-    </div>`;
-  });
-  document.getElementById('jean-form-rows').innerHTML = formHtml || '<div style="font-size:12px;color:var(--text3);padding:8px 0">Nenhuma venda registrada. Clique em "+ Venda".</div>';
+  // Linhas de edição
+  let formHtml = vendas.map((v,i) => `
+    <div class="jean-grid-row">
+      <input class="proj-input" value="${esc(v.cliente)}" placeholder="Nome do cliente"
+        oninput="bonifUpdateVenda(${i},'cliente',this.value)">
+      <input class="proj-input" value="${esc(v.contrato)}" placeholder="Nº contrato"
+        oninput="bonifUpdateVenda(${i},'contrato',this.value)">
+      <input class="proj-input" value="${esc(v.ambiente)}" placeholder="Ambiente(s)"
+        oninput="bonifUpdateVenda(${i},'ambiente',this.value)">
+      <input class="proj-input" type="number" value="${v.valor||''}" placeholder="Valor R$"
+        oninput="bonifUpdateVenda(${i},'valor',this.value)">
+      <button class="btn btn-danger btn-sm" onclick="bonifDelVenda(${i})" style="padding:3px 6px">✕</button>
+    </div>`).join('');
 
-  // Jean tabela
+  if (!formHtml) formHtml = `<div style="font-size:12px;color:var(--text3);padding:8px 0">Nenhuma venda registrada. Clique em "+ Venda".</div>`;
+  document.getElementById('jean-form-rows').innerHTML = formHtml;
+
+  // Tabela resumo
   if (vendas.length) {
-    let rows = vendas.map(v => {
-      const val = parseFloat(v.valor) || 0;
+    const rows = vendas.map(v => {
+      const val = parseFloat(v.valor)||0;
       const com = calcComissaoJean(val);
       return `<tr>
-        <td style="font-weight:500">${v.cliente||'—'}</td>
-        <td style="color:var(--text2);font-size:12px">${v.contrato||'—'}</td>
-        <td style="color:var(--text2);font-size:12px">${v.ambiente||'—'}</td>
+        <td style="font-weight:500">${esc(v.cliente)||'—'}</td>
+        <td style="color:var(--text2);font-size:12px">${esc(v.contrato)||'—'}</td>
+        <td style="color:var(--text2);font-size:12px">${esc(v.ambiente)||'—'}</td>
         <td style="font-family:var(--mono)">${val>0?fmt(val):'—'}</td>
         <td><span class="badge badge-yellow">${pctComissaoJean(val)}</span></td>
         <td style="font-family:var(--mono);font-weight:700;color:var(--green)">${com>0?fmt(com):'—'}</td>
       </tr>`;
     }).join('');
-    const totalV = vendas.reduce((a,v)=>a+(parseFloat(v.valor)||0),0);
-    const totalC = vendas.reduce((a,v)=>a+calcComissaoJean(v.valor),0);
-    rows += `<tr style="background:var(--surface2)">
-      <td colspan="3" style="font-weight:700">Total</td>
-      <td style="font-family:var(--mono);font-weight:700">${fmt(totalV)}</td>
-      <td></td>
-      <td style="font-family:var(--mono);font-weight:700;color:var(--green)">${fmt(totalC)}</td>
-    </tr>`;
-    document.getElementById('jean-tabela').innerHTML = `<div style="overflow-x:auto"><table class="hist-table">
-      <thead><tr><th>Cliente</th><th>Contrato</th><th>Ambiente</th><th>Valor</th><th>%</th><th>Comissão</th></tr></thead>
-      <tbody>${rows}</tbody>
-    </table></div>`;
+    document.getElementById('jean-tabela').innerHTML = `
+      <div style="overflow-x:auto"><table class="hist-table">
+        <thead><tr><th>Cliente</th><th>Contrato</th><th>Ambiente</th><th>Valor</th><th>%</th><th>Comissão</th></tr></thead>
+        <tbody>
+          ${rows}
+          <tr style="background:var(--surface2)">
+            <td colspan="3" style="font-weight:700">Total</td>
+            <td style="font-family:var(--mono);font-weight:700">${fmt(totVal)}</td>
+            <td></td>
+            <td style="font-family:var(--mono);font-weight:700;color:var(--green)">${fmt(totCom)}</td>
+          </tr>
+        </tbody>
+      </table></div>`;
   } else {
     document.getElementById('jean-tabela').innerHTML = '';
   }
+
+  // Atualiza resumo geral também
+  renderBonifResumoGeral();
+}
+
+function renderBonifResumoGeral() {
+  const mes = getBonifMes();
+  const monts = getBonifMontadores();
+  let totProj=0, totValM=0;
+  monts.forEach(m => {
+    (mes.projetos['emp_'+m.id]||[]).forEach(p => { totProj++; totValM+=parseFloat(p.valor)||0; });
+  });
+  let totJeanCom=0;
+  mes.vendas.forEach(v => totJeanCom+=calcComissaoJean(v.valor));
+  const el = document.getElementById('bonif-resumo-geral');
+  if (el) el.innerHTML = `
+    <div class="stat-card"><div class="stat-label">Projetos (montadores)</div><div class="stat-value blue">${totProj}</div><div class="stat-sub">no mês</div></div>
+    <div class="stat-card"><div class="stat-label">Valor total projetos</div><div class="stat-value green">${fmt(totValM)}</div></div>
+    <div class="stat-card"><div class="stat-label">Vendas Jean</div><div class="stat-value" style="color:var(--purple)">${mes.vendas.length}</div></div>
+    <div class="stat-card"><div class="stat-label">Comissão Jean</div><div class="stat-value yellow">${fmt(totJeanCom)}</div></div>
+  `;
 }
 
 function bonifAddProjeto(mid) {
   const mes = getBonifMes();
-  mes.projetos[mid].push({ cliente:'', ambiente:'', m2:'', valor:'' });
+  const key = 'emp_' + mid;
+  if (!mes.projetos[key]) mes.projetos[key] = [];
+  mes.projetos[key].push({ cliente:'', ambiente:'', m2:'', valor:'' });
   saveBonif();
-  renderBonificacoes();
+  renderBonifMontadores();
 }
 
 function bonifDelProjeto(mid, idx) {
   const mes = getBonifMes();
-  mes.projetos[mid].splice(idx, 1);
+  const key = 'emp_' + mid;
+  mes.projetos[key].splice(idx, 1);
   saveBonif();
-  renderBonificacoes();
+  renderBonifMontadores();
 }
 
 function bonifUpdateProjeto(mid, idx, field, val) {
   const mes = getBonifMes();
-  mes.projetos[mid][idx][field] = val;
+  const key = 'emp_' + mid;
+  if (!mes.projetos[key]) mes.projetos[key] = [];
+  mes.projetos[key][idx][field] = val;
   saveBonif();
-  // atualiza só stats sem re-renderizar tudo (evita perda de foco)
-  renderBonifStats();
+  const monts = getBonifMontadores();
+  let totProj=0, totValM=0;
+  monts.forEach(m => {
+    (mes.projetos['emp_'+m.id]||[]).forEach(p => { totProj++; totValM+=parseFloat(p.valor)||0; });
+  });
+  const sm = document.getElementById('bonif-mont-stats');
+  if (sm) sm.innerHTML = `
+    <div class="stat-card"><div class="stat-label">Total de projetos</div><div class="stat-value blue">${totProj}</div></div>
+    <div class="stat-card"><div class="stat-label">Valor total</div><div class="stat-value green">${fmt(totValM)}</div></div>
+    <div class="stat-card"><div class="stat-label">Com projetos</div><div class="stat-value" style="color:var(--purple)">${monts.filter(m=>(mes.projetos['emp_'+m.id]||[]).length>0).length} / ${monts.length}</div></div>
+  `;
+  renderBonifResumoGeral();
 }
 
 function bonifAddVenda() {
   const mes = getBonifMes();
   mes.vendas.push({ cliente:'', contrato:'', ambiente:'', valor:'' });
   saveBonif();
-  renderBonificacoes();
+  renderBonifJean();
 }
 
 function bonifDelVenda(idx) {
   const mes = getBonifMes();
   mes.vendas.splice(idx, 1);
   saveBonif();
-  renderBonificacoes();
+  renderBonifJean();
 }
 
 function bonifUpdateVenda(idx, field, val) {
   const mes = getBonifMes();
   mes.vendas[idx][field] = val;
   saveBonif();
-  renderBonifStats();
+  // atualiza stats sem re-render completo
+  let totVal=0, totCom=0;
+  mes.vendas.forEach(v => { totVal+=parseFloat(v.valor)||0; totCom+=calcComissaoJean(v.valor); });
+  const sj=document.getElementById('bonif-jean-stats');
+  if(sj) sj.innerHTML=`
+    <div class="stat-card"><div class="stat-label">Vendas no mês</div><div class="stat-value blue">${mes.vendas.length}</div></div>
+    <div class="stat-card"><div class="stat-label">Volume total</div><div class="stat-value green">${fmt(totVal)}</div></div>
+    <div class="stat-card"><div class="stat-label">Comissão total</div><div class="stat-value yellow">${fmt(totCom)}</div></div>
+  `;
+  renderBonifResumoGeral();
 }
 
-function renderBonifStats() {
-  const mes = getBonifMes();
-  let totalProj = 0, totalValM = 0;
-  BONIF_MONTADORES.forEach(m => {
-    mes.projetos[m.id].forEach(p => {
-      totalProj++;
-      totalValM += parseFloat(p.valor) || 0;
-    });
-  });
-  const el = document.getElementById('bonif-stats');
-  if (el) el.innerHTML = `
-    <div class="stat-card"><div class="stat-label">Total Projetos</div><div class="stat-value blue">${totalProj}</div><div class="stat-sub">no mês</div></div>
-    <div class="stat-card"><div class="stat-label">Valor Total Projetos</div><div class="stat-value green">${fmt(totalValM)}</div></div>
-  `;
-  const vendas = mes.vendas;
-  let totalJeanVal = 0, totalJeanCom = 0;
-  vendas.forEach(v => {
-    totalJeanVal += parseFloat(v.valor) || 0;
-    totalJeanCom += calcComissaoJean(v.valor);
-  });
-  const ej = document.getElementById('jean-stats');
-  if (ej) ej.innerHTML = `
-    <div class="stat-card"><div class="stat-label">Vendas</div><div class="stat-value blue">${vendas.length}</div></div>
-    <div class="stat-card"><div class="stat-label">Valor Total Vendido</div><div class="stat-value green">${fmt(totalJeanVal)}</div></div>
-    <div class="stat-card"><div class="stat-label">Comissão Total</div><div class="stat-value yellow">${fmt(totalJeanCom)}</div></div>
-  `;
-  // atualiza tabela jean
-  const jt = document.getElementById('jean-tabela');
-  if (jt && vendas.length) {
-    let rows = vendas.map(v => {
-      const val = parseFloat(v.valor) || 0;
-      const com = calcComissaoJean(val);
-      return `<tr>
-        <td style="font-weight:500">${v.cliente||'—'}</td>
-        <td style="color:var(--text2);font-size:12px">${v.contrato||'—'}</td>
-        <td style="color:var(--text2);font-size:12px">${v.ambiente||'—'}</td>
-        <td style="font-family:var(--mono)">${val>0?fmt(val):'—'}</td>
-        <td><span class="badge badge-yellow">${pctComissaoJean(val)}</span></td>
-        <td style="font-family:var(--mono);font-weight:700;color:var(--green)">${com>0?fmt(com):'—'}</td>
-      </tr>`;
-    }).join('');
-    const totalV = vendas.reduce((a,v)=>a+(parseFloat(v.valor)||0),0);
-    const totalC = vendas.reduce((a,v)=>a+calcComissaoJean(v.valor),0);
-    rows += `<tr style="background:var(--surface2)">
-      <td colspan="3" style="font-weight:700">Total</td>
-      <td style="font-family:var(--mono);font-weight:700">${fmt(totalV)}</td>
-      <td></td>
-      <td style="font-family:var(--mono);font-weight:700;color:var(--green)">${fmt(totalC)}</td>
-    </tr>`;
-    jt.innerHTML = `<div style="overflow-x:auto"><table class="hist-table">
-      <thead><tr><th>Cliente</th><th>Contrato</th><th>Ambiente</th><th>Valor</th><th>%</th><th>Comissão</th></tr></thead>
-      <tbody>${rows}</tbody>
-    </table></div>`;
-  }
-}
-
-loadBonif();
+function esc(s) { return String(s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 // ══════ RELOAD ════════════════════════════════════════════
-async function reloadData() {
+async function reloadData(){
   showLoading(true);
-  const ok = await loadFromSheets();
-  if (!ok) showToast('⚠ Sem conexão — usando dados locais');
+  const ok=await loadFromSheets();
+  if(!ok)showToast('⚠ Sem conexão — usando dados locais');
   else showToast('Dados atualizados!');
-  renderAll();
-  showLoading(false);
+  renderAll();showLoading(false);
 }
 
-function showLoading(v) {
-  const el = document.getElementById('loadingOverlay');
-  if (el) el.classList.toggle('show', v);
-}
+function showLoading(v){const el=document.getElementById('loadingOverlay');if(el)el.classList.toggle('show',v);}
 
 // ══════ INIT ══════════════════════════════════════════════
 load();
@@ -1685,8 +1527,8 @@ initMonths();
 showPage('dashboard');
 renderAll();
 showLoading(true);
-loadFromSheets().then(ok => {
-  if (ok) { renderAll(); updateSyncStatus(true); }
+loadFromSheets().then(ok=>{
+  if(ok){renderAll();updateSyncStatus(true);}
   else updateSyncStatus(false);
   showLoading(false);
 });
