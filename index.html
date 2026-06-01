@@ -446,6 +446,19 @@ input[type="number"] { font-family: var(--mono); }
     <!-- ══════ BONIFICAÇÕES ══════ -->
     <div id="page-bonificacoes" style="display:none">
 
+      <!-- Seletor de mês próprio das bonificações -->
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;padding:12px 16px;background:var(--surface);border:1px solid var(--yellow);border-radius:var(--radius)">
+        <div style="font-size:12px;color:var(--text2);line-height:1.5">
+          <div style="font-weight:600;color:var(--yellow);font-size:11px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">⚠ Atenção — mês de referência</div>
+          Os projetos e comissões são levantados no mês seguinte à execução.<br>
+          <span style="color:var(--text3);font-size:11px">Exemplo: projetos executados em maio → lançar aqui selecionando <strong style="color:var(--text2)">Maio 2025</strong>.</span>
+        </div>
+        <div style="margin-left:auto;display:flex;align-items:center;gap:8px;flex-shrink:0">
+          <label style="font-size:12px;color:var(--text2);font-weight:500;text-transform:none;letter-spacing:0;white-space:nowrap">Mês dos projetos:</label>
+          <select id="bonifMesSel" onchange="changeBonifMes()" style="font-size:13px;padding:6px 10px;width:auto;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text)"></select>
+        </div>
+      </div>
+
       <!-- Resumo geral -->
       <div class="stats-grid" id="bonif-resumo-geral" style="margin-bottom:20px"></div>
 
@@ -679,6 +692,7 @@ let advances = [];
 let payData = {};
 let bonifData = {};
 let currentMonth = '';
+let bonifCurrentMonth = ''; // mês independente para bonificações
 let selectedEmpId = null;
 
 // ══════ GOOGLE SHEETS SYNC ═══════════════════════════════
@@ -796,6 +810,34 @@ function initMonths() {
     sel.appendChild(opt);
   }
   currentMonth = now.toISOString().slice(0, 7);
+  // Bonificações: padrão = mês anterior (projetos executados no mês passado)
+  const prev = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  bonifCurrentMonth = prev.toISOString().slice(0, 7);
+  initBonifMonthSel();
+}
+
+function initBonifMonthSel() {
+  const sel = document.getElementById('bonifMesSel');
+  if (!sel) return;
+  const now = new Date();
+  sel.innerHTML = '';
+  for (let i = -6; i <= 2; i++) {
+    const d = new Date(now.getFullYear(), now.getMonth() + i, 1);
+    const key = d.toISOString().slice(0, 7);
+    const label = d.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+    const opt = document.createElement('option');
+    opt.value = key;
+    opt.textContent = label.charAt(0).toUpperCase() + label.slice(1);
+    // padrão = mês anterior
+    if (i === -1) opt.selected = true;
+    sel.appendChild(opt);
+  }
+}
+
+function changeBonifMes() {
+  const sel = document.getElementById('bonifMesSel');
+  if (sel) bonifCurrentMonth = sel.value;
+  renderBonificacoes();
 }
 
 function changeMonth() {
@@ -1098,7 +1140,12 @@ function showPage(name){
   });
   document.getElementById('pageTitle').textContent=pageTitles[name]||'';
   if(name==='dia20')renderDia20();
-  if(name==='bonificacoes')renderBonificacoes();
+  if(name==='bonificacoes'){
+    initBonifMonthSel();
+    const sel=document.getElementById('bonifMesSel');
+    if(sel&&bonifCurrentMonth)sel.value=bonifCurrentMonth;
+    renderBonificacoes();
+  }
 }
 
 function showToast(msg){
@@ -1236,16 +1283,16 @@ function getBonifMontadores() {
 }
 
 function getBonifMes() {
-  if (!bonifData[currentMonth]) bonifData[currentMonth] = { projetos: {}, vendas: [] };
-  if (!bonifData[currentMonth].projetos) bonifData[currentMonth].projetos = {};
-  if (!bonifData[currentMonth].vendas) bonifData[currentMonth].vendas = [];
-  // garante entrada para cada montador ativo
+  const k = bonifCurrentMonth || currentMonth;
+  if (!bonifData[k]) bonifData[k] = { projetos: {}, vendas: [] };
+  if (!bonifData[k].projetos) bonifData[k].projetos = {};
+  if (!bonifData[k].vendas) bonifData[k].vendas = [];
   getBonifMontadores().forEach(m => {
     const key = 'emp_' + m.id;
-    if (!bonifData[currentMonth].projetos[key])
-      bonifData[currentMonth].projetos[key] = [];
+    if (!bonifData[k].projetos[key])
+      bonifData[k].projetos[key] = [];
   });
-  return bonifData[currentMonth];
+  return bonifData[k];
 }
 
 function calcComissaoJean(val) {
