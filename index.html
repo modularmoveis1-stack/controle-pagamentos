@@ -513,17 +513,47 @@ input[type="number"] { font-family: var(--mono); }
       <div class="bonif-section active" id="bsec-montadores">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
           <div style="font-size:12px;color:var(--text3)">Somente os funcionários selecionados aparecem aqui.</div>
-          <button class="btn btn-ghost btn-sm" onclick="openGerenciarParticipantes()" style="color:var(--purple);border-color:var(--purple)">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>
-            Gerenciar participantes
-          </button>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-ghost btn-sm" onclick="openGerenciarParticipantes()" style="color:var(--purple);border-color:var(--purple)">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>
+              Gerenciar participantes
+            </button>
+            <button class="btn btn-primary btn-sm" onclick="aplicarTudoNaFolha()" id="btnAplicarTudo" style="display:none">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              Aplicar tudo na folha
+            </button>
+          </div>
         </div>
         <div class="stats-grid" id="bonif-mont-stats"></div>
+        <div id="bonif-preview-aplicar" style="display:none;margin-bottom:16px;padding:14px 16px;background:rgba(34,197,94,0.07);border:1px solid var(--green);border-radius:var(--radius)">
+          <div style="font-size:11px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">
+            💰 Preview — o que será aplicado na folha de cada um
+          </div>
+          <div id="bonif-preview-rows"></div>
+          <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(34,197,94,0.2);display:flex;justify-content:space-between;align-items:center">
+            <span style="font-size:12px;color:var(--text2)">Total a aplicar</span>
+            <span id="bonif-preview-total" style="font-family:var(--mono);font-size:15px;font-weight:700;color:var(--green)"></span>
+          </div>
+          <button class="btn btn-primary" style="width:100%;margin-top:12px;justify-content:center" onclick="aplicarTudoNaFolha()">
+            ✅ Confirmar — Aplicar tudo na folha
+          </button>
+        </div>
         <div id="bonif-montadores-list"></div>
       </div>
 
       <div class="bonif-section" id="bsec-vendas">
         <div class="stats-grid" id="bonif-jean-stats"></div>
+        <div id="bonif-jean-aplicar" style="display:none;margin-bottom:16px;padding:14px 16px;background:rgba(34,197,94,0.07);border:1px solid var(--green);border-radius:var(--radius)">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div>
+              <div style="font-size:11px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:.06em">💰 Comissão pronta para aplicar</div>
+              <div id="bonif-jean-aplicar-val" style="font-size:20px;font-weight:700;font-family:var(--mono);color:var(--green);margin-top:4px"></div>
+            </div>
+            <button class="btn btn-primary" onclick="aplicarComissaoJeanFolha()">
+              ✅ Aplicar na folha do Jean
+            </button>
+          </div>
+        </div>
         <div class="mont-block">
           <div class="mont-header">
             <div class="mont-avatar" style="background:rgba(168,85,247,0.18);color:var(--purple)">JN</div>
@@ -1438,16 +1468,77 @@ function calcAutoBonifMontador(emp, projs) {
   return { total, items };
 }
 
-// ── Aplica bonificação calculada na folha do mês ──
+// ── Aplica bonificação de UM funcionário na folha ──
 function aplicarBonifNaFolha(empId, valor) {
+  if (!valor || valor <= 0) { showToast('Nenhum bônus para aplicar.'); return; }
   const pay = getEmpPay(empId);
-  const anterior = pay.bon_projeto || 0;
-  pay.bon_projeto = anterior + valor;
+  pay.bon_projeto = (parseFloat(pay.bon_projeto)||0) + valor;
   saveEmpPay(empId, pay);
   renderDashboard(); renderEmployees();
   const emp = employees.find(e=>e.id===empId);
-  renderDetailFolha(emp, getEmpPay(empId), calcSaldo(emp));
-  showToast(`${fmt(valor)} adicionado à Bonif. de Projeto na folha!`);
+  if (selectedEmpId === empId) renderDetailFolha(emp, getEmpPay(empId), calcSaldo(emp));
+  showToast(`${fmt(valor)} aplicado na folha de ${emp.nome.split(' ')[0]}!`);
+}
+
+// ── Aplica bonificações de TODOS os participantes de uma vez ──
+function aplicarTudoNaFolha() {
+  const mes = getBonifMes();
+  const monts = getBonifMontadores();
+  let count = 0;
+  let totalAplicado = 0;
+  const resumo = [];
+
+  monts.forEach(m => {
+    const projs = mes.projetos['emp_'+m.id] || [];
+    const bonif = calcAutoBonifMontador(m, projs);
+    if (bonif.total > 0) {
+      const pay = getEmpPay(m.id);
+      pay.bon_projeto = (parseFloat(pay.bon_projeto)||0) + bonif.total;
+      saveEmpPay(m.id, pay);
+      totalAplicado += bonif.total;
+      count++;
+      resumo.push(`${m.nome.split(' ')[0]}: ${fmt(bonif.total)}`);
+    }
+  });
+
+  if (count === 0) {
+    showToast('Nenhum bônus calculado para aplicar. Verifique os projetos lançados.');
+    return;
+  }
+
+  renderDashboard(); renderEmployees();
+  renderBonificacoes();
+
+  // Esconde o preview após aplicar
+  const prev = document.getElementById('bonif-preview-aplicar');
+  if (prev) prev.style.display = 'none';
+  const btn = document.getElementById('btnAplicarTudo');
+  if (btn) btn.style.display = 'none';
+
+  showToast(`✅ ${count} funcionário(s) atualizados — ${fmt(totalAplicado)} aplicados na folha!`);
+}
+
+// ── Aplica comissão do Jean na folha ──
+function aplicarComissaoJeanFolha() {
+  const mes = getBonifMes();
+  let totCom = 0;
+  mes.vendas.forEach(v => totCom += calcComissaoJean(v.valor));
+  if (totCom <= 0) { showToast('Nenhuma comissão para aplicar.'); return; }
+
+  // Jean tem id 4
+  const jean = employees.find(e => e.funcao === 'Consultor' && e.ativo !== false);
+  if (!jean) { showToast('Jean não encontrado.'); return; }
+
+  const pay = getEmpPay(jean.id);
+  pay.bon_projeto = (parseFloat(pay.bon_projeto)||0) + totCom;
+  saveEmpPay(jean.id, pay);
+  renderDashboard(); renderEmployees();
+
+  // Esconde o bloco após aplicar
+  const el = document.getElementById('bonif-jean-aplicar');
+  if (el) el.style.display = 'none';
+
+  showToast(`✅ Comissão ${fmt(totCom)} aplicada na folha do Jean!`);
 }
 
 // ── CRUD projetos no perfil ──
@@ -1912,6 +2003,40 @@ function renderBonifMontadores(){
   });
   if(!monts.length)html=`<div style="font-size:13px;color:var(--text3);padding:20px 0">Nenhum montador ativo.</div>`;
   document.getElementById('bonif-montadores-list').innerHTML=html;
+
+  // Calcular preview de bônus e mostrar/esconder botão + preview
+  const previews = [];
+  let totalGeral = 0;
+  monts.forEach(m => {
+    const projs = mes.projetos['emp_'+m.id] || [];
+    const bonif = calcAutoBonifMontador(m, projs);
+    if (bonif.total > 0) {
+      previews.push({ nome: m.nome.split(' ').slice(0,2).join(' '), bonif });
+      totalGeral += bonif.total;
+    }
+  });
+
+  const btnAplicar = document.getElementById('btnAplicarTudo');
+  const prevBox = document.getElementById('bonif-preview-aplicar');
+  const prevRows = document.getElementById('bonif-preview-rows');
+  const prevTotal = document.getElementById('bonif-preview-total');
+
+  if (previews.length > 0) {
+    if (btnAplicar) btnAplicar.style.display = 'inline-flex';
+    if (prevBox) prevBox.style.display = 'block';
+    if (prevRows) prevRows.innerHTML = previews.map(p => `
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(34,197,94,0.12)">
+        <div>
+          <span style="font-size:13px;font-weight:600">${p.nome}</span>
+          <span style="font-size:11px;color:var(--text3);margin-left:8px">${p.bonif.items.map(i=>i.desc).join(' + ')}</span>
+        </div>
+        <span style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--green)">${fmt(p.bonif.total)}</span>
+      </div>`).join('');
+    if (prevTotal) prevTotal.textContent = fmt(totalGeral);
+  } else {
+    if (btnAplicar) btnAplicar.style.display = 'none';
+    if (prevBox) prevBox.style.display = 'none';
+  }
 }
 
 function renderBonifJean(){
@@ -1933,6 +2058,16 @@ function renderBonifJean(){
     </div>`).join('');
   if(!formHtml)formHtml=`<div style="font-size:12px;color:var(--text3);padding:8px 0">Nenhuma venda registrada.</div>`;
   document.getElementById('jean-form-rows').innerHTML=formHtml;
+  // Mostrar/esconder bloco de aplicar comissão Jean
+  const jeanAplicar = document.getElementById('bonif-jean-aplicar');
+  const jeanAplicarVal = document.getElementById('bonif-jean-aplicar-val');
+  if (totCom > 0) {
+    if (jeanAplicar) jeanAplicar.style.display = 'block';
+    if (jeanAplicarVal) jeanAplicarVal.textContent = fmt(totCom);
+  } else {
+    if (jeanAplicar) jeanAplicar.style.display = 'none';
+  }
+
   if(vendas.length){
     const rows=vendas.map(v=>{const val=parseFloat(v.valor)||0;const com=calcComissaoJean(val);return`<tr>
       <td style="font-weight:500">${esc(v.cliente)||'—'}</td>
