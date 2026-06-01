@@ -47,6 +47,17 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); min-
   padding: 12px 24px; display: flex; align-items: center; gap: 12px;
 }
 .topbar-title { font-size: 15px; font-weight: 600; flex: 1; }
+
+/* ── Badge Mês de Referência ── */
+.mes-ref-badge {
+  display: flex; align-items: center; gap: 7px;
+  background: var(--surface); border: 1px solid var(--accent);
+  border-radius: var(--radius-sm); padding: 5px 12px;
+  font-size: 12px; font-weight: 600; color: var(--accent);
+  white-space: nowrap;
+}
+.mes-ref-badge svg { opacity: 0.7; }
+
 .content { padding: 24px; }
 
 .btn {
@@ -110,7 +121,7 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); min-
 .emp-stat-value.red { color: var(--red); }
 
 #detailPanel {
-  position: fixed; right: 0; top: 0; bottom: 0; width: 560px;
+  position: fixed; right: 0; top: 0; bottom: 0; width: 580px;
   background: var(--surface); border-left: 1px solid var(--border);
   z-index: 150; transform: translateX(100%); transition: transform 0.25s;
   overflow-y: auto; display: flex; flex-direction: column;
@@ -123,6 +134,19 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); min-
 }
 .detail-body { padding: 18px 20px; flex: 1; }
 .detail-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
+
+/* ── Tabs do Detail Panel ── */
+.detail-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+.detail-tab {
+  padding: 8px 18px; font-size: 13px; font-weight: 500;
+  cursor: pointer; border: none; background: none; color: var(--text2);
+  border-bottom: 2px solid transparent; margin-bottom: -1px;
+  font-family: var(--font); transition: color 0.15s;
+}
+.detail-tab:hover { color: var(--text); }
+.detail-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.detail-tab-section { display: none; }
+.detail-tab-section.active { display: block; }
 
 .pay-section { margin-bottom: 12px; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
 .pay-section-header { padding: 9px 14px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; display: flex; justify-content: space-between; align-items: center; }
@@ -143,6 +167,20 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); min-
 .pay-value.red { color: var(--red); }
 .pay-value.muted { color: var(--text3); }
 .pay-input { width: 120px; font-size: 12px; padding: 4px 8px; font-family: var(--mono); text-align: right; }
+
+/* ── Botão editar inline para créditos fixos ── */
+.edit-fixed-btn {
+  background: none; border: 1px solid var(--border2); border-radius: 4px;
+  color: var(--text3); cursor: pointer; padding: 2px 6px; font-size: 11px;
+  transition: all 0.15s; line-height: 1.4;
+}
+.edit-fixed-btn:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-dim); }
+.fixed-edit-input {
+  width: 110px; font-size: 12px; padding: 3px 8px;
+  font-family: var(--mono); text-align: right;
+  background: var(--surface); border: 1px solid var(--accent);
+  border-radius: var(--radius-sm); color: var(--green);
+}
 
 .total-row {
   display: flex; justify-content: space-between; align-items: center;
@@ -216,7 +254,7 @@ input[type="number"] { font-family: var(--mono); }
 .month-selector { display: flex; align-items: center; gap: 8px; }
 .month-selector select { font-size: 13px; padding: 6px 10px; width: auto; }
 
-/* ── BONIFICAÇÕES ─────────────────────────── */
+/* ── BONIFICAÇÕES (página principal) ─────── */
 .bonif-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
 .bonif-tab {
   padding: 9px 20px; font-size: 13px; font-weight: 500;
@@ -241,27 +279,13 @@ input[type="number"] { font-family: var(--mono); }
 }
 .mont-name { font-size: 14px; font-weight: 600; }
 .mont-sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
-.mont-badge {
-  margin-left: auto; font-size: 11px; font-weight: 600;
-  padding: 4px 12px; border-radius: 99px;
-}
+.mont-badge { margin-left: auto; font-size: 11px; font-weight: 600; padding: 4px 12px; border-radius: 99px; }
 .mont-badge-ok { background: var(--green-dim); color: var(--green); }
 .mont-badge-warn { background: var(--yellow-dim); color: var(--yellow); }
 
-.proj-grid-header {
-  display: grid;
-  grid-template-columns: 1.4fr 1.2fr 70px 120px 32px;
-  gap: 6px; margin-bottom: 4px;
-}
-.proj-grid-row {
-  display: grid;
-  grid-template-columns: 1.4fr 1.2fr 70px 120px 32px;
-  gap: 6px; margin-bottom: 6px;
-}
-.proj-grid-header div {
-  font-size: 10px; font-weight: 600; color: var(--text3);
-  text-transform: uppercase; letter-spacing: 0.05em; padding: 0 4px;
-}
+.proj-grid-header { display: grid; grid-template-columns: 1.4fr 1.2fr 70px 120px 32px; gap: 6px; margin-bottom: 4px; }
+.proj-grid-row { display: grid; grid-template-columns: 1.4fr 1.2fr 70px 120px 32px; gap: 6px; margin-bottom: 6px; }
+.proj-grid-header div { font-size: 10px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.05em; padding: 0 4px; }
 .proj-input {
   background: var(--surface); border: 1px solid var(--border2);
   border-radius: var(--radius-sm); color: var(--text);
@@ -271,30 +295,44 @@ input[type="number"] { font-family: var(--mono); }
 .proj-input:focus { outline: none; border-color: var(--accent); }
 .proj-input[type=number] { font-family: var(--mono); }
 
-.jean-grid-header {
-  display: grid;
-  grid-template-columns: 1.3fr 0.9fr 1.1fr 130px 32px;
-  gap: 6px; margin-bottom: 4px;
-}
-.jean-grid-row {
-  display: grid;
-  grid-template-columns: 1.3fr 0.9fr 1.1fr 130px 32px;
-  gap: 6px; margin-bottom: 6px;
-}
-.jean-grid-header div {
-  font-size: 10px; font-weight: 600; color: var(--text3);
-  text-transform: uppercase; letter-spacing: 0.05em; padding: 0 4px;
-}
+.jean-grid-header { display: grid; grid-template-columns: 1.3fr 0.9fr 1.1fr 130px 32px; gap: 6px; margin-bottom: 4px; }
+.jean-grid-row { display: grid; grid-template-columns: 1.3fr 0.9fr 1.1fr 130px 32px; gap: 6px; margin-bottom: 6px; }
+.jean-grid-header div { font-size: 10px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.05em; padding: 0 4px; }
 .faixa-ref {
   background: var(--surface); border: 1px solid var(--border);
   border-radius: var(--radius-sm); padding: 10px 14px; margin-top: 14px;
 }
 .faixa-ref-title { font-size: 10px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
 .faixa-pills { display: flex; flex-wrap: wrap; gap: 6px; }
-.faixa-pill {
-  font-size: 11px; padding: 3px 10px; border-radius: 99px;
-  background: var(--surface2); border: 1px solid var(--border); color: var(--text2);
+.faixa-pill { font-size: 11px; padding: 3px 10px; border-radius: 99px; background: var(--surface2); border: 1px solid var(--border); color: var(--text2); }
+
+/* ── Aba Bonificações no perfil do funcionário ── */
+.dp-bonif-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 12px;
 }
+.dp-bonif-month {
+  font-size: 11px; color: var(--text3);
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 3px 10px;
+}
+.dp-proj-row {
+  display: grid; grid-template-columns: 1fr 80px 90px 28px;
+  gap: 6px; margin-bottom: 6px;
+}
+.dp-proj-header {
+  display: grid; grid-template-columns: 1fr 80px 90px 28px;
+  gap: 6px; margin-bottom: 4px;
+}
+.dp-proj-header div { font-size: 10px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.05em; padding: 0 4px; }
+
+/* Sync badge bonif no perfil */
+.bonif-sync-badge {
+  font-size: 10px; padding: 2px 8px; border-radius: 99px;
+  background: var(--green-dim); color: var(--green);
+  font-weight: 600; white-space: nowrap;
+}
+.bonif-sync-badge.pending { background: var(--yellow-dim); color: var(--yellow); }
 
 @media (max-width: 900px) {
   .sidebar { width: 52px; }
@@ -304,6 +342,7 @@ input[type="number"] { font-family: var(--mono); }
   #detailPanel { width: 100%; }
   .proj-grid-header, .proj-grid-row { grid-template-columns: 1fr 1fr 60px 100px 28px; }
   .jean-grid-header, .jean-grid-row { grid-template-columns: 1fr 0.8fr 1fr 110px 28px; }
+  .dp-proj-row, .dp-proj-header { grid-template-columns: 1fr 70px 80px 24px; }
 }
 </style>
 </head>
@@ -346,6 +385,13 @@ input[type="number"] { font-family: var(--mono); }
 <div class="main">
   <div class="topbar">
     <span class="topbar-title" id="pageTitle">Dashboard</span>
+
+    <!-- ✅ Badge do Mês de Referência -->
+    <div class="mes-ref-badge" id="mesRefBadge">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <span id="mesRefLabel">—</span>
+    </div>
+
     <div id="syncStatus" style="font-size:11px;color:var(--text3);font-family:var(--mono)">carregando...</div>
     <button class="btn btn-ghost" style="font-size:12px" onclick="reloadData()">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
@@ -445,8 +491,6 @@ input[type="number"] { font-family: var(--mono); }
 
     <!-- ══════ BONIFICAÇÕES ══════ -->
     <div id="page-bonificacoes" style="display:none">
-
-      <!-- Seletor de mês próprio das bonificações -->
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;padding:12px 16px;background:var(--surface);border:1px solid var(--yellow);border-radius:var(--radius)">
         <div style="font-size:12px;color:var(--text2);line-height:1.5">
           <div style="font-weight:600;color:var(--yellow);font-size:11px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">⚠ Atenção — mês de referência</div>
@@ -459,29 +503,20 @@ input[type="number"] { font-family: var(--mono); }
         </div>
       </div>
 
-      <!-- Resumo geral -->
       <div class="stats-grid" id="bonif-resumo-geral" style="margin-bottom:20px"></div>
 
-      <!-- Tabs -->
       <div class="bonif-tabs">
-        <button class="bonif-tab active" id="btab-montadores" onclick="switchBonifTab('montadores')">
-          ⚒️ Montadores
-        </button>
-        <button class="bonif-tab" id="btab-vendas" onclick="switchBonifTab('vendas')">
-          💼 Jean — Vendas
-        </button>
+        <button class="bonif-tab active" id="btab-montadores" onclick="switchBonifTab('montadores')">⚒️ Montadores</button>
+        <button class="bonif-tab" id="btab-vendas" onclick="switchBonifTab('vendas')">💼 Jean — Vendas</button>
       </div>
 
-      <!-- MONTADORES -->
       <div class="bonif-section active" id="bsec-montadores">
         <div class="stats-grid" id="bonif-mont-stats"></div>
         <div id="bonif-montadores-list"></div>
       </div>
 
-      <!-- JEAN VENDAS -->
       <div class="bonif-section" id="bsec-vendas">
         <div class="stats-grid" id="bonif-jean-stats"></div>
-
         <div class="mont-block">
           <div class="mont-header">
             <div class="mont-avatar" style="background:rgba(168,85,247,0.18);color:var(--purple)">JN</div>
@@ -491,22 +526,11 @@ input[type="number"] { font-family: var(--mono); }
             </div>
             <button class="btn btn-primary btn-sm" onclick="bonifAddVenda()">+ Venda</button>
           </div>
-
-          <!-- Header colunas -->
           <div class="jean-grid-header">
-            <div>Cliente</div>
-            <div>Contrato</div>
-            <div>Ambiente</div>
-            <div>Valor ambiente</div>
-            <div></div>
+            <div>Cliente</div><div>Contrato</div><div>Ambiente</div><div>Valor ambiente</div><div></div>
           </div>
-
           <div id="jean-form-rows"></div>
-
-          <!-- Tabela resumo -->
           <div id="jean-tabela" style="margin-top:16px"></div>
-
-          <!-- Faixas de referência -->
           <div class="faixa-ref">
             <div class="faixa-ref-title">Tabela de comissão</div>
             <div class="faixa-pills">
@@ -519,9 +543,7 @@ input[type="number"] { font-family: var(--mono); }
           </div>
         </div>
       </div>
-
     </div>
-    <!-- fim bonificações -->
 
   </div>
 </div>
@@ -692,8 +714,9 @@ let advances = [];
 let payData = {};
 let bonifData = {};
 let currentMonth = '';
-let bonifCurrentMonth = ''; // mês independente para bonificações
+let bonifCurrentMonth = '';
 let selectedEmpId = null;
+let currentDetailTab = 'folha'; // 'folha' | 'bonificacoes'
 
 // ══════ GOOGLE SHEETS SYNC ═══════════════════════════════
 async function gasCall(params) {
@@ -810,10 +833,18 @@ function initMonths() {
     sel.appendChild(opt);
   }
   currentMonth = now.toISOString().slice(0, 7);
-  // Bonificações: padrão = mês anterior (projetos executados no mês passado)
   const prev = new Date(now.getFullYear(), now.getMonth() - 1, 1);
   bonifCurrentMonth = prev.toISOString().slice(0, 7);
+  updateMesRefBadge();
   initBonifMonthSel();
+}
+
+function updateMesRefBadge() {
+  const el = document.getElementById('mesRefLabel');
+  if (!el) return;
+  const d = new Date(currentMonth + '-15');
+  const label = d.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+  el.textContent = label.charAt(0).toUpperCase() + label.slice(1);
 }
 
 function initBonifMonthSel() {
@@ -828,7 +859,6 @@ function initBonifMonthSel() {
     const opt = document.createElement('option');
     opt.value = key;
     opt.textContent = label.charAt(0).toUpperCase() + label.slice(1);
-    // padrão = mês anterior
     if (i === -1) opt.selected = true;
     sel.appendChild(opt);
   }
@@ -842,6 +872,7 @@ function changeBonifMes() {
 
 function changeMonth() {
   currentMonth = document.getElementById('monthSel').value;
+  updateMesRefBadge();
   renderAll();
 }
 
@@ -868,18 +899,26 @@ function saveEmpPay(empId, data) {
 
 function calcSaldo(emp) {
   const pay = getEmpPay(emp.id);
+  // Créditos fixos: usa override do mês se existir, senão usa cadastro
+  const salario    = pay.fix_salario    !== undefined ? pay.fix_salario    : (emp.salario||0);
+  const sal_familia= pay.fix_sal_familia!== undefined ? pay.fix_sal_familia: (emp.sal_familia||0);
+  const ajuda_custo= pay.fix_ajuda_custo!== undefined ? pay.fix_ajuda_custo: (emp.ajuda_custo||0);
+  const cesta      = pay.fix_cesta      !== undefined ? pay.fix_cesta      : (emp.cesta||0);
+  const gratificacao=pay.fix_gratificacao!==undefined ? pay.fix_gratificacao:(emp.gratificacao||0);
+  const prem_presenca=pay.fix_prem_presenca!==undefined?pay.fix_prem_presenca:(emp.prem_presenca||0);
+
   const creditos = [
-    emp.salario, emp.sal_familia||0, emp.cesta||0,
-    pay.presenca ? (emp.prem_presenca||0) : 0,
-    emp.ajuda_custo||0, emp.gratificacao||0,
+    salario, sal_familia, cesta,
+    pay.presenca ? prem_presenca : 0,
+    ajuda_custo, gratificacao,
     pay.hora_extra||0, pay.hora_extra_noturno||0,
     pay.bon_projeto||0, pay.bon_supervisao||0, pay.bon_meta_equipe||0,
     pay.bon_elpi||0, pay.bon_removedor||0, pay.bon_desempenho||0,
     pay.bon_extra||0, pay.premissao_surpresa||0, pay.descanso_remunerado||0,
   ].reduce((a,b) => a+(parseFloat(b)||0), 0);
+
   const monthAdvs = advances.filter(a => a.empId===emp.id && a.mes===currentMonth);
   const totalAdv = monthAdvs.reduce((s,a) => s+(parseFloat(a.valor)||0), 0);
-  // INSS e Consignado: usa valor do mês (editável) se existir, senão cai no cadastro
   const inss = pay.inss_mes !== undefined ? pay.inss_mes : (emp.inss||0);
   const consig = pay.consignado_mes !== undefined ? pay.consignado_mes : (emp.consignado||0);
   const deducoes = [inss, consig, pay.consignado_extra||0, pay.falta||0].reduce((a,b)=>a+(parseFloat(b)||0),0);
@@ -896,7 +935,7 @@ function renderAll() {
   renderDashboard();
   renderEmployees();
   renderDia20();
-  if (selectedEmpId) openDetail(selectedEmpId);
+  if (selectedEmpId) openDetail(selectedEmpId, currentDetailTab);
 }
 
 function renderDashboard() {
@@ -905,7 +944,7 @@ function renderDashboard() {
     const c = calcSaldo(emp);
     totalFolha+=c.total; totalDed+=c.deducoes; totalAdv+=c.adiantamento; totalSaldo+=c.saldo;
     const sc = c.saldo>=0?'green':'red';
-    rows+=`<tr style="cursor:pointer" onclick="openDetail(${emp.id})">
+    rows+=`<tr style="cursor:pointer" onclick="openDetail(${emp.id},'folha')">
       <td><div style="display:flex;align-items:center;gap:8px">
         <div style="width:28px;height:28px;border-radius:50%;background:${avatarColor(emp.nome)};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0">${initials(emp.nome)}</div>
         <span style="font-weight:500">${emp.nome}</span>
@@ -938,7 +977,7 @@ function renderEmployees() {
   const filtered = employees.filter(e=>e.ativo!==false&&e.nome.toLowerCase().includes(q)&&(!ff||e.funcao===ff));
   document.getElementById('empGrid').innerHTML = filtered.map(emp=>{
     const c=calcSaldo(emp); const col=avatarColor(emp.nome);
-    return `<div class="emp-card" onclick="openDetail(${emp.id})">
+    return `<div class="emp-card" onclick="openDetail(${emp.id},'folha')">
       <div class="emp-header">
         <div class="emp-avatar" style="background:${col};color:#fff">${initials(emp.nome)}</div>
         <div><div class="emp-name">${emp.nome.split(' ').slice(0,3).join(' ')}</div><div class="emp-role">${emp.funcao}${emp.equipe?' · '+emp.equipe:''}</div></div>
@@ -953,45 +992,127 @@ function renderEmployees() {
   }).join('');
 }
 
-function renderAdvances() {
-  const monthAdvs = advances.filter(a=>a.mes===currentMonth);
-  if (!monthAdvs.length) { document.getElementById('advBody').innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:40px">Nenhum adiantamento registrado neste mês.</td></tr>'; return; }
-  document.getElementById('advBody').innerHTML = monthAdvs.map(a=>{
-    const emp=employees.find(e=>e.id===a.empId);
-    return `<tr>
-      <td style="font-family:var(--mono);font-size:12px;color:var(--text3)">${a.data||'—'}</td>
-      <td style="font-weight:500">${emp?.nome.split(' ').slice(0,2).join(' ')||'—'}</td>
-      <td><span class="badge badge-yellow">${a.tipo}</span></td>
-      <td style="font-family:var(--mono);font-weight:600;color:var(--red)">${fmt(a.valor)}</td>
-      <td style="color:var(--text2);font-size:12px">${a.obs||'—'}</td>
-      <td><button class="btn btn-danger btn-sm" onclick="deleteAdv('${a.id}')">✕</button></td>
-    </tr>`;
-  }).join('');
-}
-
 // ══════ DETAIL PANEL ══════════════════════════════════════
-function openDetail(id) {
-  const emp=employees.find(e=>e.id===id); if(!emp) return;
-  selectedEmpId=id;
-  const pay=getEmpPay(id); const c=calcSaldo(emp);
-  const monthAdvs=advances.filter(a=>a.empId===id&&a.mes===currentMonth);
-  document.getElementById('dp-name').textContent=emp.nome;
-  document.getElementById('dp-meta').innerHTML=`
+function openDetail(id, tab) {
+  const emp = employees.find(e=>e.id===id); if(!emp) return;
+  selectedEmpId = id;
+  currentDetailTab = tab || 'folha';
+  const pay = getEmpPay(id);
+  const c = calcSaldo(emp);
+  const col = avatarColor(emp.nome);
+
+  document.getElementById('dp-name').textContent = emp.nome;
+  document.getElementById('dp-meta').innerHTML = `
     <span class="badge badge-blue">${emp.funcao}</span>
     ${emp.equipe?`<span class="badge badge-gray">👥 ${emp.equipe}</span>`:''}
     <span class="badge ${c.saldo>=0?'badge-green':'badge-red'}">${c.saldo>=0?'✓':'⚠'} ${fmt(c.saldo)}</span>
   `;
-  const presLabel=pay.presenca!==false?'✅ Presente':'❌ Faltou';
-  const presBadge=pay.presenca!==false?'badge-green':'badge-red';
-  const rows=(items)=>items.map(([label,val,cls=''])=>`<div class="pay-row"><div class="pay-label">${label}</div><div class="pay-value ${cls}">${fmt(val)}</div></div>`).join('');
-  const editRow=(label,key,val)=>`<div class="pay-row"><div class="pay-label">${label}</div><input class="pay-input" type="number" value="${val||0}" onchange="updatePay(${id},'${key}',this.value)" style="background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text)"></div>`;
-  const advsHtml=monthAdvs.length?monthAdvs.map(a=>`<div class="adv-item"><div class="adv-date">${a.data||''}</div><div class="adv-desc">${a.tipo}</div><div class="adv-val">-${fmt(a.valor)}</div><button class="btn btn-ghost btn-sm" onclick="deleteAdv('${a.id}')" style="padding:2px 6px;font-size:11px">✕</button></div>`).join(''):'<div style="padding:12px 14px;font-size:12px;color:var(--text3)">Nenhum adiantamento este mês</div>';
-  document.getElementById('dp-body').innerHTML=`
-    <div class="pay-section" style="margin-bottom:12px"><div class="pay-section-header blue" style="cursor:pointer" onclick="togglePresenca(${id})"><span>👤 Presença no Mês</span><span class="badge ${presBadge}">${presLabel}</span></div></div>
-    <div class="pay-section" style="margin-bottom:12px">
-      <div class="pay-section-header green"><span>✅ Créditos Fixos</span><span style="font-size:12px">${fmt(emp.salario+(emp.sal_familia||0)+(emp.cesta||0)+(pay.presenca!==false?(emp.prem_presenca||0):0)+(emp.ajuda_custo||0)+(emp.gratificacao||0))}</span></div>
-      ${rows([['Salário Contratual',emp.salario,'green'],...(emp.sal_familia?[['Salário Família',emp.sal_familia,'green']]:[]),(emp.cesta?[['Cesta / Cartão Ticket',emp.cesta,'green']]:[]),...(emp.ajuda_custo?[['Ajuda de Custo',emp.ajuda_custo,'green']]:[]),(emp.gratificacao?[['Gratificação',emp.gratificacao,'green']]:[]),...(pay.presenca!==false&&emp.prem_presenca?[['Premiação por Presença',emp.prem_presenca,'green']]:[])])}
+
+  // ── Tabs no painel ──
+  const isMontador = ['Montador','Gerente de Montagem','Aux. Marceneiro','Marceneiro'].includes(emp.funcao);
+  const isConsultor = emp.funcao === 'Consultor';
+  const hasBonif = isMontador || isConsultor;
+
+  const tabsHtml = `
+    <div class="detail-tabs">
+      <button class="detail-tab ${currentDetailTab==='folha'?'active':''}" onclick="openDetail(${id},'folha')">📋 Folha do Mês</button>
+      <button class="detail-tab ${currentDetailTab==='bonificacoes'?'active':''}" onclick="openDetail(${id},'bonificacoes')">⭐ Bonificações</button>
     </div>
+  `;
+
+  document.getElementById('dp-body').innerHTML = tabsHtml +
+    `<div id="dp-tab-folha" class="detail-tab-section ${currentDetailTab==='folha'?'active':''}"></div>
+     <div id="dp-tab-bonificacoes" class="detail-tab-section ${currentDetailTab==='bonificacoes'?'active':''}"></div>`;
+
+  // Renderiza aba folha
+  renderDetailFolha(emp, pay, c);
+
+  // Renderiza aba bonificações
+  renderDetailBonificacoes(emp);
+
+  document.getElementById('detailPanel').classList.add('open');
+}
+
+// ── Aba Folha (créditos fixos EDITÁVEIS) ──
+function renderDetailFolha(emp, pay, c) {
+  const id = emp.id;
+  const monthAdvs = advances.filter(a=>a.empId===id&&a.mes===currentMonth);
+
+  // Créditos fixos com valor do mês ou cadastro
+  const salario     = pay.fix_salario     !== undefined ? pay.fix_salario     : emp.salario;
+  const sal_familia = pay.fix_sal_familia  !== undefined ? pay.fix_sal_familia  : (emp.sal_familia||0);
+  const ajuda_custo = pay.fix_ajuda_custo  !== undefined ? pay.fix_ajuda_custo  : (emp.ajuda_custo||0);
+  const cesta       = pay.fix_cesta        !== undefined ? pay.fix_cesta        : (emp.cesta||0);
+  const gratificacao= pay.fix_gratificacao !== undefined ? pay.fix_gratificacao : (emp.gratificacao||0);
+  const prem_pres   = pay.fix_prem_presenca!== undefined ? pay.fix_prem_presenca: (emp.prem_presenca||0);
+
+  const presLabel = pay.presenca!==false ? '✅ Presente' : '❌ Faltou';
+  const presBadge = pay.presenca!==false ? 'badge-green' : 'badge-red';
+
+  // Função para linha fixa editável
+  const fixedRow = (label, field, val, baseVal) => {
+    const isEditing = pay['fix_editing_'+field];
+    const hasOverride = pay['fix_'+field] !== undefined;
+    return `<div class="pay-row" id="frow_${field}_${id}">
+      <div class="pay-label">
+        ${label}
+        ${hasOverride ? `<span style="font-size:10px;color:var(--yellow);margin-left:4px">✎ editado</span>` : ''}
+      </div>
+      ${isEditing
+        ? `<input class="fixed-edit-input" type="number" id="fixinp_${field}_${id}" value="${val}"
+             onblur="saveFixedField(${id},'${field}',this.value)"
+             onkeydown="if(event.key==='Enter')saveFixedField(${id},'${field}',this.value);if(event.key==='Escape')cancelFixedEdit(${id},'${field}')">
+           <button class="edit-fixed-btn" onclick="cancelFixedEdit(${id},'${field}')" title="Cancelar">✕</button>
+           ${hasOverride?`<button class="edit-fixed-btn" onclick="resetFixedField(${id},'${field}')" title="Voltar ao padrão (${fmt(baseVal)})" style="color:var(--yellow);border-color:var(--yellow)">↺</button>`:''}
+          `
+        : `<div class="pay-value green">${fmt(val)}</div>
+           <button class="edit-fixed-btn" onclick="startFixedEdit(${id},'${field}')" title="Editar este mês">✎</button>
+           ${hasOverride?`<button class="edit-fixed-btn" onclick="resetFixedField(${id},'${field}')" title="Voltar ao padrão (${fmt(baseVal)})" style="color:var(--yellow)">↺</button>`:''}
+          `
+      }
+    </div>`;
+  };
+
+  const editRow = (label, key, val) => `<div class="pay-row">
+    <div class="pay-label">${label}</div>
+    <input class="pay-input" type="number" value="${val||0}" onchange="updatePay(${id},'${key}',this.value)"
+      style="background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text)">
+  </div>`;
+
+  const advsHtml = monthAdvs.length
+    ? monthAdvs.map(a=>`<div class="adv-item">
+        <div class="adv-date">${a.data||''}</div>
+        <div class="adv-desc">${a.tipo}</div>
+        <div class="adv-val">-${fmt(a.valor)}</div>
+        <button class="btn btn-ghost btn-sm" onclick="deleteAdv('${a.id}')" style="padding:2px 6px;font-size:11px">✕</button>
+      </div>`).join('')
+    : '<div style="padding:12px 14px;font-size:12px;color:var(--text3)">Nenhum adiantamento este mês</div>';
+
+  const totalFixo = salario + sal_familia + (pay.presenca!==false?prem_pres:0) + ajuda_custo + gratificacao + cesta;
+
+  document.getElementById('dp-tab-folha').innerHTML = `
+    <div class="pay-section" style="margin-bottom:12px">
+      <div class="pay-section-header blue" style="cursor:pointer" onclick="togglePresenca(${id})">
+        <span>👤 Presença no Mês</span><span class="badge ${presBadge}">${presLabel}</span>
+      </div>
+    </div>
+
+    <div class="pay-section" style="margin-bottom:12px">
+      <div class="pay-section-header green">
+        <span>✅ Créditos Fixos</span>
+        <span style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:10px;color:var(--green);opacity:0.7">✎ clique no lápis para editar</span>
+          <span style="font-size:12px">${fmt(totalFixo)}</span>
+        </span>
+      </div>
+      ${fixedRow('Salário Contratual','salario', salario, emp.salario)}
+      ${sal_familia > 0 || pay.fix_sal_familia !== undefined ? fixedRow('Salário Família','sal_familia', sal_familia, emp.sal_familia||0) : ''}
+      ${cesta > 0 || pay.fix_cesta !== undefined ? fixedRow('Cesta / Cartão Ticket','cesta', cesta, emp.cesta||0) : ''}
+      ${ajuda_custo > 0 || pay.fix_ajuda_custo !== undefined ? fixedRow('Ajuda de Custo','ajuda_custo', ajuda_custo, emp.ajuda_custo||0) : ''}
+      ${gratificacao > 0 || pay.fix_gratificacao !== undefined ? fixedRow('Gratificação','gratificacao', gratificacao, emp.gratificacao||0) : ''}
+      ${(prem_pres > 0 || pay.fix_prem_presenca !== undefined) && pay.presenca!==false ? fixedRow('Premiação por Presença','prem_presenca', prem_pres, emp.prem_presenca||0) : ''}
+    </div>
+
     <div class="pay-section" style="margin-bottom:12px">
       <div class="pay-section-header purple"><span>⭐ Variáveis do Mês</span></div>
       ${editRow('Hora Extra (R$)','hora_extra',pay.hora_extra)}
@@ -1004,42 +1125,349 @@ function openDetail(id) {
       ${editRow('Bonif. Removedor (R$)','bon_removedor',pay.bon_removedor)}
       ${editRow('Bonif. Extra / Surpresa (R$)','bon_extra',pay.bon_extra)}
     </div>
+
     <div class="pay-section" style="margin-bottom:12px">
       <div class="pay-section-header red"><span>❌ Deduções</span><span style="font-size:12px">-${fmt(c.deducoes)}</span></div>
       <div class="pay-row">
         <div class="pay-label">INSS <span style="font-size:10px;color:var(--text3)">(padrão: ${fmt(emp.inss||0)})</span></div>
-        <input class="pay-input" type="number" value="${pay.inss_mes !== undefined ? pay.inss_mes : (emp.inss||0)}" onchange="updatePay(${id},'inss_mes',this.value)" style="background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--red)">
+        <input class="pay-input" type="number" value="${pay.inss_mes !== undefined ? pay.inss_mes : (emp.inss||0)}" onchange="updatePay(${id},'inss_mes',this.value)"
+          style="background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--red)">
       </div>
       <div class="pay-row">
         <div class="pay-label">Consignado Fixo <span style="font-size:10px;color:var(--text3)">(padrão: ${fmt(emp.consignado||0)})</span></div>
-        <input class="pay-input" type="number" value="${pay.consignado_mes !== undefined ? pay.consignado_mes : (emp.consignado||0)}" onchange="updatePay(${id},'consignado_mes',this.value)" style="background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--red)">
+        <input class="pay-input" type="number" value="${pay.consignado_mes !== undefined ? pay.consignado_mes : (emp.consignado||0)}" onchange="updatePay(${id},'consignado_mes',this.value)"
+          style="background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--red)">
       </div>
       ${editRow('Consignado Extra / Parcela (R$)','consignado_extra',pay.consignado_extra)}
       ${editRow('Desconto Falta / DSR (R$)','falta',pay.falta)}
     </div>
+
     <div class="pay-section" style="margin-bottom:12px">
-      <div class="pay-section-header yellow"><span>💳 Adiantamentos — ${fmt(c.adiantamento)}</span><button class="btn btn-ghost btn-sm" onclick="openAddAdvEmp(${id})" style="font-size:11px;padding:3px 8px">+ Add</button></div>
+      <div class="pay-section-header yellow">
+        <span>💳 Adiantamentos — ${fmt(c.adiantamento)}</span>
+        <button class="btn btn-ghost btn-sm" onclick="openAddAdvEmp(${id})" style="font-size:11px;padding:3px 8px">+ Add</button>
+      </div>
       ${advsHtml}
     </div>
+
     <div class="total-row">
-      <div><div class="total-label">Saldo Final</div><div style="font-size:11px;color:var(--text3)">Total ${fmt(c.total)} − Deduções ${fmt(c.deducoes)} − Adiant. ${fmt(c.adiantamento)}</div></div>
+      <div>
+        <div class="total-label">Saldo Final</div>
+        <div style="font-size:11px;color:var(--text3)">Total ${fmt(c.total)} − Deduções ${fmt(c.deducoes)} − Adiant. ${fmt(c.adiantamento)}</div>
+      </div>
       <div class="total-value" style="color:${c.saldo>=0?'var(--green)':'var(--red)'}">${fmt(c.saldo)}</div>
     </div>
-    ${emp.pix?`<div style="margin-top:8px;font-size:12px;color:var(--text3)">PIX: ${emp.pix}</div>`:''}
-    ${emp.obs?`<div style="margin-top:10px;padding:10px 12px;background:var(--surface2);border-radius:var(--radius-sm);font-size:12px;color:var(--text2)">${emp.obs}</div>`:''}
+    ${emp.pix ? `<div style="margin-top:8px;font-size:12px;color:var(--text3)">PIX: ${emp.pix}</div>` : ''}
+    ${emp.obs ? `<div style="margin-top:10px;padding:10px 12px;background:var(--surface2);border-radius:var(--radius-sm);font-size:12px;color:var(--text2)">${emp.obs}</div>` : ''}
     <div style="margin-top:16px;display:flex;gap:8px;justify-content:flex-end">
       <button class="btn btn-ghost btn-sm" onclick="openEditEmployee(${id})">✏️ Editar Ficha</button>
       <button class="btn btn-danger btn-sm" onclick="removeEmployee(${id})">🗑 Remover</button>
     </div>
   `;
-  document.getElementById('detailPanel').classList.add('open');
+
+  // Foca no input se estiver editando
+  Object.keys(pay).forEach(k => {
+    if (k.startsWith('fix_editing_') && pay[k]) {
+      const field = k.replace('fix_editing_','');
+      const inp = document.getElementById(`fixinp_${field}_${id}`);
+      if (inp) { inp.focus(); inp.select(); }
+    }
+  });
+}
+
+// ── Edição inline de créditos fixos ──
+function startFixedEdit(empId, field) {
+  const pay = getEmpPay(empId);
+  pay['fix_editing_'+field] = true;
+  payData[currentMonth][empId] = pay;
+  localStorage.setItem(PAY_KEY, JSON.stringify(payData));
+  const emp = employees.find(e=>e.id===empId);
+  renderDetailFolha(emp, pay, calcSaldo(emp));
+  setTimeout(()=>{ const inp=document.getElementById(`fixinp_${field}_${empId}`); if(inp){inp.focus();inp.select();} },50);
+}
+
+function saveFixedField(empId, field, val) {
+  const pay = getEmpPay(empId);
+  pay['fix_'+field] = parseFloat(val)||0;
+  delete pay['fix_editing_'+field];
+  saveEmpPay(empId, pay);
+  const emp = employees.find(e=>e.id===empId);
+  renderDetailFolha(emp, pay, calcSaldo(emp));
+  renderDashboard(); renderEmployees();
+  showToast('Valor atualizado para este mês!');
+}
+
+function cancelFixedEdit(empId, field) {
+  const pay = getEmpPay(empId);
+  delete pay['fix_editing_'+field];
+  payData[currentMonth][empId] = pay;
+  localStorage.setItem(PAY_KEY, JSON.stringify(payData));
+  const emp = employees.find(e=>e.id===empId);
+  renderDetailFolha(emp, pay, calcSaldo(emp));
+}
+
+function resetFixedField(empId, field) {
+  const pay = getEmpPay(empId);
+  delete pay['fix_'+field];
+  delete pay['fix_editing_'+field];
+  saveEmpPay(empId, pay);
+  const emp = employees.find(e=>e.id===empId);
+  renderDetailFolha(emp, pay, calcSaldo(emp));
+  renderDashboard(); renderEmployees();
+  showToast('Valor resetado para o padrão do cadastro.');
+}
+
+// ── Aba Bonificações no perfil do funcionário ──
+function renderDetailBonificacoes(emp) {
+  const container = document.getElementById('dp-tab-bonificacoes');
+  if (!container) return;
+
+  const isMontador = ['Montador','Gerente de Montagem','Aux. Marceneiro','Marceneiro'].includes(emp.funcao);
+  const isConsultor = emp.funcao === 'Consultor';
+
+  if (!isMontador && !isConsultor) {
+    container.innerHTML = `<div style="padding:24px 0;text-align:center;color:var(--text3);font-size:13px">
+      Bonificações por projeto não se aplicam a esta função.<br>
+      <span style="font-size:11px">Use os campos variáveis na aba Folha do Mês.</span>
+    </div>`;
+    return;
+  }
+
+  // Mês das bonificações (usa bonifCurrentMonth)
+  const mesKey = bonifCurrentMonth || currentMonth;
+  const d = new Date(mesKey+'-15');
+  const mesLabel = d.toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
+  if (!bonifData[mesKey]) bonifData[mesKey] = { projetos:{}, vendas:[] };
+  const mes = bonifData[mesKey];
+
+  if (isMontador) {
+    const key = 'emp_'+emp.id;
+    if (!mes.projetos) mes.projetos = {};
+    if (!mes.projetos[key]) mes.projetos[key] = [];
+    const projs = mes.projetos[key];
+    const soma = projs.reduce((a,p)=>a+(parseFloat(p.valor)||0),0);
+    const cnt = projs.length;
+
+    // Calcula bônus automático baseado nas obs do funcionário
+    const autoBonif = calcAutoBonifMontador(emp, projs);
+
+    const projRows = projs.map((p,i) => `
+      <div class="dp-proj-row">
+        <input class="proj-input" value="${esc(p.cliente)}" placeholder="Cliente / projeto"
+          oninput="dpUpdateProjeto(${emp.id},${i},'cliente',this.value)">
+        <input class="proj-input" type="number" value="${p.m2||''}" placeholder="m²"
+          oninput="dpUpdateProjeto(${emp.id},${i},'m2',this.value)">
+        <input class="proj-input" type="number" value="${p.valor||''}" placeholder="Valor R$"
+          oninput="dpUpdateProjeto(${emp.id},${i},'valor',this.value)">
+        <button class="btn btn-danger btn-sm" onclick="dpDelProjeto(${emp.id},${i})" style="padding:3px 6px">✕</button>
+      </div>`).join('') || `<div style="font-size:12px;color:var(--text3);padding:8px 0">Clique em "+ Projeto" para adicionar.</div>`;
+
+    container.innerHTML = `
+      <div class="dp-bonif-header">
+        <div>
+          <div style="font-size:13px;font-weight:600;color:var(--text)">Projetos — ${mesLabel.charAt(0).toUpperCase()+mesLabel.slice(1)}</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">${cnt} projeto(s) · ${fmt(soma)}</div>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="dpAddProjeto(${emp.id})">+ Projeto</button>
+      </div>
+
+      <div class="dp-proj-header">
+        <div>Cliente / Projeto</div><div>m²</div><div>Valor R$</div><div></div>
+      </div>
+      <div id="dp-proj-rows-${emp.id}">${projRows}</div>
+
+      ${autoBonif.total > 0 ? `
+      <div style="margin-top:14px;padding:12px 14px;background:rgba(34,197,94,0.08);border:1px solid var(--green);border-radius:var(--radius-sm)">
+        <div style="font-size:11px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">
+          💰 Bônus calculado automaticamente
+        </div>
+        ${autoBonif.items.map(item=>`
+          <div style="display:flex;justify-content:space-between;font-size:12px;padding:3px 0;border-bottom:1px solid rgba(34,197,94,0.15)">
+            <span style="color:var(--text2)">${item.desc}</span>
+            <span style="font-family:var(--mono);color:var(--green);font-weight:600">${fmt(item.val)}</span>
+          </div>`).join('')}
+        <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700;margin-top:8px">
+          <span>Total Bonificação</span>
+          <span style="font-family:var(--mono);color:var(--green)">${fmt(autoBonif.total)}</span>
+        </div>
+        <button class="btn btn-primary" style="width:100%;margin-top:10px;justify-content:center;font-size:12px" onclick="aplicarBonifNaFolha(${emp.id},${autoBonif.total})">
+          ✅ Aplicar na Folha do Mês
+        </button>
+      </div>` : cnt > 0 ? `
+      <div style="margin-top:12px;padding:10px 12px;background:var(--surface2);border-radius:var(--radius-sm);font-size:12px;color:var(--text3)">
+        Nenhum bônus automático calculado pelas regras do cadastro.
+        <br>Use a aba Folha do Mês para lançar manualmente.
+      </div>` : ''}
+
+      <div style="margin-top:14px;padding:10px 12px;background:var(--surface2);border-radius:var(--radius-sm);font-size:11px;color:var(--text3)">
+        <strong style="color:var(--text2)">Regras:</strong> ${esc(emp.obs||'Sem regras cadastradas. Edite a ficha para adicionar.')}
+      </div>
+    `;
+  }
+
+  if (isConsultor) {
+    if (!mes.vendas) mes.vendas = [];
+    const vendas = mes.vendas;
+    let totVal=0, totCom=0;
+    vendas.forEach(v => { totVal+=parseFloat(v.valor)||0; totCom+=calcComissaoJean(v.valor); });
+
+    const formRows = vendas.map((v,i) => `
+      <div class="jean-grid-row">
+        <input class="proj-input" value="${esc(v.cliente)}" placeholder="Cliente"
+          oninput="bonifUpdateVenda(${i},'cliente',this.value);renderDetailBonificacoes(employees.find(e=>e.id===${emp.id}))">
+        <input class="proj-input" value="${esc(v.contrato)}" placeholder="Nº contrato"
+          oninput="bonifUpdateVenda(${i},'contrato',this.value)">
+        <input class="proj-input" value="${esc(v.ambiente)}" placeholder="Ambiente(s)"
+          oninput="bonifUpdateVenda(${i},'ambiente',this.value)">
+        <input class="proj-input" type="number" value="${v.valor||''}" placeholder="Valor R$"
+          oninput="bonifUpdateVenda(${i},'valor',this.value);dpUpdateJeanStats(${emp.id})">
+        <button class="btn btn-danger btn-sm" onclick="bonifDelVenda(${i});renderDetailBonificacoes(employees.find(e=>e.id===${emp.id}))" style="padding:3px 6px">✕</button>
+      </div>`).join('') || `<div style="font-size:12px;color:var(--text3);padding:8px 0">Nenhuma venda. Clique em "+ Venda".</div>`;
+
+    container.innerHTML = `
+      <div class="dp-bonif-header">
+        <div>
+          <div style="font-size:13px;font-weight:600">Vendas — ${mesLabel.charAt(0).toUpperCase()+mesLabel.slice(1)}</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">${vendas.length} venda(s) · Comissão: ${fmt(totCom)}</div>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="bonifAddVenda();renderDetailBonificacoes(employees.find(e=>e.id===${emp.id}))">+ Venda</button>
+      </div>
+
+      <div class="jean-grid-header" style="margin-top:8px">
+        <div>Cliente</div><div>Contrato</div><div>Ambiente</div><div>Valor R$</div><div></div>
+      </div>
+      ${formRows}
+
+      <div id="dp-jean-stats-${emp.id}" style="margin-top:12px"></div>
+
+      ${totCom > 0 ? `
+      <div style="margin-top:12px;padding:12px 14px;background:rgba(34,197,94,0.08);border:1px solid var(--green);border-radius:var(--radius-sm)">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div style="font-size:11px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:.05em">Comissão calculada</div>
+            <div style="font-size:20px;font-weight:700;font-family:var(--mono);color:var(--green);margin-top:4px">${fmt(totCom)}</div>
+          </div>
+          <button class="btn btn-primary" onclick="aplicarBonifNaFolha(${emp.id},${totCom})">✅ Aplicar na Folha</button>
+        </div>
+      </div>` : ''}
+
+      <div class="faixa-ref" style="margin-top:14px">
+        <div class="faixa-ref-title">Tabela de comissão</div>
+        <div class="faixa-pills">
+          <span class="faixa-pill">R$160k–199.999 → 1,1%</span>
+          <span class="faixa-pill">R$200k–249.999 → 1,2%</span>
+          <span class="faixa-pill">R$250k–299.999 → 1,3%</span>
+          <span class="faixa-pill">R$300k–349.999 → 1,4%</span>
+          <span class="faixa-pill">A partir de R$350k → 1,5%</span>
+        </div>
+      </div>
+    `;
+  }
+}
+
+// ── Calcula bônus automático por montador ──
+function calcAutoBonifMontador(emp, projs) {
+  const cnt = projs.length;
+  const items = [];
+  let total = 0;
+  const obs = (emp.obs||'').toLowerCase();
+
+  // Detecta valor por projeto nas obs
+  const matchProj = obs.match(/r\$\s*(\d+)[\s,]?\/?proj/);
+  if (matchProj) {
+    const valPorProj = parseFloat(matchProj[1]);
+    if (cnt > 0) {
+      const subtotal = cnt * valPorProj;
+      items.push({ desc: `${cnt} projeto(s) × R$ ${valPorProj}`, val: subtotal });
+      total += subtotal;
+    }
+  }
+
+  // Bônus extra a cada 10 projetos
+  if (obs.includes('10 projeto') || obs.includes('10 proj')) {
+    const matchExtra = obs.match(/r\$\s*(\d+)\s*extra/);
+    if (matchExtra && cnt >= 10) {
+      const extras = Math.floor(cnt / 10);
+      const val = extras * parseFloat(matchExtra[1]);
+      items.push({ desc: `Bônus extra (${extras}× R$ ${matchExtra[1]})`, val });
+      total += val;
+    }
+  }
+
+  return { total, items };
+}
+
+// ── Aplica bonificação calculada na folha do mês ──
+function aplicarBonifNaFolha(empId, valor) {
+  const pay = getEmpPay(empId);
+  const anterior = pay.bon_projeto || 0;
+  pay.bon_projeto = anterior + valor;
+  saveEmpPay(empId, pay);
+  renderDashboard(); renderEmployees();
+  const emp = employees.find(e=>e.id===empId);
+  renderDetailFolha(emp, getEmpPay(empId), calcSaldo(emp));
+  showToast(`${fmt(valor)} adicionado à Bonif. de Projeto na folha!`);
+}
+
+// ── CRUD projetos no perfil ──
+function dpAddProjeto(empId) {
+  const mes = getBonifMes();
+  const key = 'emp_'+empId;
+  if (!mes.projetos[key]) mes.projetos[key] = [];
+  mes.projetos[key].push({ cliente:'', m2:'', valor:'' });
+  saveBonif();
+  const emp = employees.find(e=>e.id===empId);
+  renderDetailBonificacoes(emp);
+}
+
+function dpDelProjeto(empId, idx) {
+  const mes = getBonifMes();
+  const key = 'emp_'+empId;
+  mes.projetos[key].splice(idx, 1);
+  saveBonif();
+  const emp = employees.find(e=>e.id===empId);
+  renderDetailBonificacoes(emp);
+}
+
+function dpUpdateProjeto(empId, idx, field, val) {
+  const mes = getBonifMes();
+  const key = 'emp_'+empId;
+  if (!mes.projetos[key]) mes.projetos[key] = [];
+  mes.projetos[key][idx][field] = val;
+  saveBonif();
+  // Atualiza stats sem re-render total
+  const projs = mes.projetos[key];
+  const cnt = projs.length;
+  const soma = projs.reduce((a,p)=>a+(parseFloat(p.valor)||0),0);
+  const emp = employees.find(e=>e.id===empId);
+  const autoBonif = calcAutoBonifMontador(emp, projs);
+  // Atualiza subtítulo
+  const header = document.querySelector(`#dp-tab-bonificacoes .dp-bonif-header div:first-child div:last-child`);
+  if (header) header.textContent = `${cnt} projeto(s) · ${fmt(soma)}`;
+  if (field === 'valor') {
+    // Re-render bônus automático
+    const emp2 = employees.find(e=>e.id===empId);
+    renderDetailBonificacoes(emp2);
+  }
+}
+
+function dpUpdateJeanStats(empId) {
+  const mes = getBonifMes();
+  let totVal=0, totCom=0;
+  (mes.vendas||[]).forEach(v => { totVal+=parseFloat(v.valor)||0; totCom+=calcComissaoJean(v.valor); });
+  const el = document.getElementById(`dp-jean-stats-${empId}`);
+  if (el) el.innerHTML = totVal > 0 ? `
+    <div style="display:flex;gap:12px;font-size:12px">
+      <span style="color:var(--text3)">Volume: <strong style="color:var(--text);font-family:var(--mono)">${fmt(totVal)}</strong></span>
+      <span style="color:var(--text3)">Faixa: <strong style="color:var(--yellow)">${pctComissaoJean(totVal)}</strong></span>
+    </div>` : '';
 }
 
 function closeDetail() { document.getElementById('detailPanel').classList.remove('open'); selectedEmpId=null; }
 
 function togglePresenca(empId) {
   const pay=getEmpPay(empId); pay.presenca=!pay.presenca;
-  saveEmpPay(empId,pay); openDetail(empId); renderAll();
+  saveEmpPay(empId,pay); openDetail(empId, currentDetailTab); renderAll();
 }
 
 function updatePay(empId,key,val) {
@@ -1116,7 +1544,7 @@ function saveAdv() {
   if(!valor||valor<=0){showToast('Informe o valor');return;}
   advances.push({id:Date.now().toString(),empId,mes:currentMonth,data:document.getElementById('adv_data').value,tipo:document.getElementById('adv_tipo').value,valor,obs:document.getElementById('adv_obs').value.trim()});
   save(); closeModal('modalAdv'); renderAll();
-  if(selectedEmpId===empId)openDetail(empId);
+  if(selectedEmpId===empId)openDetail(empId,currentDetailTab);
   showToast('Adiantamento registrado!');
 }
 
@@ -1124,14 +1552,15 @@ function deleteAdv(advId) {
   if(!confirm('Remover este adiantamento?'))return;
   advances=advances.filter(a=>a.id!==advId);
   save(); renderAll();
-  if(selectedEmpId)openDetail(selectedEmpId);
+  if(selectedEmpId)openDetail(selectedEmpId,currentDetailTab);
   showToast('Removido.');
 }
 
 // ══════ UTILS ═════════════════════════════════════════════
 function closeModal(id){document.getElementById(id).classList.remove('open');}
+function esc(s){return String(s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
-const pageTitles={dashboard:'Dashboard',funcionarios:'Funcionários',dia20:'Dia 20 — Adiantamentos',bonificacoes:'Bonificações & Comissões'};
+const pageTitles={dashboard:'Dashboard',funcionarios:'Funcionários',adiantamentos:'Adiantamentos',dia20:'Dia 20 — Adiantamentos',bonificacoes:'Bonificações & Comissões'};
 function showPage(name){
   ['dashboard','funcionarios','adiantamentos','dia20','bonificacoes'].forEach(p=>{
     const el=document.getElementById('page-'+p);
@@ -1270,217 +1699,155 @@ function lancarVariavel(){
   saveEmpPay(empId,pay);document.getElementById('lanc_valor').value='';renderAll();showToast('Lançado!');
 }
 
-// ══════ BONIFICAÇÕES ══════════════════════════════════════
-
-// Montadores para bonificações: dinâmico, baseado nos funcionários ativos
-
-// Montadores para bonificações: dinâmico, baseado nos funcionários ativos
+// ══════ BONIFICAÇÕES (página principal) ═══════════════════
 function getBonifMontadores() {
   return employees.filter(e =>
     e.ativo !== false &&
-    (e.funcao === 'Montador' || e.funcao === 'Gerente de Montagem' || e.funcao === 'Aux. Marceneiro')
+    (e.funcao==='Montador'||e.funcao==='Gerente de Montagem'||e.funcao==='Aux. Marceneiro'||e.funcao==='Marceneiro')
   );
 }
 
 function getBonifMes() {
   const k = bonifCurrentMonth || currentMonth;
-  if (!bonifData[k]) bonifData[k] = { projetos: {}, vendas: [] };
+  if (!bonifData[k]) bonifData[k] = { projetos:{}, vendas:[] };
   if (!bonifData[k].projetos) bonifData[k].projetos = {};
   if (!bonifData[k].vendas) bonifData[k].vendas = [];
   getBonifMontadores().forEach(m => {
-    const key = 'emp_' + m.id;
-    if (!bonifData[k].projetos[key])
-      bonifData[k].projetos[key] = [];
+    const key = 'emp_'+m.id;
+    if (!bonifData[k].projetos[key]) bonifData[k].projetos[key] = [];
   });
   return bonifData[k];
 }
 
 function calcComissaoJean(val) {
-  val = parseFloat(val) || 0;
-  if (val >= 350000) return val * 0.015;
-  if (val >= 300000) return val * 0.014;
-  if (val >= 250000) return val * 0.013;
-  if (val >= 200000) return val * 0.012;
-  if (val >= 160000) return val * 0.011;
+  val=parseFloat(val)||0;
+  if(val>=350000)return val*0.015;
+  if(val>=300000)return val*0.014;
+  if(val>=250000)return val*0.013;
+  if(val>=200000)return val*0.012;
+  if(val>=160000)return val*0.011;
   return 0;
 }
-
 function pctComissaoJean(val) {
-  val = parseFloat(val) || 0;
-  if (val >= 350000) return '1,5%';
-  if (val >= 300000) return '1,4%';
-  if (val >= 250000) return '1,3%';
-  if (val >= 200000) return '1,2%';
-  if (val >= 160000) return '1,1%';
+  val=parseFloat(val)||0;
+  if(val>=350000)return '1,5%';
+  if(val>=300000)return '1,4%';
+  if(val>=250000)return '1,3%';
+  if(val>=200000)return '1,2%';
+  if(val>=160000)return '1,1%';
   return '—';
 }
 
 function switchBonifTab(sec) {
-  ['montadores','vendas'].forEach(s => {
-    document.getElementById('bsec-'+s).classList.toggle('active', s===sec);
-    document.getElementById('btab-'+s).classList.toggle('active', s===sec);
+  ['montadores','vendas'].forEach(s=>{
+    document.getElementById('bsec-'+s).classList.toggle('active',s===sec);
+    document.getElementById('btab-'+s).classList.toggle('active',s===sec);
   });
 }
 
 function renderBonificacoes() {
-  const mes = getBonifMes();
-  const monts = getBonifMontadores();
-
-  let totProj=0, totValM=0;
-  monts.forEach(m => {
-    (mes.projetos['emp_'+m.id]||[]).forEach(p => { totProj++; totValM+=parseFloat(p.valor)||0; });
-  });
+  const mes=getBonifMes();
+  const monts=getBonifMontadores();
+  let totProj=0,totValM=0;
+  monts.forEach(m=>{(mes.projetos['emp_'+m.id]||[]).forEach(p=>{totProj++;totValM+=parseFloat(p.valor)||0;});});
   let totJeanCom=0;
-  mes.vendas.forEach(v => totJeanCom+=calcComissaoJean(v.valor));
-
-  document.getElementById('bonif-resumo-geral').innerHTML = `
+  mes.vendas.forEach(v=>totJeanCom+=calcComissaoJean(v.valor));
+  document.getElementById('bonif-resumo-geral').innerHTML=`
     <div class="stat-card"><div class="stat-label">Projetos (montadores)</div><div class="stat-value blue">${totProj}</div><div class="stat-sub">no mês</div></div>
     <div class="stat-card"><div class="stat-label">Valor total projetos</div><div class="stat-value green">${fmt(totValM)}</div></div>
     <div class="stat-card"><div class="stat-label">Vendas Jean</div><div class="stat-value" style="color:var(--purple)">${mes.vendas.length}</div></div>
     <div class="stat-card"><div class="stat-label">Comissão Jean</div><div class="stat-value yellow">${fmt(totJeanCom)}</div></div>
   `;
-
   renderBonifMontadores();
   renderBonifJean();
 }
 
-function renderBonifMontadores() {
-  const mes = getBonifMes();
-  const monts = getBonifMontadores();
-  let totProj=0, totValM=0;
-  monts.forEach(m => {
-    (mes.projetos['emp_'+m.id]||[]).forEach(p => { totProj++; totValM+=parseFloat(p.valor)||0; });
-  });
-
-  document.getElementById('bonif-mont-stats').innerHTML = `
+function renderBonifMontadores(){
+  const mes=getBonifMes();const monts=getBonifMontadores();
+  let totProj=0,totValM=0;
+  monts.forEach(m=>{(mes.projetos['emp_'+m.id]||[]).forEach(p=>{totProj++;totValM+=parseFloat(p.valor)||0;});});
+  document.getElementById('bonif-mont-stats').innerHTML=`
     <div class="stat-card"><div class="stat-label">Total de projetos</div><div class="stat-value blue">${totProj}</div></div>
     <div class="stat-card"><div class="stat-label">Valor total</div><div class="stat-value green">${fmt(totValM)}</div></div>
     <div class="stat-card"><div class="stat-label">Com projetos</div><div class="stat-value" style="color:var(--purple)">${monts.filter(m=>(mes.projetos['emp_'+m.id]||[]).length>0).length} / ${monts.length}</div></div>
   `;
-
-  let html = '';
-  monts.forEach(m => {
-    const key = 'emp_' + m.id;
-    const projs = mes.projetos[key] || [];
-    const cnt = projs.length;
-    const soma = projs.reduce((a,p)=>a+(parseFloat(p.valor)||0),0);
-    const badgeCls = cnt>=10 ? 'mont-badge-ok' : 'mont-badge-warn';
-    const badgeTxt = cnt>=10 ? `${cnt} proj. ✓` : `${cnt} / 10`;
-    const col = avatarColor(m.nome);
-    const ini = initials(m.nome);
-
-    let rows = projs.map((p,i) => `
+  let html='';
+  monts.forEach(m=>{
+    const key='emp_'+m.id;const projs=mes.projetos[key]||[];
+    const cnt=projs.length;const soma=projs.reduce((a,p)=>a+(parseFloat(p.valor)||0),0);
+    const badgeCls=cnt>=10?'mont-badge-ok':'mont-badge-warn';
+    const badgeTxt=cnt>=10?`${cnt} proj. ✓`:`${cnt} / 10`;
+    const col=avatarColor(m.nome);const ini=initials(m.nome);
+    let rows=projs.map((p,i)=>`
       <div class="proj-grid-row">
-        <input class="proj-input" value="${esc(p.cliente)}" placeholder="Nome do cliente"
-          oninput="bonifUpdateProjeto(${m.id},${i},'cliente',this.value)">
-        <input class="proj-input" value="${esc(p.ambiente)}" placeholder="Ambiente"
-          oninput="bonifUpdateProjeto(${m.id},${i},'ambiente',this.value)">
-        <input class="proj-input" type="number" value="${p.m2||''}" placeholder="m²"
-          oninput="bonifUpdateProjeto(${m.id},${i},'m2',this.value)">
-        <input class="proj-input" type="number" value="${p.valor||''}" placeholder="0,00"
-          oninput="bonifUpdateProjeto(${m.id},${i},'valor',this.value)">
+        <input class="proj-input" value="${esc(p.cliente)}" placeholder="Nome do cliente" oninput="bonifUpdateProjeto(${m.id},${i},'cliente',this.value)">
+        <input class="proj-input" value="${esc(p.ambiente)}" placeholder="Ambiente" oninput="bonifUpdateProjeto(${m.id},${i},'ambiente',this.value)">
+        <input class="proj-input" type="number" value="${p.m2||''}" placeholder="m²" oninput="bonifUpdateProjeto(${m.id},${i},'m2',this.value)">
+        <input class="proj-input" type="number" value="${p.valor||''}" placeholder="0,00" oninput="bonifUpdateProjeto(${m.id},${i},'valor',this.value)">
         <button class="btn btn-danger btn-sm" onclick="bonifDelProjeto(${m.id},${i})" style="padding:3px 6px">✕</button>
       </div>`).join('');
-
-    if (!rows) rows = `<div style="font-size:12px;color:var(--text3);padding:8px 0">Nenhum projeto. Clique em "+ Projeto".</div>`;
-
-    html += `
-      <div class="mont-block">
-        <div class="mont-header">
-          <div class="mont-avatar" style="background:${col}22;color:${col}">${ini}</div>
-          <div style="flex:1">
-            <div class="mont-name">${m.nome.split(' ').slice(0,3).join(' ')}</div>
-            <div class="mont-sub">${m.funcao}${m.equipe?' · '+m.equipe:''} · ${cnt} projeto(s) · ${fmt(soma)}</div>
-          </div>
-          <span class="mont-badge ${badgeCls}">${badgeTxt}</span>
-          <button class="btn btn-primary btn-sm" onclick="bonifAddProjeto(${m.id})">+ Projeto</button>
+    if(!rows)rows=`<div style="font-size:12px;color:var(--text3);padding:8px 0">Nenhum projeto. Clique em "+ Projeto".</div>`;
+    html+=`<div class="mont-block">
+      <div class="mont-header">
+        <div class="mont-avatar" style="background:${col}22;color:${col}">${ini}</div>
+        <div style="flex:1">
+          <div class="mont-name">${m.nome.split(' ').slice(0,3).join(' ')}</div>
+          <div class="mont-sub">${m.funcao}${m.equipe?' · '+m.equipe:''} · ${cnt} projeto(s) · ${fmt(soma)}</div>
         </div>
-        <div class="proj-grid-header">
-          <div>Cliente</div><div>Ambiente</div><div>m²</div><div>Valor (R$)</div><div></div>
-        </div>
-        ${rows}
-      </div>`;
+        <span class="mont-badge ${badgeCls}">${badgeTxt}</span>
+        <button class="btn btn-primary btn-sm" onclick="bonifAddProjeto(${m.id})">+ Projeto</button>
+      </div>
+      <div class="proj-grid-header"><div>Cliente</div><div>Ambiente</div><div>m²</div><div>Valor (R$)</div><div></div></div>
+      ${rows}
+    </div>`;
   });
-
-  if (!monts.length) html = `<div style="font-size:13px;color:var(--text3);padding:20px 0">Nenhum montador ativo cadastrado.</div>`;
-  document.getElementById('bonif-montadores-list').innerHTML = html;
+  if(!monts.length)html=`<div style="font-size:13px;color:var(--text3);padding:20px 0">Nenhum montador ativo.</div>`;
+  document.getElementById('bonif-montadores-list').innerHTML=html;
 }
 
-function renderBonifJean() {
-  const mes = getBonifMes();
-  const vendas = mes.vendas;
-  let totVal=0, totCom=0;
-  vendas.forEach(v => { totVal+=parseFloat(v.valor)||0; totCom+=calcComissaoJean(v.valor); });
-
-  document.getElementById('bonif-jean-stats').innerHTML = `
+function renderBonifJean(){
+  const mes=getBonifMes();const vendas=mes.vendas;
+  let totVal=0,totCom=0;
+  vendas.forEach(v=>{totVal+=parseFloat(v.valor)||0;totCom+=calcComissaoJean(v.valor);});
+  document.getElementById('bonif-jean-stats').innerHTML=`
     <div class="stat-card"><div class="stat-label">Vendas no mês</div><div class="stat-value blue">${vendas.length}</div></div>
     <div class="stat-card"><div class="stat-label">Volume total</div><div class="stat-value green">${fmt(totVal)}</div></div>
     <div class="stat-card"><div class="stat-label">Comissão total</div><div class="stat-value yellow">${fmt(totCom)}</div></div>
   `;
-
-  // Linhas de edição
-  let formHtml = vendas.map((v,i) => `
+  let formHtml=vendas.map((v,i)=>`
     <div class="jean-grid-row">
-      <input class="proj-input" value="${esc(v.cliente)}" placeholder="Nome do cliente"
-        oninput="bonifUpdateVenda(${i},'cliente',this.value)">
-      <input class="proj-input" value="${esc(v.contrato)}" placeholder="Nº contrato"
-        oninput="bonifUpdateVenda(${i},'contrato',this.value)">
-      <input class="proj-input" value="${esc(v.ambiente)}" placeholder="Ambiente(s)"
-        oninput="bonifUpdateVenda(${i},'ambiente',this.value)">
-      <input class="proj-input" type="number" value="${v.valor||''}" placeholder="Valor R$"
-        oninput="bonifUpdateVenda(${i},'valor',this.value)">
+      <input class="proj-input" value="${esc(v.cliente)}" placeholder="Nome do cliente" oninput="bonifUpdateVenda(${i},'cliente',this.value)">
+      <input class="proj-input" value="${esc(v.contrato)}" placeholder="Nº contrato" oninput="bonifUpdateVenda(${i},'contrato',this.value)">
+      <input class="proj-input" value="${esc(v.ambiente)}" placeholder="Ambiente(s)" oninput="bonifUpdateVenda(${i},'ambiente',this.value)">
+      <input class="proj-input" type="number" value="${v.valor||''}" placeholder="Valor R$" oninput="bonifUpdateVenda(${i},'valor',this.value)">
       <button class="btn btn-danger btn-sm" onclick="bonifDelVenda(${i})" style="padding:3px 6px">✕</button>
     </div>`).join('');
-
-  if (!formHtml) formHtml = `<div style="font-size:12px;color:var(--text3);padding:8px 0">Nenhuma venda registrada. Clique em "+ Venda".</div>`;
-  document.getElementById('jean-form-rows').innerHTML = formHtml;
-
-  // Tabela resumo
-  if (vendas.length) {
-    const rows = vendas.map(v => {
-      const val = parseFloat(v.valor)||0;
-      const com = calcComissaoJean(val);
-      return `<tr>
-        <td style="font-weight:500">${esc(v.cliente)||'—'}</td>
-        <td style="color:var(--text2);font-size:12px">${esc(v.contrato)||'—'}</td>
-        <td style="color:var(--text2);font-size:12px">${esc(v.ambiente)||'—'}</td>
-        <td style="font-family:var(--mono)">${val>0?fmt(val):'—'}</td>
-        <td><span class="badge badge-yellow">${pctComissaoJean(val)}</span></td>
-        <td style="font-family:var(--mono);font-weight:700;color:var(--green)">${com>0?fmt(com):'—'}</td>
-      </tr>`;
-    }).join('');
-    document.getElementById('jean-tabela').innerHTML = `
-      <div style="overflow-x:auto"><table class="hist-table">
-        <thead><tr><th>Cliente</th><th>Contrato</th><th>Ambiente</th><th>Valor</th><th>%</th><th>Comissão</th></tr></thead>
-        <tbody>
-          ${rows}
-          <tr style="background:var(--surface2)">
-            <td colspan="3" style="font-weight:700">Total</td>
-            <td style="font-family:var(--mono);font-weight:700">${fmt(totVal)}</td>
-            <td></td>
-            <td style="font-family:var(--mono);font-weight:700;color:var(--green)">${fmt(totCom)}</td>
-          </tr>
-        </tbody>
-      </table></div>`;
-  } else {
-    document.getElementById('jean-tabela').innerHTML = '';
-  }
-
-  // Atualiza resumo geral também
+  if(!formHtml)formHtml=`<div style="font-size:12px;color:var(--text3);padding:8px 0">Nenhuma venda registrada.</div>`;
+  document.getElementById('jean-form-rows').innerHTML=formHtml;
+  if(vendas.length){
+    const rows=vendas.map(v=>{const val=parseFloat(v.valor)||0;const com=calcComissaoJean(val);return`<tr>
+      <td style="font-weight:500">${esc(v.cliente)||'—'}</td>
+      <td style="color:var(--text2);font-size:12px">${esc(v.contrato)||'—'}</td>
+      <td style="color:var(--text2);font-size:12px">${esc(v.ambiente)||'—'}</td>
+      <td style="font-family:var(--mono)">${val>0?fmt(val):'—'}</td>
+      <td><span class="badge badge-yellow">${pctComissaoJean(val)}</span></td>
+      <td style="font-family:var(--mono);font-weight:700;color:var(--green)">${com>0?fmt(com):'—'}</td>
+    </tr>`;}).join('');
+    document.getElementById('jean-tabela').innerHTML=`<div style="overflow-x:auto"><table class="hist-table">
+      <thead><tr><th>Cliente</th><th>Contrato</th><th>Ambiente</th><th>Valor</th><th>%</th><th>Comissão</th></tr></thead>
+      <tbody>${rows}<tr style="background:var(--surface2)"><td colspan="3" style="font-weight:700">Total</td><td style="font-family:var(--mono);font-weight:700">${fmt(totVal)}</td><td></td><td style="font-family:var(--mono);font-weight:700;color:var(--green)">${fmt(totCom)}</td></tr></tbody>
+    </table></div>`;
+  } else { document.getElementById('jean-tabela').innerHTML=''; }
   renderBonifResumoGeral();
 }
 
-function renderBonifResumoGeral() {
-  const mes = getBonifMes();
-  const monts = getBonifMontadores();
-  let totProj=0, totValM=0;
-  monts.forEach(m => {
-    (mes.projetos['emp_'+m.id]||[]).forEach(p => { totProj++; totValM+=parseFloat(p.valor)||0; });
-  });
-  let totJeanCom=0;
-  mes.vendas.forEach(v => totJeanCom+=calcComissaoJean(v.valor));
-  const el = document.getElementById('bonif-resumo-geral');
-  if (el) el.innerHTML = `
+function renderBonifResumoGeral(){
+  const mes=getBonifMes();const monts=getBonifMontadores();
+  let totProj=0,totValM=0;
+  monts.forEach(m=>{(mes.projetos['emp_'+m.id]||[]).forEach(p=>{totProj++;totValM+=parseFloat(p.valor)||0;});});
+  let totJeanCom=0;mes.vendas.forEach(v=>totJeanCom+=calcComissaoJean(v.valor));
+  const el=document.getElementById('bonif-resumo-geral');
+  if(el)el.innerHTML=`
     <div class="stat-card"><div class="stat-label">Projetos (montadores)</div><div class="stat-value blue">${totProj}</div><div class="stat-sub">no mês</div></div>
     <div class="stat-card"><div class="stat-label">Valor total projetos</div><div class="stat-value green">${fmt(totValM)}</div></div>
     <div class="stat-card"><div class="stat-label">Vendas Jean</div><div class="stat-value" style="color:var(--purple)">${mes.vendas.length}</div></div>
@@ -1488,74 +1855,49 @@ function renderBonifResumoGeral() {
   `;
 }
 
-function bonifAddProjeto(mid) {
-  const mes = getBonifMes();
-  const key = 'emp_' + mid;
-  if (!mes.projetos[key]) mes.projetos[key] = [];
-  mes.projetos[key].push({ cliente:'', ambiente:'', m2:'', valor:'' });
-  saveBonif();
-  renderBonifMontadores();
+function bonifAddProjeto(mid){
+  const mes=getBonifMes();const key='emp_'+mid;
+  if(!mes.projetos[key])mes.projetos[key]=[];
+  mes.projetos[key].push({cliente:'',ambiente:'',m2:'',valor:''});
+  saveBonif();renderBonifMontadores();
 }
-
-function bonifDelProjeto(mid, idx) {
-  const mes = getBonifMes();
-  const key = 'emp_' + mid;
-  mes.projetos[key].splice(idx, 1);
-  saveBonif();
-  renderBonifMontadores();
+function bonifDelProjeto(mid,idx){
+  const mes=getBonifMes();const key='emp_'+mid;
+  mes.projetos[key].splice(idx,1);saveBonif();renderBonifMontadores();
 }
-
-function bonifUpdateProjeto(mid, idx, field, val) {
-  const mes = getBonifMes();
-  const key = 'emp_' + mid;
-  if (!mes.projetos[key]) mes.projetos[key] = [];
-  mes.projetos[key][idx][field] = val;
-  saveBonif();
-  const monts = getBonifMontadores();
-  let totProj=0, totValM=0;
-  monts.forEach(m => {
-    (mes.projetos['emp_'+m.id]||[]).forEach(p => { totProj++; totValM+=parseFloat(p.valor)||0; });
-  });
-  const sm = document.getElementById('bonif-mont-stats');
-  if (sm) sm.innerHTML = `
+function bonifUpdateProjeto(mid,idx,field,val){
+  const mes=getBonifMes();const key='emp_'+mid;
+  if(!mes.projetos[key])mes.projetos[key]=[];
+  mes.projetos[key][idx][field]=val;saveBonif();
+  const monts=getBonifMontadores();let totProj=0,totValM=0;
+  monts.forEach(m=>{(mes.projetos['emp_'+m.id]||[]).forEach(p=>{totProj++;totValM+=parseFloat(p.valor)||0;});});
+  const sm=document.getElementById('bonif-mont-stats');
+  if(sm)sm.innerHTML=`
     <div class="stat-card"><div class="stat-label">Total de projetos</div><div class="stat-value blue">${totProj}</div></div>
     <div class="stat-card"><div class="stat-label">Valor total</div><div class="stat-value green">${fmt(totValM)}</div></div>
     <div class="stat-card"><div class="stat-label">Com projetos</div><div class="stat-value" style="color:var(--purple)">${monts.filter(m=>(mes.projetos['emp_'+m.id]||[]).length>0).length} / ${monts.length}</div></div>
   `;
   renderBonifResumoGeral();
 }
-
-function bonifAddVenda() {
-  const mes = getBonifMes();
-  mes.vendas.push({ cliente:'', contrato:'', ambiente:'', valor:'' });
-  saveBonif();
-  renderBonifJean();
+function bonifAddVenda(){
+  const mes=getBonifMes();mes.vendas.push({cliente:'',contrato:'',ambiente:'',valor:''});
+  saveBonif();renderBonifJean();
 }
-
-function bonifDelVenda(idx) {
-  const mes = getBonifMes();
-  mes.vendas.splice(idx, 1);
-  saveBonif();
-  renderBonifJean();
+function bonifDelVenda(idx){
+  const mes=getBonifMes();mes.vendas.splice(idx,1);saveBonif();renderBonifJean();
 }
-
-function bonifUpdateVenda(idx, field, val) {
-  const mes = getBonifMes();
-  mes.vendas[idx][field] = val;
-  saveBonif();
-  // atualiza stats sem re-render completo
-  let totVal=0, totCom=0;
-  mes.vendas.forEach(v => { totVal+=parseFloat(v.valor)||0; totCom+=calcComissaoJean(v.valor); });
+function bonifUpdateVenda(idx,field,val){
+  const mes=getBonifMes();mes.vendas[idx][field]=val;saveBonif();
+  let totVal=0,totCom=0;
+  mes.vendas.forEach(v=>{totVal+=parseFloat(v.valor)||0;totCom+=calcComissaoJean(v.valor);});
   const sj=document.getElementById('bonif-jean-stats');
-  if(sj) sj.innerHTML=`
+  if(sj)sj.innerHTML=`
     <div class="stat-card"><div class="stat-label">Vendas no mês</div><div class="stat-value blue">${mes.vendas.length}</div></div>
     <div class="stat-card"><div class="stat-label">Volume total</div><div class="stat-value green">${fmt(totVal)}</div></div>
     <div class="stat-card"><div class="stat-label">Comissão total</div><div class="stat-value yellow">${fmt(totCom)}</div></div>
   `;
   renderBonifResumoGeral();
 }
-
-function esc(s) { return String(s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 // ══════ RELOAD ════════════════════════════════════════════
 async function reloadData(){
@@ -1565,7 +1907,6 @@ async function reloadData(){
   else showToast('Dados atualizados!');
   renderAll();showLoading(false);
 }
-
 function showLoading(v){const el=document.getElementById('loadingOverlay');if(el)el.classList.toggle('show',v);}
 
 // ══════ INIT ══════════════════════════════════════════════
