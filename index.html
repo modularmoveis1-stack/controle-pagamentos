@@ -1690,7 +1690,7 @@ function getDia20Status(empId){return advances.some(a=>a.empId===empId&&a.mes===
 function getDia20Valor(empId){const pay=getEmpPay(empId);return pay.adiant_dia20_valor!==undefined?pay.adiant_dia20_valor:(employees.find(e=>e.id===empId)?.adiant_quinzena||0);}
 
 function renderDia20(){
-  const ativos=employees.filter(e=>e.ativo!==false&&e.adiant_quinzena>0);
+  const ativos=employees.filter(e=>e.ativo!==false&&e.adiant_quinzena>0).sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'));
   const pagos=ativos.filter(e=>getDia20Status(e.id));
   const pendentes=ativos.filter(e=>!getDia20Status(e.id));
   const totalGeral=ativos.reduce((s,e)=>s+getDia20Valor(e.id),0);
@@ -1717,7 +1717,7 @@ function renderDia20(){
     </tr>`;
   }).join('');
   document.getElementById('dia20BodyRows').innerHTML=rows||'<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text3)">Nenhum funcionário com adiantamento cadastrado.</td></tr>';
-  const monthAdvs=advances.filter(a=>a.mes===currentMonth);
+  const monthAdvs=advances.filter(a=>a.mes===currentMonth).sort((a,b)=>{const nA=employees.find(e=>e.id===a.empId)?.nome||'';const nB=employees.find(e=>e.id===b.empId)?.nome||'';return nA.localeCompare(nB,'pt-BR');});
   const advRows=monthAdvs.length?monthAdvs.map(a=>{
     const emp=employees.find(e=>e.id===a.empId);
     return `<tr>
