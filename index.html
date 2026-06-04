@@ -627,27 +627,8 @@ input[type="number"] { font-family: var(--mono); }
         <div class="form-group"><label>Equipe</label><input type="text" id="emp_equipe" placeholder="Ex: Equipe Tadeu"></div>
       </div>
       <div class="form-row">
-        <div class="form-group"><label>Salário Base (R$)</label><input type="number" id="emp_salario" placeholder="1525"></div>
-        <div class="form-group"><label>Adiant. Quinzena (R$)</label><input type="number" id="emp_adiant_quinzena" placeholder="600"></div>
-      </div>
-      <div style="border-top:1px solid var(--border);padding-top:14px;margin-top:2px">
-        <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px">Benefícios Fixos</div>
-        <div class="form-row">
-          <div class="form-group"><label>Salário Família (R$)</label><input type="number" id="emp_sal_familia" placeholder="0"></div>
-          <div class="form-group"><label>Ajuda de Custo (R$)</label><input type="number" id="emp_ajuda_custo" placeholder="0"></div>
-        </div>
-        <div class="form-row">
-          <div class="form-group"><label>Cesta/Ticket (R$)</label><input type="number" id="emp_cesta" placeholder="0"></div>
-          <div class="form-group"><label>Prem. Presença (R$)</label><input type="number" id="emp_prem_presenca" placeholder="0"></div>
-        </div>
-        <div class="form-row">
-          <div class="form-group"><label>Gratificação (R$)</label><input type="number" id="emp_gratificacao" placeholder="0"></div>
-          <div class="form-group"><label>INSS Fixo (R$)</label><input type="number" id="emp_inss" placeholder="0"></div>
-        </div>
-        <div class="form-row">
-          <div class="form-group"><label>Consignado (R$)</label><input type="number" id="emp_consignado" placeholder="0"></div>
-          <div class="form-group"><label>PIX / Banco</label><input type="text" id="emp_pix" placeholder="CPF ou número"></div>
-        </div>
+        <div class="form-group"><label>PIX / Banco</label><input type="text" id="emp_pix" placeholder="CPF ou número"></div>
+        <div class="form-group"><label>Data de Admissão</label><input type="text" id="emp_admissao" placeholder="dd/mm/aaaa"></div>
       </div>
       <div class="form-group"><label>Observações</label><textarea id="emp_obs" rows="2" placeholder="Regras de bonificação, etc."></textarea></div>
     </div>
@@ -716,10 +697,8 @@ input[type="number"] { font-family: var(--mono); }
               <option value="bon_projeto">Bônus de Projeto</option>
               <option value="bon_supervisao">Bônus Supervisão</option>
               <option value="bon_meta_equipe">Bônus Meta Equipe</option>
-              <option value="bon_removedor">Bônus Removedor</option>
-              <option value="bon_extra">Bônus Extra</option>
-              <option value="hora_extra">Hora Extra</option>
-              <option value="descanso_remunerado">Descanso Remunerado</option>
+              <option value="bon_comissao_vendas">Comissão de Vendas</option>
+              <option value="bon_credito_extra">Crédito Extra</option>
               <option value="falta">Desconto Falta</option>
               <option value="consignado_extra">Consignado Extra</option>
             </select>
@@ -942,7 +921,8 @@ function getEmpPay(empId) {
       bon_supervisao:0, bon_meta_equipe:0, bon_elpi:0,
       bon_removedor:0, bon_desempenho:0, bon_extra:0,
       premissao_surpresa:0, descanso_remunerado:0,
-      falta:0, consignado_extra:0, faltas_obs:'', obs_mes:'', presenca:true,
+      bon_comissao_vendas:0, bon_credito_extra:0,
+      falta:0, consignado_extra:0, debito_extra:0, faltas_obs:'', obs_mes:'', presenca:true,
     };
   }
   return payData[currentMonth][empId];
@@ -979,6 +959,7 @@ function calcSaldo(emp) {
     pay.bon_projeto||0, pay.bon_supervisao||0, pay.bon_meta_equipe||0,
     pay.bon_elpi||0, pay.bon_removedor||0, pay.bon_desempenho||0,
     pay.bon_extra||0, pay.premissao_surpresa||0, pay.descanso_remunerado||0,
+    pay.bon_comissao_vendas||0, pay.bon_credito_extra||0,
   ].reduce((a,b) => a+(parseFloat(b)||0), 0);
 
   // ✅ Adiantamento do dia 20 foi lançado no MÊS ANTERIOR
@@ -989,7 +970,7 @@ function calcSaldo(emp) {
 
   const inss = pay.inss_mes !== undefined ? pay.inss_mes : (emp.inss||0);
   const consig = pay.consignado_mes !== undefined ? pay.consignado_mes : (emp.consignado||0);
-  const deducoes = [inss, consig, pay.consignado_extra||0, pay.falta||0].reduce((a,b)=>a+(parseFloat(b)||0),0);
+  const deducoes = [inss, consig, pay.consignado_extra||0, pay.falta||0, pay.debito_extra||0].reduce((a,b)=>a+(parseFloat(b)||0),0);
   return { total:creditos, deducoes, adiantamento:totalAdv, mesAdiant, saldo:creditos-deducoes-totalAdv };
 }
 
@@ -1186,15 +1167,11 @@ function renderDetailFolha(emp, pay, c) {
 
     <div class="pay-section" style="margin-bottom:12px">
       <div class="pay-section-header purple"><span>⭐ Variáveis do Mês</span></div>
-      ${editRow('Hora Extra (R$)','hora_extra',pay.hora_extra)}
-      ${editRow('Hora Extra Noturna (R$)','hora_extra_noturno',pay.hora_extra_noturno)}
-      ${editRow('Descanso Semanal Rem. (R$)','descanso_remunerado',pay.descanso_remunerado)}
       ${editRow('Bonif. de Projeto (R$)','bon_projeto',pay.bon_projeto)}
       ${editRow('Bonif. Supervisão (R$)','bon_supervisao',pay.bon_supervisao)}
       ${editRow('Bonif. Meta Equipe (R$)','bon_meta_equipe',pay.bon_meta_equipe)}
-      ${editRow('Bonif. Elpi (R$)','bon_elpi',pay.bon_elpi)}
-      ${editRow('Bonif. Removedor (R$)','bon_removedor',pay.bon_removedor)}
-      ${editRow('Bonif. Extra / Surpresa (R$)','bon_extra',pay.bon_extra)}
+      ${editRow('Comissão de Vendas (R$)','bon_comissao_vendas',pay.bon_comissao_vendas)}
+      ${editRow('Crédito Extra (R$)','bon_credito_extra',pay.bon_credito_extra)}
     </div>
 
     <div class="pay-section" style="margin-bottom:12px">
@@ -1209,8 +1186,8 @@ function renderDetailFolha(emp, pay, c) {
         <input class="pay-input" type="number" value="${pay.consignado_mes !== undefined ? pay.consignado_mes : (emp.consignado||0)}" onchange="updatePay(${id},'consignado_mes',this.value)"
           style="background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--red)">
       </div>
-      ${editRow('Consignado Extra / Parcela (R$)','consignado_extra',pay.consignado_extra)}
       ${editRow('Desconto Falta / DSR (R$)','falta',pay.falta)}
+      ${editRow('Débito Extra (R$)','debito_extra',pay.debito_extra)}
     </div>
 
     <div class="pay-section" style="margin-bottom:12px">
@@ -1628,16 +1605,8 @@ function openEditEmployee(id) {
   document.getElementById('emp_cpf').value=emp.cpf||'';
   document.getElementById('emp_funcao').value=emp.funcao;
   document.getElementById('emp_equipe').value=emp.equipe||'';
-  document.getElementById('emp_salario').value=emp.salario||'';
-  document.getElementById('emp_sal_familia').value=emp.sal_familia||'';
-  document.getElementById('emp_ajuda_custo').value=emp.ajuda_custo||'';
-  document.getElementById('emp_cesta').value=emp.cesta||'';
-  document.getElementById('emp_prem_presenca').value=emp.prem_presenca||'';
-  document.getElementById('emp_gratificacao').value=emp.gratificacao||'';
-  document.getElementById('emp_inss').value=emp.inss||'';
-  document.getElementById('emp_consignado').value=emp.consignado||'';
-  document.getElementById('emp_adiant_quinzena').value=emp.adiant_quinzena||'';
   document.getElementById('emp_pix').value=emp.pix||'';
+  document.getElementById('emp_admissao').value=emp.admissao||'';
   document.getElementById('emp_obs').value=emp.obs||'';
   document.getElementById('modalEmp').classList.add('open');
 }
@@ -1646,7 +1615,8 @@ function saveEmployee() {
   const nome=document.getElementById('emp_nome').value.trim();
   if(!nome){showToast('Informe o nome');return;}
   const id=document.getElementById('emp_id').value;
-  const data={nome,cpf:document.getElementById('emp_cpf').value.trim(),funcao:document.getElementById('emp_funcao').value,equipe:document.getElementById('emp_equipe').value.trim(),salario:parseFloat(document.getElementById('emp_salario').value)||0,sal_familia:parseFloat(document.getElementById('emp_sal_familia').value)||0,ajuda_custo:parseFloat(document.getElementById('emp_ajuda_custo').value)||0,cesta:parseFloat(document.getElementById('emp_cesta').value)||0,prem_presenca:parseFloat(document.getElementById('emp_prem_presenca').value)||0,gratificacao:parseFloat(document.getElementById('emp_gratificacao').value)||0,inss:parseFloat(document.getElementById('emp_inss').value)||0,consignado:parseFloat(document.getElementById('emp_consignado').value)||0,adiant_quinzena:parseFloat(document.getElementById('emp_adiant_quinzena').value)||0,pix:document.getElementById('emp_pix').value.trim(),obs:document.getElementById('emp_obs').value.trim(),ativo:true};
+  const _existing = document.getElementById('emp_id').value ? (employees.find(e=>e.id==document.getElementById('emp_id').value)||{}) : {};
+  const data={nome,cpf:document.getElementById('emp_cpf').value.trim(),funcao:document.getElementById('emp_funcao').value,equipe:document.getElementById('emp_equipe').value.trim(),pix:document.getElementById('emp_pix').value.trim(),admissao:document.getElementById('emp_admissao').value.trim(),obs:document.getElementById('emp_obs').value.trim(),ativo:true,salario:_existing.salario||0,sal_familia:_existing.sal_familia||0,ajuda_custo:_existing.ajuda_custo||0,cesta:_existing.cesta||0,prem_presenca:_existing.prem_presenca||0,gratificacao:_existing.gratificacao||0,inss:_existing.inss||0,consignado:_existing.consignado||0,adiant_quinzena:_existing.adiant_quinzena||0};
   if(id){const idx=employees.findIndex(e=>e.id==id);if(idx!==-1)employees[idx]={...employees[idx],...data};}
   else{const maxId=employees.reduce((m,e)=>Math.max(m,e.id||0),0);employees.push({id:maxId+1,...data});}
   saveEmployees(); closeModal('modalEmp'); renderAll(); showToast('Salvo!');
