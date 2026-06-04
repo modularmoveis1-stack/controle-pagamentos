@@ -989,7 +989,7 @@ function renderAll() {
 
 function renderDashboard() {
   let totalFolha=0, totalAdv=0, totalDed=0, totalSaldo=0, rows='';
-  employees.filter(e=>e.ativo!==false).forEach(emp => {
+  [...employees].filter(e=>e.ativo!==false).sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR')).forEach(emp => {
     const c = calcSaldo(emp);
     totalFolha+=c.total; totalDed+=c.deducoes; totalAdv+=c.adiantamento; totalSaldo+=c.saldo;
     const sc = c.saldo>=0?'green':'red';
@@ -1023,7 +1023,7 @@ function renderEmployees() {
   const sel = document.getElementById('filterFunc');
   const prev = sel.value;
   sel.innerHTML = '<option value="">Todas as funções</option>'+funcoes.map(f=>`<option value="${f}" ${f===prev?'selected':''}>${f}</option>`).join('');
-  const filtered = employees.filter(e=>e.ativo!==false&&e.nome.toLowerCase().includes(q)&&(!ff||e.funcao===ff));
+  const filtered = employees.filter(e=>e.ativo!==false&&e.nome.toLowerCase().includes(q)&&(!ff||e.funcao===ff)).sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'));
   document.getElementById('empGrid').innerHTML = filtered.map(emp=>{
     const c=calcSaldo(emp); const col=avatarColor(emp.nome);
     return `<div class="emp-card" onclick="openDetail(${emp.id},'folha')">
@@ -1619,7 +1619,7 @@ function saveEmployee() {
   const data={nome,cpf:document.getElementById('emp_cpf').value.trim(),funcao:document.getElementById('emp_funcao').value,equipe:document.getElementById('emp_equipe').value.trim(),pix:document.getElementById('emp_pix').value.trim(),admissao:document.getElementById('emp_admissao').value.trim(),obs:document.getElementById('emp_obs').value.trim(),ativo:true,salario:_existing.salario||0,sal_familia:_existing.sal_familia||0,ajuda_custo:_existing.ajuda_custo||0,cesta:_existing.cesta||0,prem_presenca:_existing.prem_presenca||0,gratificacao:_existing.gratificacao||0,inss:_existing.inss||0,consignado:_existing.consignado||0,adiant_quinzena:_existing.adiant_quinzena||0};
   if(id){const idx=employees.findIndex(e=>e.id==id);if(idx!==-1)employees[idx]={...employees[idx],...data};}
   else{const maxId=employees.reduce((m,e)=>Math.max(m,e.id||0),0);employees.push({id:maxId+1,...data});}
-  saveEmployees(); closeModal('modalEmp'); renderAll(); showToast('Salvo!');
+  employees.sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR')); saveEmployees(); closeModal('modalEmp'); renderAll(); showToast('Salvo!');
 }
 
 function removeEmployee(id) {
@@ -1631,7 +1631,7 @@ function removeEmployee(id) {
 // ══════ ADVANCES ══════════════════════════════════════════
 function openAddAdv() {
   const sel=document.getElementById('adv_emp');
-  sel.innerHTML=employees.filter(e=>e.ativo!==false).map(e=>`<option value="${e.id}">${e.nome.split(' ').slice(0,3).join(' ')}</option>`).join('');
+  sel.innerHTML=[...employees].filter(e=>e.ativo!==false).sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR')).map(e=>`<option value="${e.id}">${e.nome.split(' ').slice(0,3).join(' ')}</option>`).join('');
   document.getElementById('adv_data').value=new Date().toISOString().split('T')[0];
   document.getElementById('adv_valor').value='';
   document.getElementById('adv_obs').value='';
@@ -1769,7 +1769,7 @@ function openLancamento(){
     </div>`;
   }).join('');
   const sel=document.getElementById('lanc_emp');
-  sel.innerHTML=employees.filter(e=>e.ativo!==false).map(e=>`<option value="${e.id}">${e.nome.split(' ').slice(0,3).join(' ')}</option>`).join('');
+  sel.innerHTML=[...employees].filter(e=>e.ativo!==false).sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR')).map(e=>`<option value="${e.id}">${e.nome.split(' ').slice(0,3).join(' ')}</option>`).join('');
   document.getElementById('modalLancamento').classList.add('open');
 }
 
