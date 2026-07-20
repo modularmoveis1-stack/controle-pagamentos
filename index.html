@@ -634,6 +634,27 @@ input[type="number"] { font-family: var(--mono); }
         <div class="form-group"><label>Data de Admissão</label><input type="text" id="emp_admissao" placeholder="dd/mm/aaaa"></div>
       </div>
       <div class="form-group"><label>Observações</label><textarea id="emp_obs" rows="2" placeholder="Regras de bonificação, etc."></textarea></div>
+
+      <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
+        <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">💰 Valores Fixos (padrão de todo mês)</div>
+        <div class="form-row">
+          <div class="form-group"><label>Salário Base</label><input type="text" inputmode="numeric" id="emp_salario" placeholder="0,00" oninput="maskMoneyInput(this)"></div>
+          <div class="form-group"><label>🎫 Ticket</label><input type="text" inputmode="numeric" id="emp_cesta" placeholder="0,00" oninput="maskMoneyInput(this)"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Premiação (fixa)</label><input type="text" inputmode="numeric" id="emp_prem_presenca" placeholder="0,00" oninput="maskMoneyInput(this)"></div>
+          <div class="form-group"><label>Adiantamento Quinzenal (dia 20)</label><input type="text" inputmode="numeric" id="emp_adiant_quinzena" placeholder="0,00" oninput="maskMoneyInput(this)"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>INSS Padrão</label><input type="text" inputmode="numeric" id="emp_inss" placeholder="0,00" oninput="maskMoneyInput(this)"></div>
+          <div class="form-group"><label>Consignado Padrão</label><input type="text" inputmode="numeric" id="emp_consignado" placeholder="0,00" oninput="maskMoneyInput(this)"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Ajuda de Custo</label><input type="text" inputmode="numeric" id="emp_ajuda_custo" placeholder="0,00" oninput="maskMoneyInput(this)"></div>
+          <div class="form-group"><label>Gratificação</label><input type="text" inputmode="numeric" id="emp_gratificacao" placeholder="0,00" oninput="maskMoneyInput(this)"></div>
+        </div>
+        <div class="form-group"><label>Salário Família</label><input type="text" inputmode="numeric" id="emp_sal_familia" placeholder="0,00" oninput="maskMoneyInput(this)" style="max-width:200px"></div>
+      </div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="closeModal('modalEmp')">Cancelar</button>
@@ -1584,11 +1605,14 @@ function removeConsignado(empId, idx) {
 }
 
 // ══════ EMPLOYEES CRUD ════════════════════════════════════
+const EMP_MONEY_FIELDS = ['salario','cesta','prem_presenca','adiant_quinzena','inss','consignado','ajuda_custo','gratificacao','sal_familia'];
+
 function openAddEmployee() {
   document.getElementById('modalEmpTitle').textContent='Novo Funcionário';
   document.getElementById('emp_id').value='';
-  ['emp_nome','emp_cpf','emp_equipe','emp_pix','emp_obs'].forEach(id=>document.getElementById(id).value='');
-  ['emp_salario','emp_sal_familia','emp_ajuda_custo','emp_cesta','emp_prem_presenca','emp_gratificacao','emp_inss','emp_consignado','emp_adiant_quinzena'].forEach(id=>document.getElementById(id).value='');
+  ['emp_nome','emp_cpf','emp_equipe','emp_pix','emp_admissao','emp_obs'].forEach(id=>document.getElementById(id).value='');
+  EMP_MONEY_FIELDS.forEach(f=>document.getElementById('emp_'+f).value='0,00');
+  document.getElementById('emp_funcao').value='Montador';
   document.getElementById('modalEmp').classList.add('open');
 }
 
@@ -1603,6 +1627,7 @@ function openEditEmployee(id) {
   document.getElementById('emp_pix').value=emp.pix||'';
   document.getElementById('emp_admissao').value=emp.admissao||'';
   document.getElementById('emp_obs').value=emp.obs||'';
+  EMP_MONEY_FIELDS.forEach(f=>document.getElementById('emp_'+f).value=formatBR(emp[f]||0));
   document.getElementById('modalEmp').classList.add('open');
 }
 
@@ -1610,8 +1635,8 @@ function saveEmployee() {
   const nome=document.getElementById('emp_nome').value.trim();
   if(!nome){showToast('Informe o nome');return;}
   const id=document.getElementById('emp_id').value;
-  const _existing = document.getElementById('emp_id').value ? (employees.find(e=>e.id==document.getElementById('emp_id').value)||{}) : {};
-  const data={nome,cpf:document.getElementById('emp_cpf').value.trim(),funcao:document.getElementById('emp_funcao').value,equipe:document.getElementById('emp_equipe').value.trim(),pix:document.getElementById('emp_pix').value.trim(),admissao:document.getElementById('emp_admissao').value.trim(),obs:document.getElementById('emp_obs').value.trim(),ativo:true,salario:_existing.salario||0,sal_familia:_existing.sal_familia||0,ajuda_custo:_existing.ajuda_custo||0,cesta:_existing.cesta||0,prem_presenca:_existing.prem_presenca||0,gratificacao:_existing.gratificacao||0,inss:_existing.inss||0,consignado:_existing.consignado||0,adiant_quinzena:_existing.adiant_quinzena||0};
+  const data={nome,cpf:document.getElementById('emp_cpf').value.trim(),funcao:document.getElementById('emp_funcao').value,equipe:document.getElementById('emp_equipe').value.trim(),pix:document.getElementById('emp_pix').value.trim(),admissao:document.getElementById('emp_admissao').value.trim(),obs:document.getElementById('emp_obs').value.trim(),ativo:true};
+  EMP_MONEY_FIELDS.forEach(f=>data[f]=parseBR(document.getElementById('emp_'+f).value));
   if(id){const idx=employees.findIndex(e=>e.id==id);if(idx!==-1)employees[idx]={...employees[idx],...data};}
   else{const maxId=employees.reduce((m,e)=>Math.max(m,e.id||0),0);employees.push({id:maxId+1,...data});}
   employees.sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR')); saveEmployees(); closeModal('modalEmp'); renderAll(); showToast('Salvo!');
