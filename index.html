@@ -400,6 +400,10 @@ input[type="number"] { font-family: var(--mono); }
     <div class="month-selector">
       <select id="monthSel" onchange="changeMonth()"></select>
     </div>
+    <button class="btn btn-primary" onclick="virarMes()" title="Arquiva o mês atual e cria o próximo, em 1 clique" style="background:var(--purple);border-color:var(--purple)">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+      Virar mês
+    </button>
     <button class="btn btn-ghost" onclick="openLancamento()" style="color:var(--yellow);border-color:var(--yellow)">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
       Lançamento Mensal
@@ -506,55 +510,50 @@ input[type="number"] { font-family: var(--mono); }
       <div class="stats-grid" id="bonif-resumo-geral" style="margin-bottom:20px"></div>
 
       <div class="bonif-tabs">
-        <button class="bonif-tab active" id="btab-montadores" onclick="switchBonifTab('montadores')">⚒️ Montadores</button>
-        <button class="bonif-tab" id="btab-vendas" onclick="switchBonifTab('vendas')">💼 Jean — Vendas</button>
+        <button class="bonif-tab active" id="btab-fabrica" onclick="switchBonifTab('fabrica')">🏭 Fábrica</button>
+        <button class="bonif-tab" id="btab-montagem" onclick="switchBonifTab('montagem')">⚒️ Montagem</button>
+        <button class="bonif-tab" id="btab-comercial" onclick="switchBonifTab('comercial')">💼 Comercial</button>
       </div>
 
-      <div class="bonif-section active" id="bsec-montadores">
+      <div class="bonif-section active" id="bsec-fabrica">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-          <div style="font-size:12px;color:var(--text3)">Somente os funcionários selecionados aparecem aqui.</div>
+          <div style="font-size:12px;color:var(--text3)">Contagem automática (Controle de Projetos) + ajuste manual. Prêmio calculado pela tabela oficial por faixa.</div>
           <div style="display:flex;gap:8px">
-            <button class="btn btn-ghost btn-sm" onclick="openGerenciarParticipantes()" style="color:var(--purple);border-color:var(--purple)">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>
-              Gerenciar participantes
-            </button>
-            <button class="btn btn-primary btn-sm" onclick="aplicarTudoNaFolha()" id="btnAplicarTudo" style="display:none">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-              Aplicar tudo na folha
-            </button>
+            <button class="btn btn-ghost btn-sm" onclick="buscarProjetosSetor('fabrica')" style="color:var(--accent);border-color:var(--accent)">🔄 Atualizar contagem automática</button>
+            <button class="btn btn-primary btn-sm" onclick="aplicarTudoSetor('fabrica')">✅ Aplicar tudo na folha</button>
           </div>
         </div>
-        <div class="stats-grid" id="bonif-mont-stats"></div>
-        <div id="bonif-preview-aplicar" style="display:none;margin-bottom:16px;padding:14px 16px;background:rgba(34,197,94,0.07);border:1px solid var(--green);border-radius:var(--radius)">
-          <div style="font-size:11px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">
-            💰 Preview — o que será aplicado na folha de cada um
-          </div>
-          <div id="bonif-preview-rows"></div>
-          <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(34,197,94,0.2);display:flex;justify-content:space-between;align-items:center">
-            <span style="font-size:12px;color:var(--text2)">Total a aplicar</span>
-            <span id="bonif-preview-total" style="font-family:var(--mono);font-size:15px;font-weight:700;color:var(--green)"></span>
-          </div>
-          <button class="btn btn-primary" style="width:100%;margin-top:12px;justify-content:center" onclick="aplicarTudoNaFolha()">
-            ✅ Confirmar — Aplicar tudo na folha
-          </button>
-        </div>
-        <div id="bonif-montadores-list"></div>
+        <div class="stats-grid" id="bonif-stats-fabrica"></div>
+        <div id="bonif-list-fabrica"></div>
       </div>
 
-      <div class="bonif-section" id="bsec-vendas">
-        <div class="stats-grid" id="bonif-jean-stats"></div>
-        <div id="bonif-jean-aplicar" style="display:none;margin-bottom:16px;padding:14px 16px;background:rgba(34,197,94,0.07);border:1px solid var(--green);border-radius:var(--radius)">
-          <div style="display:flex;align-items:center;justify-content:space-between">
-            <div>
-              <div style="font-size:11px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:.06em">💰 Comissão pronta para aplicar</div>
-              <div id="bonif-jean-aplicar-val" style="font-size:20px;font-weight:700;font-family:var(--mono);color:var(--green);margin-top:4px"></div>
-            </div>
-            <button class="btn btn-primary" onclick="aplicarComissaoJeanFolha()">
-              ✅ Aplicar na folha do Jean
-            </button>
+      <div class="bonif-section" id="bsec-montagem">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <div style="font-size:12px;color:var(--text3)">Contagem automática (Controle de Projetos) + ajuste manual. Prêmio calculado pela tabela oficial por faixa.</div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-ghost btn-sm" onclick="buscarProjetosSetor('montagem')" style="color:var(--accent);border-color:var(--accent)">🔄 Atualizar contagem automática</button>
+            <button class="btn btn-primary btn-sm" onclick="aplicarTudoSetor('montagem')">✅ Aplicar tudo na folha</button>
           </div>
         </div>
-        <div class="mont-block">
+        <div class="stats-grid" id="bonif-stats-montagem"></div>
+        <div id="bonif-list-montagem"></div>
+      </div>
+
+      <div class="bonif-section" id="bsec-comercial">
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-body" style="display:flex;align-items:center;gap:14px">
+            <div style="flex:1">
+              <label style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em">Faturamento do mês (R$) — base para a faixa do Jean e da Adriana</label>
+              <input class="proj-input" type="text" inputmode="numeric" id="comercial_faturamento" style="margin-top:6px;font-size:15px;font-family:var(--mono)" placeholder="0,00" oninput="maskMoneyInput(this);atualizaFaturamentoMes(this.value)">
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="aplicarTudoSetor('comercial')">✅ Aplicar tudo na folha</button>
+          </div>
+        </div>
+        <div class="stats-grid" id="bonif-stats-comercial"></div>
+        <div id="bonif-list-comercial"></div>
+      </div>
+
+      <div class="mont-block" style="display:none">
           <div class="mont-header">
             <div class="mont-avatar" style="background:rgba(168,85,247,0.18);color:var(--purple)">JN</div>
             <div style="flex:1">
@@ -613,10 +612,14 @@ input[type="number"] { font-family: var(--mono); }
       <div class="form-row">
         <div class="form-group"><label>Função *</label>
           <select id="emp_funcao">
+            <option value="Diretor">Diretor</option>
+            <option value="Sócio">Sócio</option>
             <option value="Marceneiro">Marceneiro</option>
             <option value="Aux. Marceneiro">Aux. Marceneiro</option>
             <option value="Montador">Montador</option>
             <option value="Gerente de Montagem">Gerente de Montagem</option>
+            <option value="Projetista">Projetista</option>
+            <option value="Operador de Máquina">Operador de Máquina</option>
             <option value="Consultor">Consultor</option>
             <option value="Estoque">Estoque</option>
             <option value="Administrativo">Administrativo</option>
@@ -659,7 +662,7 @@ input[type="number"] { font-family: var(--mono); }
         </div>
         <div class="form-group"><label>Data</label><input type="date" id="adv_data"></div>
       </div>
-      <div class="form-group"><label>Valor (R$) *</label><input type="number" id="adv_valor" placeholder="0,00"></div>
+      <div class="form-group"><label>Valor (R$) *</label><input type="text" inputmode="numeric" id="adv_valor" placeholder="0,00" oninput="maskMoneyInput(this)"></div>
       <div class="form-group"><label>Observação</label><input type="text" id="adv_obs" placeholder="Motivo ou referência"></div>
     </div>
     <div class="modal-footer">
@@ -699,12 +702,14 @@ input[type="number"] { font-family: var(--mono); }
               <option value="bon_meta_equipe">Bônus Meta Equipe</option>
               <option value="bon_comissao_vendas">Comissão de Vendas</option>
               <option value="bon_credito_extra">Crédito Extra</option>
+              <option value="bon_valor_extra">💠 Valor Extra (com observação)</option>
               <option value="falta">Desconto Falta</option>
               <option value="consignado_extra">Consignado Extra</option>
             </select>
           </div>
         </div>
-        <div class="form-group" style="margin-top:8px"><label>Valor (R$)</label><input type="number" id="lanc_valor" placeholder="0,00"></div>
+        <div class="form-group" style="margin-top:8px"><label>Valor (R$)</label><input type="text" inputmode="numeric" id="lanc_valor" placeholder="0,00" oninput="maskMoneyInput(this)"></div>
+        <div class="form-group" style="margin-top:8px"><label>Observação</label><input type="text" id="lanc_obs" placeholder="Motivo ou referência (opcional)"></div>
         <button class="btn btn-primary" style="width:100%;margin-top:8px;justify-content:center" onclick="lancarVariavel()">Lançar</button>
       </div>
     </div>
@@ -714,22 +719,23 @@ input[type="number"] { font-family: var(--mono); }
   </div>
 </div>
 
-<!-- MODAL GERENCIAR PARTICIPANTES BONIFICAÇÃO -->
-<div class="modal-overlay" id="modalParticipantes">
-  <div class="modal" style="width:480px">
+<!-- MODAL DETALHE DO DASHBOARD (cards clicáveis) -->
+<div class="modal-overlay" id="modalDashDetalhe">
+  <div class="modal" style="width:640px">
     <div class="modal-header">
-      <h2>⚒️ Participantes das Bonificações</h2>
-      <button class="modal-close" onclick="closeModal('modalParticipantes')">✕</button>
+      <h2 id="dashDetalheTitle">Detalhe</h2>
+      <button class="modal-close" onclick="closeModal('modalDashDetalhe')">✕</button>
     </div>
     <div class="modal-body">
-      <div style="font-size:12px;color:var(--text2);margin-bottom:4px;padding:10px 12px;background:var(--surface2);border-radius:var(--radius-sm);border:1px solid var(--border)">
-        Marque quem deve aparecer na lista de bonificações por projeto. Você pode adicionar ou remover a qualquer momento — os dados dos projetos já lançados ficam salvos.
+      <div style="overflow-x:auto">
+        <table class="hist-table" id="dashDetalheTable">
+          <thead id="dashDetalheHead"></thead>
+          <tbody id="dashDetalheBody"></tbody>
+        </table>
       </div>
-      <div id="participantesList" style="display:flex;flex-direction:column;gap:6px;max-height:400px;overflow-y:auto;margin-top:4px"></div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeModal('modalParticipantes')">Fechar</button>
-      <button class="btn btn-primary" onclick="salvarParticipantes()">✓ Salvar</button>
+      <button class="btn btn-ghost" onclick="closeModal('modalDashDetalhe')">Fechar</button>
     </div>
   </div>
 </div>
@@ -753,6 +759,108 @@ let currentMonth = '';
 let bonifCurrentMonth = '';
 let selectedEmpId = null;
 let currentDetailTab = 'folha'; // 'folha' | 'bonificacoes'
+let currentPremiacaoSetor = 'fabrica'; // 'fabrica' | 'montagem' | 'comercial'
+
+// ══════ PREMIAÇÃO — TABELAS OFICIAIS (por faixa) ══════════
+// Faixas: [min, max(Infinity=sem limite), prêmio]
+const FAIXAS = {
+  fabrica: {
+    'Gerente de Fábrica': [[25,30,1000],[31,36,1300],[37,42,1600],[43,Infinity,1800]],
+    'Projetista':         [[25,30,250],[31,36,330],[37,42,400],[43,Infinity,450]],
+    'Estoquista':         [[25,30,250],[31,36,330],[37,42,400],[43,Infinity,450]],
+    'Operador de Máquina':[[25,30,1500],[31,36,1720],[37,42,2270],[43,Infinity,2410]],
+    'Montador':           [[25,30,1500],[31,36,1720],[37,42,2270],[43,Infinity,2410]], // pré-montagem
+  },
+  montagem: {
+    'Gerente de Montagem':[[20,24,1000],[25,30,1180],[31,36,1450],[37,Infinity,1740]],
+    'Montador':           [[9,10,800],[11,12,1080],[13,14,1455],[15,Infinity,2000]], // marceneiro/montador líder
+    'Auxiliar':           [[9,10,500],[11,12,670],[13,14,800],[15,Infinity,1100]],
+  },
+  comercial: {
+    'Gerente de Vendas':    [[180000,199999,2000],[200000,249999,2500],[250000,299999,3250],[300000,Infinity,4200]],
+    'Gerente Financeiro':   [[200000,249999,150],[250000,299999,300],[300000,Infinity,500]],
+  }
+};
+
+// Mapeamento funcionário → setor/papel na Premiação (por nome, à prova de reset do cadastro)
+const PREMIACAO_ROLES = {
+  'Marlony Douglas de Sousa Lima':        { setor:'fabrica',   papel:'Gerente de Fábrica' },
+  'Weverton Lucas dos Reis Silva':        { setor:'fabrica',   papel:'Projetista' },
+  'João Mateus Pereira de Sousa':         { setor:'fabrica',   papel:'Estoquista' },
+  'Rafael Galeno de Oliveira':            { setor:'fabrica',   papel:'Operador de Máquina' },
+  'David Guilherme Moura da Silva Vieira':{ setor:'fabrica',   papel:'Montador' },
+  'Railton da Silva Costa Oliveira':      { setor:'fabrica',   papel:'Montador' },
+  'Helder Batista Pires':                 { setor:'montagem',  papel:'Gerente de Montagem' },
+  'Arlembeng Lopes Oliveira':             { setor:'montagem',  papel:'Montador' },
+  'João Victor Gomes Marques da Silva':   { setor:'montagem',  papel:'Auxiliar' },
+  'Tadeu Leandro Licar':                  { setor:'montagem',  papel:'Montador' },
+  'Yure da Silva Carvalho':               { setor:'montagem',  papel:'Auxiliar' },
+  'José Atevaldo Santos da Cunha':        { setor:'montagem',  papel:'Auxiliar' },
+  'Jean Thaynan Veras Sousa':             { setor:'comercial', papel:'Gerente de Vendas' },
+  'Adriana Evangelista':                  { setor:'comercial', papel:'Gerente Financeiro' },
+  // Jardiel (licença INSS), Pedro e Hiago: propositalmente fora da premiação.
+};
+function getPremiacaoRole(emp) {
+  if (!emp) return null;
+  // tenta nome completo, depois primeiros 2 nomes (tolerante a variações de cadastro)
+  return PREMIACAO_ROLES[emp.nome] ||
+    Object.entries(PREMIACAO_ROLES).find(([n]) => n.split(' ').slice(0,2).join(' ').toLowerCase() === emp.nome.split(' ').slice(0,2).join(' ').toLowerCase())?.[1] ||
+    null;
+}
+function faixaInfo(setor, papel, valor) {
+  const tabela = (FAIXAS[setor]||{})[papel];
+  if (!tabela) return { faixaIdx:-1, premio:0, label:'—' };
+  let idx = -1, premio = 0;
+  for (let i=0;i<tabela.length;i++) { const [min,max,val]=tabela[i]; if (valor>=min && valor<=max) { idx=i; premio=val; } }
+  if (idx===-1 && tabela.length && valor > tabela[tabela.length-1][0]) { idx = tabela.length-1; premio = tabela[idx][2]; }
+  const label = idx>=0 ? `Faixa ${idx+1}` : 'Sem faixa atingida';
+  return { faixaIdx: idx, premio, label, tabela };
+}
+
+// Critérios eliminatórios — retorna o fator (0, 0.5 ou 1) a aplicar sobre o prêmio
+function fatorCriterios(crit) {
+  if (!crit) return 1;
+  if (crit.advertencia || crit.suspensao || crit.demissao || crit.justaCausa || crit.desvioProjeto) return 0;
+  let fator = 1;
+  const faltas = parseInt(crit.faltas)||0, atrasos = parseInt(crit.atrasos)||0;
+  if (faltas >= 2) fator = 0; else if (faltas === 1) fator = Math.min(fator, 0.5);
+  if (atrasos >= 2) fator = 0; else if (atrasos === 1) fator = Math.min(fator, 0.5);
+  return fator;
+}
+
+// ══════ INTEGRAÇÃO — Controle de Projetos (Sheets) ══════════
+const PROJ_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxsxPyjW7JwadAfySUwcld8hFNYOB-M-f9x6fhYjATeyrxre3YvXm8lNQkT5m0ugjnnUA/exec';
+const PROJ_SHEET_ID = '1TIEjkrS8SEg4ghlwdb_lsWdoKjCPDCsN-VEhlXu9Ofg';
+let projetosCache = null;
+async function fetchProjetosControle(force) {
+  if (projetosCache && !force) return projetosCache;
+  try {
+    const url = PROJ_SCRIPT_URL + '?action=list&sheetId=' + PROJ_SHEET_ID;
+    const r = await fetch(url);
+    const data = await r.json();
+    projetosCache = Array.isArray(data) ? data : (data.rows||data.data||[]);
+    return projetosCache;
+  } catch(e) {
+    console.warn('Não foi possível buscar o Controle de Projetos:', e);
+    return [];
+  }
+}
+// Conta projetos automaticamente para um papel/pessoa no mês (mesKey = 'YYYY-MM')
+function contarProjetosAuto(lista, papel, nomeBusca, mesKey, setor) {
+  if (!lista || !lista.length) return { count:0, itens:[] };
+  const campoData = (papel==='Estoquista'||papel==='Projetista') ? 'conferido'
+    : (setor==='fabrica') ? 'fim_fab'
+    : 'montagem_entregue';
+  const primeiroNome = (nomeBusca||'').split(' ')[0].toLowerCase();
+  const itens = lista.filter(p => {
+    const dataRef = p[campoData];
+    if (!dataRef || !String(dataRef).startsWith(mesKey)) return false;
+    if (papel==='Gerente de Fábrica' || papel==='Gerente de Montagem' || papel==='Estoquista' || papel==='Projetista') return true; // gestor/estoque conta tudo do mês
+    const equipe = String(p.equipe||'').toLowerCase();
+    return equipe.includes(primeiroNome);
+  });
+  return { count: itens.length, itens };
+}
 
 // ══════ GOOGLE SHEETS SYNC ═══════════════════════════════
 async function gasCall(params) {
@@ -850,7 +958,7 @@ function saveEmployees() {
 }
 
 function seedEmployees() {
-  employees = [{"id": 1, "nome": "Arlembeng Lopes Oliveira", "cpf": "058.776.653-08", "funcao": "Marceneiro", "equipe": "Equipe Arlembeng + David", "salario": 1621, "sal_familia": 67.54, "ajuda_custo": 300, "cesta": 0, "prem_presenca": 200, "gratificacao": 0, "inss": 130.68, "consignado": 372.53, "adiant_quinzena": 600, "pix": "86999578009", "obs": "Bônus: R$ 80/proj. A cada 10 projetos recebe R$ 200 extra. Toda vez que bater 13 proj toda equipe ganha R$ 200.", "ativo": true}, {"id": 2, "nome": "David Guilherme Moura da Silva Vieira", "cpf": "087.107.903-81", "funcao": "Aux. Marceneiro", "equipe": "Equipe Arlembeng + David", "salario": 1621, "sal_familia": 0, "ajuda_custo": 0, "cesta": 0, "prem_presenca": 140, "gratificacao": 0, "inss": 129.3, "consignado": 0, "adiant_quinzena": 600, "pix": "08710790381", "obs": "Bônus: R$ 30/projeto. Pré-montagem quando aplicável.", "ativo": true}, {"id": 3, "nome": "Helder Batista Pires", "cpf": "795.940.263-91", "funcao": "Gerente de Montagem", "equipe": "", "salario": 1621, "sal_familia": 0, "ajuda_custo": 100, "cesta": 0, "prem_presenca": 250, "gratificacao": 0, "inss": 0, "consignado": 0, "adiant_quinzena": 750, "pix": "79594026391", "obs": "Bônus: R$ 100 por equipe que bate a meta. Supervisão R$ 400. Bônus Extra variável. Gratificação R$ 648,40.", "ativo": true}, {"id": 4, "nome": "Jean Thaynan Veras Sousa", "cpf": "017.810.703-42", "funcao": "Consultor", "equipe": "", "salario": 1621, "sal_familia": 0, "ajuda_custo": 400, "cesta": 0, "prem_presenca": 0, "gratificacao": 648.4, "inss": 179.92, "consignado": 0, "adiant_quinzena": 900, "pix": "86998208398", "obs": "Comissão % sobre projetos fechados. Bônus acerto variável. Gratificação R$ 648,40.", "ativo": true}, {"id": 5, "nome": "João Victor Gomes Marques da Silva", "cpf": "076.386.653-92", "funcao": "Aux. Marceneiro", "equipe": "Corte / Equipe + Jardiel", "salario": 1621, "sal_familia": 0, "ajuda_custo": 0, "cesta": 0, "prem_presenca": 0, "gratificacao": 0, "inss": 91.18, "consignado": 0, "adiant_quinzena": 600, "pix": "07638665392", "obs": "Bônus projetos variável. R$ 50 se atingir 15 proj. Falta corta presença e projetos.", "ativo": true}, {"id": 6, "nome": "João Mateus Pereira de Sousa", "cpf": "066.677.313-05", "funcao": "Estoque", "equipe": "Estoque / Conferência", "salario": 1621, "sal_familia": 0, "ajuda_custo": 400, "cesta": 0, "prem_presenca": 100, "gratificacao": 0, "inss": 124.05, "consignado": 90.26, "adiant_quinzena": 648.4, "pix": "86994164565", "obs": "Bônus R$ 100 por equipe de meta batida quando atua com conferências.", "ativo": true}, {"id": 7, "nome": "José Atevaldo Santos da Cunha", "cpf": "959.413.393-72", "funcao": "Montador", "equipe": "Todas as equipes", "salario": 1621, "sal_familia": 270.16, "ajuda_custo": 300, "cesta": 0, "prem_presenca": 150, "gratificacao": 0, "inss": 128.92, "consignado": 374.69, "adiant_quinzena": 600, "pix": "95941339372", "obs": "Auxilia todas as equipes. Extra pontual R$ 200 quando aplicável.", "ativo": true}, {"id": 8, "nome": "Marlony Douglas de Sousa Lima", "cpf": "077.555.143-07", "funcao": "Gerente de Montagem", "equipe": "", "salario": 1621, "sal_familia": 0, "ajuda_custo": 0, "cesta": 0, "prem_presenca": 200, "gratificacao": 0, "inss": 179.92, "consignado": 451.53, "adiant_quinzena": 900, "pix": "8699537-1039", "obs": "Supervisão R$ 648,40. Corte variável. Desempenho R$ 400. Bônus R$ 100 por equipe de meta batida.", "ativo": true}, {"id": 9, "nome": "Tadeu Leandro Licar", "cpf": "043.146.003-57", "funcao": "Montador", "equipe": "Equipe Arlembeng + Tadeu", "salario": 1621, "sal_familia": 0, "ajuda_custo": 100, "cesta": 0, "prem_presenca": 0, "gratificacao": 0, "inss": 113.47, "consignado": 486.78, "adiant_quinzena": 600, "pix": "86998002876", "obs": "Bônus: R$ 80/proj. Elpi R$ 125. Premiação presença R$ 150 a partir de 05/07.", "ativo": true}, {"id": 10, "nome": "Weverton Lucas dos Reis Silva", "cpf": "077.478.153-01", "funcao": "Montador", "equipe": "", "salario": 1621, "sal_familia": 0, "ajuda_custo": 400, "cesta": 0, "prem_presenca": 300, "gratificacao": 0, "inss": 121.57, "consignado": 0, "adiant_quinzena": 600, "pix": "07747815301", "obs": "Adicional autorizado por Anne quando aplicável.", "ativo": true}, {"id": 11, "nome": "Yure da Silva Carvalho", "cpf": "068.683.693-60", "funcao": "Montador", "equipe": "Equipe + Tadeu", "salario": 1621, "sal_familia": 0, "ajuda_custo": 166, "cesta": 0, "prem_presenca": 125, "gratificacao": 0, "inss": 121.57, "consignado": 0, "adiant_quinzena": 600, "pix": "yurehenry407@gmail.com", "obs": "Bônus: R$ 50/proj se não faltar. Elpi R$ 125.", "ativo": true}, {"id": 12, "nome": "Railton da Silva Costa Oliveira", "cpf": "082.995.183-00", "funcao": "Montador", "equipe": "", "salario": 1621, "sal_familia": 135.08, "ajuda_custo": 300, "cesta": 0, "prem_presenca": 100, "gratificacao": 0, "inss": 121.57, "consignado": 379.18, "adiant_quinzena": 600, "pix": "86995788474", "obs": "Premiação produção variável.", "ativo": true}, {"id": 13, "nome": "Rafael Galeno de Oliveira", "cpf": "041.524.553-22", "funcao": "Montador", "equipe": "", "salario": 1621, "sal_familia": 67.54, "ajuda_custo": 400, "cesta": 0, "prem_presenca": 100, "gratificacao": 0, "inss": 121.57, "consignado": 215, "adiant_quinzena": 600, "pix": "04152455322", "obs": "Premiação produção variável.", "ativo": true}, {"id": 14, "nome": "Adriana Evangelista", "cpf": "779.959.703-82", "funcao": "Administrativo", "equipe": "", "salario": 1621, "sal_familia": 0, "ajuda_custo": 200, "cesta": 0, "prem_presenca": 100, "gratificacao": 0, "inss": 121.57, "consignado": 0, "adiant_quinzena": 600, "pix": "86988768771", "obs": "Bonificação R$ 975.", "ativo": true}, {"id": 15, "nome": "Jardiel Soares Rocha", "cpf": "070.744.563-90", "funcao": "Montador", "equipe": "Equipe + João Victor", "salario": 1404, "sal_familia": 0, "ajuda_custo": 0, "cesta": 0, "prem_presenca": 0, "gratificacao": 0, "inss": 89.15, "consignado": 0, "adiant_quinzena": 0, "pix": "8698112-9603", "obs": "Bônus de projeto variável. Elpi quando aplicável. Sem adiantamento fixo dia 20.", "ativo": true}, {"id": 16, "nome": "Hiago Oliveira de Santana", "cpf": "093.868.873-12", "funcao": "Montador", "equipe": "", "salario": 1621, "sal_familia": 0, "ajuda_custo": 0, "cesta": 0, "prem_presenca": 0, "gratificacao": 0, "inss": 121.57, "consignado": 0, "adiant_quinzena": 600, "pix": "hiagooliveiraoliveira48@gmail.com", "obs": "Premiação produção variável.", "ativo": true}];
+  employees = [{"id": 1, "nome": "Arlembeng Lopes Oliveira", "cpf": "058.776.653-08", "funcao": "Marceneiro", "equipe": "Equipe Arlembeng + David", "salario": 1621, "sal_familia": 67.54, "ajuda_custo": 300, "cesta": 0, "prem_presenca": 200, "gratificacao": 0, "inss": 130.68, "consignado": 372.53, "adiant_quinzena": 600, "pix": "86999578009", "obs": "", "ativo": true}, {"id": 2, "nome": "David Guilherme Moura da Silva Vieira", "cpf": "087.107.903-81", "funcao": "Aux. Marceneiro", "equipe": "Equipe Arlembeng + David", "salario": 1621, "sal_familia": 0, "ajuda_custo": 0, "cesta": 0, "prem_presenca": 140, "gratificacao": 0, "inss": 129.3, "consignado": 0, "adiant_quinzena": 600, "pix": "08710790381", "obs": "", "ativo": true}, {"id": 3, "nome": "Helder Batista Pires", "cpf": "795.940.263-91", "funcao": "Gerente de Montagem", "equipe": "", "salario": 1621, "sal_familia": 0, "ajuda_custo": 100, "cesta": 0, "prem_presenca": 250, "gratificacao": 0, "inss": 0, "consignado": 0, "adiant_quinzena": 750, "pix": "79594026391", "obs": "", "ativo": true}, {"id": 4, "nome": "Jean Thaynan Veras Sousa", "cpf": "017.810.703-42", "funcao": "Consultor", "equipe": "", "salario": 1621, "sal_familia": 0, "ajuda_custo": 400, "cesta": 0, "prem_presenca": 0, "gratificacao": 648.4, "inss": 179.92, "consignado": 0, "adiant_quinzena": 900, "pix": "86998208398", "obs": "", "ativo": true}, {"id": 5, "nome": "João Victor Gomes Marques da Silva", "cpf": "076.386.653-92", "funcao": "Aux. Marceneiro", "equipe": "Corte / Equipe + Jardiel", "salario": 1621, "sal_familia": 0, "ajuda_custo": 0, "cesta": 0, "prem_presenca": 0, "gratificacao": 0, "inss": 91.18, "consignado": 0, "adiant_quinzena": 600, "pix": "07638665392", "obs": "", "ativo": true}, {"id": 6, "nome": "João Mateus Pereira de Sousa", "cpf": "066.677.313-05", "funcao": "Estoque", "equipe": "Estoque / Conferência", "salario": 1621, "sal_familia": 0, "ajuda_custo": 400, "cesta": 0, "prem_presenca": 100, "gratificacao": 0, "inss": 124.05, "consignado": 90.26, "adiant_quinzena": 648.4, "pix": "86994164565", "obs": "", "ativo": true}, {"id": 7, "nome": "José Atevaldo Santos da Cunha", "cpf": "959.413.393-72", "funcao": "Montador", "equipe": "Todas as equipes", "salario": 1621, "sal_familia": 270.16, "ajuda_custo": 300, "cesta": 0, "prem_presenca": 150, "gratificacao": 0, "inss": 128.92, "consignado": 374.69, "adiant_quinzena": 600, "pix": "95941339372", "obs": "", "ativo": true}, {"id": 8, "nome": "Marlony Douglas de Sousa Lima", "cpf": "077.555.143-07", "funcao": "Gerente de Montagem", "equipe": "", "salario": 1621, "sal_familia": 0, "ajuda_custo": 0, "cesta": 0, "prem_presenca": 200, "gratificacao": 0, "inss": 179.92, "consignado": 451.53, "adiant_quinzena": 900, "pix": "8699537-1039", "obs": "", "ativo": true}, {"id": 9, "nome": "Tadeu Leandro Licar", "cpf": "043.146.003-57", "funcao": "Montador", "equipe": "Equipe Arlembeng + Tadeu", "salario": 1621, "sal_familia": 0, "ajuda_custo": 100, "cesta": 0, "prem_presenca": 0, "gratificacao": 0, "inss": 113.47, "consignado": 486.78, "adiant_quinzena": 600, "pix": "86998002876", "obs": "", "ativo": true}, {"id": 10, "nome": "Weverton Lucas dos Reis Silva", "cpf": "077.478.153-01", "funcao": "Projetista", "equipe": "", "salario": 1621, "sal_familia": 0, "ajuda_custo": 400, "cesta": 0, "prem_presenca": 300, "gratificacao": 0, "inss": 121.57, "consignado": 0, "adiant_quinzena": 600, "pix": "07747815301", "obs": "", "ativo": true}, {"id": 11, "nome": "Yure da Silva Carvalho", "cpf": "068.683.693-60", "funcao": "Montador", "equipe": "Equipe + Tadeu", "salario": 1621, "sal_familia": 0, "ajuda_custo": 166, "cesta": 0, "prem_presenca": 125, "gratificacao": 0, "inss": 121.57, "consignado": 0, "adiant_quinzena": 600, "pix": "yurehenry407@gmail.com", "obs": "", "ativo": true}, {"id": 12, "nome": "Railton da Silva Costa Oliveira", "cpf": "082.995.183-00", "funcao": "Montador", "equipe": "", "salario": 1621, "sal_familia": 135.08, "ajuda_custo": 300, "cesta": 0, "prem_presenca": 100, "gratificacao": 0, "inss": 121.57, "consignado": 379.18, "adiant_quinzena": 600, "pix": "86995788474", "obs": "", "ativo": true}, {"id": 13, "nome": "Rafael Galeno de Oliveira", "cpf": "041.524.553-22", "funcao": "Operador de Máquina", "equipe": "", "salario": 1621, "sal_familia": 67.54, "ajuda_custo": 400, "cesta": 0, "prem_presenca": 100, "gratificacao": 0, "inss": 121.57, "consignado": 215, "adiant_quinzena": 600, "pix": "04152455322", "obs": "", "ativo": true}, {"id": 14, "nome": "Adriana Evangelista", "cpf": "779.959.703-82", "funcao": "Administrativo", "equipe": "", "salario": 1621, "sal_familia": 0, "ajuda_custo": 200, "cesta": 0, "prem_presenca": 100, "gratificacao": 0, "inss": 121.57, "consignado": 0, "adiant_quinzena": 600, "pix": "86988768771", "obs": "", "ativo": true}, {"id": 15, "nome": "Jardiel Soares Rocha", "cpf": "070.744.563-90", "funcao": "Montador", "equipe": "Equipe + João Victor", "salario": 1404, "sal_familia": 0, "ajuda_custo": 0, "cesta": 0, "prem_presenca": 0, "gratificacao": 0, "inss": 89.15, "consignado": 0, "adiant_quinzena": 0, "pix": "8698112-9603", "obs": "", "ativo": true}, {"id": 16, "nome": "Hiago Oliveira de Santana", "cpf": "093.868.873-12", "funcao": "Montador", "equipe": "", "salario": 1621, "sal_familia": 0, "ajuda_custo": 0, "cesta": 0, "prem_presenca": 0, "gratificacao": 0, "inss": 121.57, "consignado": 0, "adiant_quinzena": 600, "pix": "hiagooliveiraoliveira48@gmail.com", "obs": "", "ativo": true}, {"id": 17, "nome": "Francilda Anne Beatriz de Sousa Ramos", "cpf": "", "funcao": "Sócio", "equipe": "", "salario": 5000, "sal_familia": 0, "ajuda_custo": 0, "cesta": 0, "prem_presenca": 0, "gratificacao": 0, "inss": 0, "consignado": 0, "adiant_quinzena": 2500, "pix": "", "obs": "Pró-labore. Confirmar % de INSS com a contadora.", "ativo": true}, {"id": 18, "nome": "Jessé", "cpf": "", "funcao": "Sócio", "equipe": "", "salario": 5000, "sal_familia": 0, "ajuda_custo": 0, "cesta": 0, "prem_presenca": 0, "gratificacao": 0, "inss": 0, "consignado": 0, "adiant_quinzena": 2500, "pix": "", "obs": "Pró-labore. Confirmar % de INSS com a contadora.", "ativo": true}];
   save();
 }
 
@@ -912,6 +1020,24 @@ function changeMonth() {
   renderAll();
 }
 
+// ── Virar mês (1 clique): avança pro mês seguinte, mantendo cadastro/dados anteriores intactos ──
+function virarMes() {
+  const d = new Date(currentMonth + '-15');
+  const next = new Date(d.getFullYear(), d.getMonth() + 1, 1);
+  const nextKey = next.toISOString().slice(0, 7);
+  const nextLabel = next.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+  if (!confirm(`Virar o controle para ${nextLabel.charAt(0).toUpperCase()+nextLabel.slice(1)}?\n\nO mês atual (${document.getElementById('mesRefLabel').textContent}) fica salvo no histórico — nada é perdido, você pode voltar a ele pelo seletor de mês.`)) return;
+  currentMonth = nextKey;
+  bonifCurrentMonth = prevMonth(nextKey); // bonificações seguem sempre 1 mês atrás, como já era a regra
+  const sel = document.getElementById('monthSel');
+  if (sel) { if (![...sel.options].some(o=>o.value===nextKey)) { const opt=document.createElement('option'); opt.value=nextKey; opt.textContent=nextLabel.charAt(0).toUpperCase()+nextLabel.slice(1); sel.appendChild(opt); } sel.value = nextKey; }
+  if (!payData[nextKey]) payData[nextKey] = {}; // garante payData[nextKey] inicializado
+  updateMesRefBadge();
+  save();
+  renderAll();
+  showToast(`📅 Controle virado para ${nextLabel}!`);
+}
+
 // ══════ PAY DATA ══════════════════════════════════════════
 function getEmpPay(empId) {
   if (!payData[currentMonth]) payData[currentMonth] = {};
@@ -941,26 +1067,43 @@ function prevMonth(ym) {
   return d.toISOString().slice(0, 7);
 }
 
+function getConsignados(pay, emp) {
+  if (Array.isArray(pay.consignados)) return pay.consignados;
+  const legacy = pay.consignado_mes !== undefined ? pay.consignado_mes : (emp.consignado||0);
+  return legacy > 0 ? [{ desc: 'Consignado', valor: legacy }] : [];
+}
+
+// Salário Família só aparece como linha própria pra estes colaboradores
+const SAL_FAMILIA_NOMES = ['Arlembeng Lopes Oliveira','José Atevaldo Santos da Cunha','Rafael Galeno de Oliveira','Railton da Silva Costa Oliveira'];
+function temSalFamilia(emp) {
+  return SAL_FAMILIA_NOMES.some(n => n.split(' ').slice(0,2).join(' ').toLowerCase() === emp.nome.split(' ').slice(0,2).join(' ').toLowerCase());
+}
+
 function calcSaldo(emp) {
   const pay = getEmpPay(emp.id);
   // Créditos fixos: usa override do mês se existir, senão usa cadastro
   const salario    = pay.fix_salario    !== undefined ? pay.fix_salario    : (emp.salario||0);
   const sal_familia= pay.fix_sal_familia!== undefined ? pay.fix_sal_familia: (emp.sal_familia||0);
   const ajuda_custo= pay.fix_ajuda_custo!== undefined ? pay.fix_ajuda_custo: (emp.ajuda_custo||0);
-  const cesta      = pay.fix_cesta      !== undefined ? pay.fix_cesta      : (emp.cesta||0);
+  const cesta      = pay.fix_cesta      !== undefined ? pay.fix_cesta      : (emp.cesta||0); // Ticket
   const gratificacao=pay.fix_gratificacao!==undefined ? pay.fix_gratificacao:(emp.gratificacao||0);
-  const prem_presenca=pay.fix_prem_presenca!==undefined?pay.fix_prem_presenca:(emp.prem_presenca||0);
+  const prem_presenca=pay.fix_prem_presenca!==undefined?pay.fix_prem_presenca:(emp.prem_presenca||0); // Premiação (fixa)
 
-  const creditos = [
-    salario, sal_familia, cesta,
-    pay.presenca ? prem_presenca : 0,
-    ajuda_custo, gratificacao,
+  const mostraSalFamilia = temSalFamilia(emp);
+  const fixosPrincipais = salario + cesta + (pay.presenca ? prem_presenca : 0) + (mostraSalFamilia ? sal_familia : 0);
+  const fixosOutros = (mostraSalFamilia ? 0 : sal_familia) + ajuda_custo + gratificacao; // legado — somado no total, exibido só como "outros" no detalhe
+
+  const premiacaoVariavel = pay.bon_premiacao_faixa||0; // Premiação (calculada na página de Premiação)
+  const creditoExtra = pay.bon_credito_extra||0;
+  const variaveisOutros = [
     pay.hora_extra||0, pay.hora_extra_noturno||0,
     pay.bon_projeto||0, pay.bon_supervisao||0, pay.bon_meta_equipe||0,
     pay.bon_elpi||0, pay.bon_removedor||0, pay.bon_desempenho||0,
     pay.bon_extra||0, pay.premissao_surpresa||0, pay.descanso_remunerado||0,
-    pay.bon_comissao_vendas||0, pay.bon_credito_extra||0,
+    pay.bon_comissao_vendas||0, pay.bon_valor_extra||0,
   ].reduce((a,b) => a+(parseFloat(b)||0), 0);
+
+  const creditos = fixosPrincipais + fixosOutros + premiacaoVariavel + creditoExtra + variaveisOutros;
 
   // ✅ Adiantamento do dia 20 foi lançado no MÊS ANTERIOR
   // A folha de junho desconta o adiantamento de maio
@@ -969,9 +1112,15 @@ function calcSaldo(emp) {
   const totalAdv = monthAdvs.reduce((s,a) => s+(parseFloat(a.valor)||0), 0);
 
   const inss = pay.inss_mes !== undefined ? pay.inss_mes : (emp.inss||0);
-  const consig = pay.consignado_mes !== undefined ? pay.consignado_mes : (emp.consignado||0);
-  const deducoes = [inss, consig, pay.consignado_extra||0, pay.falta||0, pay.debito_extra||0].reduce((a,b)=>a+(parseFloat(b)||0),0);
-  return { total:creditos, deducoes, adiantamento:totalAdv, mesAdiant, saldo:creditos-deducoes-totalAdv };
+  const consignados = getConsignados(pay, emp);
+  const totalConsignado = consignados.reduce((s,c)=>s+(parseFloat(c.valor)||0),0);
+  const deducoes = [inss, totalConsignado, pay.falta||0, pay.debito_extra||0].reduce((a,b)=>a+(parseFloat(b)||0),0);
+  return {
+    total:creditos, deducoes, adiantamento:totalAdv, mesAdiant,
+    saldo:creditos-deducoes-totalAdv,
+    fixosPrincipais, fixosOutros, premiacaoVariavel, creditoExtra, variaveisOutros,
+    inss, totalConsignado, consignados, sal_familia, mostraSalFamilia,
+  };
 }
 
 // ══════ RENDER ════════════════════════════════════════════
@@ -979,6 +1128,33 @@ const COLORS = ['#4f7bff','#22c55e','#f59e0b','#a855f7','#14b8a6','#f97316','#ef
 function avatarColor(name) { let h=0; for(let c of name) h+=c.charCodeAt(0); return COLORS[h%COLORS.length]; }
 function initials(name) { return name.split(' ').slice(0,2).map(n=>n[0]).join('').toUpperCase(); }
 function fmt(v) { return 'R$ '+(parseFloat(v)||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+
+// ══════ MÁSCARA DE DINHEIRO (trava sempre no formato 0,00) ══════
+// Formata um número pra exibição "1.234,56"
+function formatBR(v) { return (parseFloat(v)||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+// Converte "1.234,56" (ou "134,7", "134.7", "134") de volta pra número
+function parseBR(v) {
+  if (typeof v === 'number') return v;
+  v = String(v==null?'':v).trim();
+  if (!v) return 0;
+  v = v.replace(/[^\d,.-]/g, '');
+  if (v.includes(',')) v = v.replace(/\./g, '').replace(',', '.');
+  const n = parseFloat(v);
+  return isNaN(n) ? 0 : n;
+}
+// Aplica no oninput: digita como um caixa eletrônico — os dígitos entram da direita pra esquerda, sempre 2 decimais
+function maskMoneyInput(el) {
+  let digits = el.value.replace(/\D/g, '');
+  digits = digits.replace(/^0+(?=\d)/, '');
+  if (!digits) digits = '0';
+  while (digits.length < 3) digits = '0' + digits;
+  const intPart = (digits.slice(0, -2).replace(/^0+(?=\d)/, '') || '0');
+  const centPart = digits.slice(-2);
+  const withThousands = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  el.value = withThousands + ',' + centPart;
+}
+// Garante formato correto ao perder o foco, mesmo se o valor veio de fora (ex: value="" inicial)
+function fixMoneyOnBlur(el) { el.value = formatBR(parseBR(el.value)); }
 
 function renderAll() {
   renderDashboard();
@@ -1009,11 +1185,60 @@ function renderDashboard() {
   document.getElementById('dashBody').innerHTML = rows;
   document.getElementById('dashTotal').textContent = fmt(totalSaldo);
   document.getElementById('statsGrid').innerHTML = `
-    <div class="stat-card"><div class="stat-label">Total Bruto</div><div class="stat-value blue">${fmt(totalFolha)}</div><div class="stat-sub">${employees.filter(e=>e.ativo!==false).length} funcionários</div></div>
-    <div class="stat-card"><div class="stat-label">Deduções</div><div class="stat-value red">-${fmt(totalDed)}</div><div class="stat-sub">INSS + Consignado + Faltas</div></div>
-    <div class="stat-card"><div class="stat-label">Adiantamentos</div><div class="stat-value yellow">-${fmt(totalAdv)}</div><div class="stat-sub">Quinzena + Extra</div></div>
-    <div class="stat-card"><div class="stat-label">Saldo a Pagar</div><div class="stat-value ${totalSaldo>=0?'green':'red'}">${fmt(totalSaldo)}</div><div class="stat-sub">Dia 05</div></div>
+    <div class="stat-card" style="cursor:pointer" onclick="abrirDashDetalhe('bruto')"><div class="stat-label">Total Bruto</div><div class="stat-value blue">${fmt(totalFolha)}</div><div class="stat-sub">${employees.filter(e=>e.ativo!==false).length} funcionários</div></div>
+    <div class="stat-card" style="cursor:pointer" onclick="abrirDashDetalhe('deducoes')"><div class="stat-label">Deduções</div><div class="stat-value red">-${fmt(totalDed)}</div><div class="stat-sub">INSS + Consignado + Faltas</div></div>
+    <div class="stat-card" style="cursor:pointer" onclick="abrirDashDetalhe('adiantamentos')"><div class="stat-label">Adiantamentos</div><div class="stat-value yellow">-${fmt(totalAdv)}</div><div class="stat-sub">Quinzena + Extra</div></div>
+    <div class="stat-card" style="cursor:pointer" onclick="abrirDashDetalhe('saldo')"><div class="stat-label">Saldo a Pagar</div><div class="stat-value ${totalSaldo>=0?'green':'red'}">${fmt(totalSaldo)}</div><div class="stat-sub">Dia 05</div></div>
   `;
+}
+
+// ── Modal de detalhe ao clicar em um card do Dashboard ──
+function abrirDashDetalhe(tipo) {
+  const ativos = [...employees].filter(e=>e.ativo!==false).sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'));
+  const linhas = ativos.map(emp => ({ emp, c: calcSaldo(emp) }));
+  const cfg = {
+    bruto: {
+      titulo: '💰 Total Bruto — detalhe por funcionário',
+      head: ['Funcionário','Função','Fixos','Variáveis','Total'],
+      sort: (a,b) => a.emp.nome.localeCompare(b.emp.nome,'pt-BR'),
+      row: ({emp,c}) => `<tr><td>${emp.nome}</td><td><span class="badge badge-gray">${emp.funcao}</span></td>
+        <td style="font-family:var(--mono)">${fmt(c.fixosPrincipais + c.fixosOutros)}</td>
+        <td style="font-family:var(--mono)">${fmt(c.premiacaoVariavel + c.creditoExtra + c.variaveisOutros)}</td>
+        <td style="font-family:var(--mono);font-weight:700;color:var(--green)">${fmt(c.total)}</td></tr>`,
+    },
+    deducoes: {
+      titulo: '❌ Deduções — detalhe por funcionário',
+      head: ['Funcionário','Função','INSS','Consignado','Falta+DSR / Débito','Total Deduções'],
+      sort: (a,b) => a.emp.nome.localeCompare(b.emp.nome,'pt-BR'),
+      row: ({emp,c}) => `<tr><td>${emp.nome}</td><td><span class="badge badge-gray">${emp.funcao}</span></td>
+        <td style="font-family:var(--mono)">${fmt(c.inss)}</td>
+        <td style="font-family:var(--mono)">${fmt(c.totalConsignado)}</td>
+        <td style="font-family:var(--mono)">${fmt((c.deducoes - c.inss - c.totalConsignado))}</td>
+        <td style="font-family:var(--mono);font-weight:700;color:var(--red)">-${fmt(c.deducoes)}</td></tr>`,
+    },
+    adiantamentos: {
+      titulo: `💳 Adiantamentos de ${(() => { const d=new Date(prevMonth(currentMonth)+'-15'); const l=d.toLocaleDateString('pt-BR',{month:'long',year:'numeric'}); return l.charAt(0).toUpperCase()+l.slice(1); })()}`,
+      head: ['Funcionário','Função','Valor Adiantado'],
+      sort: (a,b) => a.emp.nome.localeCompare(b.emp.nome,'pt-BR'),
+      row: ({emp,c}) => c.adiantamento>0 ? `<tr><td>${emp.nome}</td><td><span class="badge badge-gray">${emp.funcao}</span></td>
+        <td style="font-family:var(--mono);font-weight:700;color:var(--yellow)">-${fmt(c.adiantamento)}</td></tr>` : '',
+    },
+    saldo: {
+      titulo: '✅ Saldo a Pagar — detalhe por funcionário',
+      head: ['Funcionário','Função','Total','Deduções','Adiant.','Saldo Final'],
+      sort: (a,b) => a.emp.nome.localeCompare(b.emp.nome,'pt-BR'),
+      row: ({emp,c}) => `<tr><td>${emp.nome}</td><td><span class="badge badge-gray">${emp.funcao}</span></td>
+        <td style="font-family:var(--mono)">${fmt(c.total)}</td>
+        <td style="font-family:var(--mono);color:var(--red)">-${fmt(c.deducoes)}</td>
+        <td style="font-family:var(--mono);color:var(--yellow)">-${fmt(c.adiantamento)}</td>
+        <td style="font-family:var(--mono);font-weight:700;color:${c.saldo>=0?'var(--green)':'var(--red)'}">${fmt(c.saldo)}</td></tr>`,
+    },
+  }[tipo];
+  if (!cfg) return;
+  document.getElementById('dashDetalheTitle').textContent = cfg.titulo;
+  document.getElementById('dashDetalheHead').innerHTML = '<tr>'+cfg.head.map(h=>`<th>${h}</th>`).join('')+'</tr>';
+  document.getElementById('dashDetalheBody').innerHTML = linhas.sort(cfg.sort).map(cfg.row).join('') || '<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:20px">Nada a exibir.</td></tr>';
+  document.getElementById('modalDashDetalhe').classList.add('open');
 }
 
 function renderEmployees() {
@@ -1082,26 +1307,21 @@ function openDetail(id, tab) {
   document.getElementById('detailPanel').classList.add('open');
 }
 
-// ── Aba Folha (créditos fixos EDITÁVEIS) ──
+// ── Aba Folha (versão enxuta) ──
 function renderDetailFolha(emp, pay, c) {
   const id = emp.id;
-  // Adiantamentos do mês anterior (dia 20) descontam na folha atual
   const mesAdiant = prevMonth(currentMonth);
   const monthAdvs = advances.filter(a=>a.empId===id&&a.mes===mesAdiant);
   const mesAdiantLabel = (() => { const d = new Date(mesAdiant+'-15'); return d.toLocaleDateString('pt-BR',{month:'long'}); })();
 
-  // Créditos fixos com valor do mês ou cadastro
-  const salario     = pay.fix_salario     !== undefined ? pay.fix_salario     : emp.salario;
-  const sal_familia = pay.fix_sal_familia  !== undefined ? pay.fix_sal_familia  : (emp.sal_familia||0);
-  const ajuda_custo = pay.fix_ajuda_custo  !== undefined ? pay.fix_ajuda_custo  : (emp.ajuda_custo||0);
-  const cesta       = pay.fix_cesta        !== undefined ? pay.fix_cesta        : (emp.cesta||0);
-  const gratificacao= pay.fix_gratificacao !== undefined ? pay.fix_gratificacao : (emp.gratificacao||0);
-  const prem_pres   = pay.fix_prem_presenca!== undefined ? pay.fix_prem_presenca: (emp.prem_presenca||0);
+  const salario   = pay.fix_salario      !== undefined ? pay.fix_salario      : emp.salario;
+  const cesta     = pay.fix_cesta        !== undefined ? pay.fix_cesta        : (emp.cesta||0); // Ticket
+  const prem_pres = pay.fix_prem_presenca!== undefined ? pay.fix_prem_presenca: (emp.prem_presenca||0); // Premiação fixa
+  const sal_familia = pay.fix_sal_familia!== undefined ? pay.fix_sal_familia  : (emp.sal_familia||0);
 
   const presLabel = pay.presenca!==false ? '✅ Presente' : '❌ Faltou';
   const presBadge = pay.presenca!==false ? 'badge-green' : 'badge-red';
 
-  // Função para linha fixa editável
   const fixedRow = (label, field, val, baseVal) => {
     const isEditing = pay['fix_editing_'+field];
     const hasOverride = pay['fix_'+field] !== undefined;
@@ -1111,7 +1331,8 @@ function renderDetailFolha(emp, pay, c) {
         ${hasOverride ? `<span style="font-size:10px;color:var(--yellow);margin-left:4px">✎ editado</span>` : ''}
       </div>
       ${isEditing
-        ? `<input class="fixed-edit-input" type="number" id="fixinp_${field}_${id}" value="${val}"
+        ? `<input class="fixed-edit-input" type="text" inputmode="numeric" id="fixinp_${field}_${id}" value="${formatBR(val)}"
+             oninput="maskMoneyInput(this)"
              onblur="saveFixedField(${id},'${field}',this.value)"
              onkeydown="if(event.key==='Enter')saveFixedField(${id},'${field}',this.value);if(event.key==='Escape')cancelFixedEdit(${id},'${field}')">
            <button class="edit-fixed-btn" onclick="cancelFixedEdit(${id},'${field}')" title="Cancelar">✕</button>
@@ -1127,8 +1348,16 @@ function renderDetailFolha(emp, pay, c) {
 
   const editRow = (label, key, val) => `<div class="pay-row">
     <div class="pay-label">${label}</div>
-    <input class="pay-input" type="number" value="${val||0}" onchange="updatePay(${id},'${key}',this.value)"
+    <input class="pay-input" type="text" inputmode="numeric" value="${formatBR(val)}" oninput="maskMoneyInput(this)" onchange="updatePay(${id},'${key}',this.value)"
       style="background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text)">
+  </div>`;
+
+  const editRowObs = (label, key, val, obsKey, obsVal) => `<div class="pay-row" style="flex-wrap:wrap">
+    <div class="pay-label">${label}</div>
+    <input class="pay-input" type="text" inputmode="numeric" value="${formatBR(val)}" oninput="maskMoneyInput(this)" onchange="updatePay(${id},'${key}',this.value)"
+      style="background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text)">
+    <input type="text" value="${esc(obsVal||'')}" placeholder="Observação (opcional)" onchange="updatePayObs(${id},'${obsKey}',this.value)"
+      style="width:100%;margin-top:6px;background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text2);font-size:12px;padding:6px 8px">
   </div>`;
 
   const advsHtml = monthAdvs.length
@@ -1140,7 +1369,20 @@ function renderDetailFolha(emp, pay, c) {
       </div>`).join('')
     : '<div style="padding:12px 14px;font-size:12px;color:var(--text3)">Nenhum adiantamento este mês</div>';
 
-  const totalFixo = salario + sal_familia + (pay.presenca!==false?prem_pres:0) + ajuda_custo + gratificacao + cesta;
+  const consignados = c.consignados;
+  const consigRows = consignados.map((cs,i)=>`
+    <div class="pay-row">
+      <div class="pay-label" style="display:flex;gap:6px;align-items:center">
+        <input value="${esc(cs.desc)}" placeholder="Descrição" style="width:110px;background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text2);font-size:12px;padding:4px 6px" onchange="updateConsignado(${id},${i},'desc',this.value)">
+      </div>
+      <input class="pay-input" type="text" inputmode="numeric" value="${formatBR(cs.valor)}" oninput="maskMoneyInput(this)" onchange="updateConsignado(${id},${i},'valor',this.value)"
+        style="background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--red)">
+      <button class="btn btn-danger btn-sm" onclick="removeConsignado(${id},${i})" style="padding:2px 6px">✕</button>
+    </div>`).join('');
+
+  const totalFixo = c.fixosPrincipais;
+  const outrosFixos = c.fixosOutros||0;
+  const outrosVariaveis = c.variaveisOutros||0;
 
   document.getElementById('dp-tab-folha').innerHTML = `
     <div class="pay-section" style="margin-bottom:12px">
@@ -1152,57 +1394,55 @@ function renderDetailFolha(emp, pay, c) {
     <div class="pay-section" style="margin-bottom:12px">
       <div class="pay-section-header green">
         <span>✅ Créditos Fixos</span>
-        <span style="display:flex;align-items:center;gap:8px">
-          <span style="font-size:10px;color:var(--green);opacity:0.7">✎ clique no lápis para editar</span>
-          <span style="font-size:12px">${fmt(totalFixo)}</span>
-        </span>
+        <span style="font-size:12px">${fmt(totalFixo)}</span>
       </div>
-      ${fixedRow('Salário Contratual','salario', salario, emp.salario)}
-      ${sal_familia > 0 || pay.fix_sal_familia !== undefined ? fixedRow('Salário Família','sal_familia', sal_familia, emp.sal_familia||0) : ''}
-      ${cesta > 0 || pay.fix_cesta !== undefined ? fixedRow('Cesta / Cartão Ticket','cesta', cesta, emp.cesta||0) : ''}
-      ${ajuda_custo > 0 || pay.fix_ajuda_custo !== undefined ? fixedRow('Ajuda de Custo','ajuda_custo', ajuda_custo, emp.ajuda_custo||0) : ''}
-      ${gratificacao > 0 || pay.fix_gratificacao !== undefined ? fixedRow('Gratificação','gratificacao', gratificacao, emp.gratificacao||0) : ''}
-      ${(prem_pres > 0 || pay.fix_prem_presenca !== undefined) && pay.presenca!==false ? fixedRow('Premiação por Presença','prem_presenca', prem_pres, emp.prem_presenca||0) : ''}
+      ${fixedRow('Salário','salario', salario, emp.salario)}
+      ${fixedRow('🎫 Ticket','cesta', cesta, emp.cesta||0)}
+      ${fixedRow('Premiação','prem_presenca', prem_pres, emp.prem_presenca||0)}
+      ${c.mostraSalFamilia ? fixedRow('Salário Família','sal_familia', sal_familia, emp.sal_familia||0) : ''}
+      ${outrosFixos > 0 ? `<div style="padding:6px 14px;font-size:11px;color:var(--text3)">+ ${fmt(outrosFixos)} de outros valores do cadastro (ajuda de custo / gratificação${c.mostraSalFamilia?'':' / sal. família'})</div>` : ''}
     </div>
 
     <div class="pay-section" style="margin-bottom:12px">
-      <div class="pay-section-header purple"><span>⭐ Variáveis do Mês</span></div>
-      ${editRow('Bonif. de Projeto (R$)','bon_projeto',pay.bon_projeto)}
-      ${editRow('Bonif. Supervisão (R$)','bon_supervisao',pay.bon_supervisao)}
-      ${editRow('Bonif. Meta Equipe (R$)','bon_meta_equipe',pay.bon_meta_equipe)}
-      ${editRow('Comissão de Vendas (R$)','bon_comissao_vendas',pay.bon_comissao_vendas)}
-      ${editRow('Crédito Extra (R$)','bon_credito_extra',pay.bon_credito_extra)}
+      <div class="pay-section-header purple">
+        <span>⭐ Créditos Variáveis</span>
+        <span style="font-size:12px">${fmt(c.premiacaoVariavel + c.creditoExtra)}</span>
+      </div>
+      ${editRow('Premiação','bon_premiacao_faixa', pay.bon_premiacao_faixa)}
+      ${editRow('Crédito Extra','bon_credito_extra', pay.bon_credito_extra)}
+      ${outrosVariaveis > 0 ? `<div style="padding:6px 14px;font-size:11px;color:var(--text3)">+ ${fmt(outrosVariaveis)} de outros lançamentos do mês (hora extra, valor extra etc.)</div>` : ''}
     </div>
 
     <div class="pay-section" style="margin-bottom:12px">
       <div class="pay-section-header red"><span>❌ Deduções</span><span style="font-size:12px">-${fmt(c.deducoes)}</span></div>
       <div class="pay-row">
-        <div class="pay-label">INSS <span style="font-size:10px;color:var(--text3)">(padrão: ${fmt(emp.inss||0)})</span></div>
-        <input class="pay-input" type="number" value="${pay.inss_mes !== undefined ? pay.inss_mes : (emp.inss||0)}" onchange="updatePay(${id},'inss_mes',this.value)"
+        <div class="pay-label">INSS</div>
+        <input class="pay-input" type="text" inputmode="numeric" value="${formatBR(c.inss)}" oninput="maskMoneyInput(this)" onchange="updatePay(${id},'inss_mes',this.value)"
           style="background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--red)">
       </div>
       <div class="pay-row">
-        <div class="pay-label">Consignado Fixo <span style="font-size:10px;color:var(--text3)">(padrão: ${fmt(emp.consignado||0)})</span></div>
-        <input class="pay-input" type="number" value="${pay.consignado_mes !== undefined ? pay.consignado_mes : (emp.consignado||0)}" onchange="updatePay(${id},'consignado_mes',this.value)"
-          style="background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--red)">
+        <div class="pay-label">Consignado</div>
+        <button class="btn btn-ghost btn-sm" onclick="addConsignado(${id})" style="padding:2px 8px;font-size:12px">+</button>
       </div>
-      ${editRow('Desconto Falta / DSR (R$)','falta',pay.falta)}
-      ${editRow('Débito Extra (R$)','debito_extra',pay.debito_extra)}
+      ${consigRows || '<div style="padding:2px 14px 8px;font-size:11px;color:var(--text3)">Nenhum consignado lançado.</div>'}
+      ${editRow('Desconto/Falta + DSR','falta',pay.falta)}
+      ${editRowObs('Débito Extra','debito_extra',pay.debito_extra,'debito_extra_obs',pay.debito_extra_obs)}
     </div>
 
     <div class="pay-section" style="margin-bottom:12px">
       <div class="pay-section-header yellow">
-        <span>💳 Adiantamentos de ${mesAdiantLabel} — ${fmt(c.adiantamento)}</span>
-        <button class="btn btn-ghost btn-sm" onclick="openAddAdvEmp(${id})" style="font-size:11px;padding:3px 8px">+ Add</button>
+        <span>💳 Adiantamento de ${mesAdiantLabel} — ${fmt(c.adiantamento)}</span>
       </div>
       ${advsHtml}
+      <div style="padding:4px 14px 8px;font-size:11px;color:var(--text3)">Lançado direto na página de Adiantamento (dia 20) — aqui é só consulta.</div>
     </div>
 
+    <div class="total-row" style="margin-bottom:6px">
+      <div class="total-label">Valor a Receber sem Deduções</div>
+      <div class="total-value" style="color:var(--text2);font-size:16px">${fmt(c.total)}</div>
+    </div>
     <div class="total-row">
-      <div>
-        <div class="total-label">Saldo Final</div>
-        <div style="font-size:11px;color:var(--text3)">Total ${fmt(c.total)} − Deduções ${fmt(c.deducoes)} − Adiant. ${fmt(c.adiantamento)}</div>
-      </div>
+      <div class="total-label">Valor a Receber com Deduções</div>
       <div class="total-value" style="color:${c.saldo>=0?'var(--green)':'var(--red)'}">${fmt(c.saldo)}</div>
     </div>
     ${emp.pix ? `<div style="margin-top:8px;font-size:12px;color:var(--text3)">PIX: ${emp.pix}</div>` : ''}
@@ -1236,7 +1476,7 @@ function startFixedEdit(empId, field) {
 
 function saveFixedField(empId, field, val) {
   const pay = getEmpPay(empId);
-  pay['fix_'+field] = parseFloat(val)||0;
+  pay['fix_'+field] = parseBR(val);
   delete pay['fix_editing_'+field];
   saveEmpPay(empId, pay);
   const emp = employees.find(e=>e.id===empId);
@@ -1265,311 +1505,33 @@ function resetFixedField(empId, field) {
   showToast('Valor resetado para o padrão do cadastro.');
 }
 
-// ── Aba Bonificações no perfil do funcionário ──
+// ── Aba Bonificações no perfil do funcionário (agora redireciona para a Premiação oficial) ──
 function renderDetailBonificacoes(emp) {
   const container = document.getElementById('dp-tab-bonificacoes');
   if (!container) return;
-
-  const isMontador = ['Montador','Gerente de Montagem','Aux. Marceneiro','Marceneiro'].includes(emp.funcao);
-  const isConsultor = emp.funcao === 'Consultor';
-
-  if (!isMontador && !isConsultor) {
+  const role = getPremiacaoRole(emp);
+  if (!role) {
     container.innerHTML = `<div style="padding:24px 0;text-align:center;color:var(--text3);font-size:13px">
-      Bonificações por projeto não se aplicam a esta função.<br>
-      <span style="font-size:11px">Use os campos variáveis na aba Folha do Mês.</span>
+      Este colaborador não participa do Programa de Premiação oficial.
     </div>`;
     return;
   }
-
-  // Mês das bonificações (usa bonifCurrentMonth)
-  const mesKey = bonifCurrentMonth || currentMonth;
-  const d = new Date(mesKey+'-15');
-  const mesLabel = d.toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
-  if (!bonifData[mesKey]) bonifData[mesKey] = { projetos:{}, vendas:[] };
-  const mes = bonifData[mesKey];
-
-  if (isMontador) {
-    const key = 'emp_'+emp.id;
-    if (!mes.projetos) mes.projetos = {};
-    if (!mes.projetos[key]) mes.projetos[key] = [];
-    const projs = mes.projetos[key];
-    const soma = projs.reduce((a,p)=>a+(parseFloat(p.valor)||0),0);
-    const cnt = projs.length;
-
-    // Calcula bônus automático baseado nas obs do funcionário
-    const autoBonif = calcAutoBonifMontador(emp, projs);
-
-    const projRows = projs.map((p,i) => `
-      <div class="dp-proj-row">
-        <input class="proj-input" value="${esc(p.cliente)}" placeholder="Cliente / projeto"
-          oninput="dpUpdateProjeto(${emp.id},${i},'cliente',this.value)">
-        <input class="proj-input" type="number" value="${p.m2||''}" placeholder="m²"
-          oninput="dpUpdateProjeto(${emp.id},${i},'m2',this.value)">
-        <input class="proj-input" type="number" value="${p.valor||''}" placeholder="Valor R$"
-          oninput="dpUpdateProjeto(${emp.id},${i},'valor',this.value)">
-        <button class="btn btn-danger btn-sm" onclick="dpDelProjeto(${emp.id},${i})" style="padding:3px 6px">✕</button>
-      </div>`).join('') || `<div style="font-size:12px;color:var(--text3);padding:8px 0">Clique em "+ Projeto" para adicionar.</div>`;
-
-    container.innerHTML = `
-      <div class="dp-bonif-header">
-        <div>
-          <div style="font-size:13px;font-weight:600;color:var(--text)">Projetos — ${mesLabel.charAt(0).toUpperCase()+mesLabel.slice(1)}</div>
-          <div style="font-size:11px;color:var(--text3);margin-top:2px">${cnt} projeto(s) · ${fmt(soma)}</div>
-        </div>
-        <button class="btn btn-primary btn-sm" onclick="dpAddProjeto(${emp.id})">+ Projeto</button>
-      </div>
-
-      <div class="dp-proj-header">
-        <div>Cliente / Projeto</div><div>m²</div><div>Valor R$</div><div></div>
-      </div>
-      <div id="dp-proj-rows-${emp.id}">${projRows}</div>
-
-      ${autoBonif.total > 0 ? `
-      <div style="margin-top:14px;padding:12px 14px;background:rgba(34,197,94,0.08);border:1px solid var(--green);border-radius:var(--radius-sm)">
-        <div style="font-size:11px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">
-          💰 Bônus calculado automaticamente
-        </div>
-        ${autoBonif.items.map(item=>`
-          <div style="display:flex;justify-content:space-between;font-size:12px;padding:3px 0;border-bottom:1px solid rgba(34,197,94,0.15)">
-            <span style="color:var(--text2)">${item.desc}</span>
-            <span style="font-family:var(--mono);color:var(--green);font-weight:600">${fmt(item.val)}</span>
-          </div>`).join('')}
-        <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700;margin-top:8px">
-          <span>Total Bonificação</span>
-          <span style="font-family:var(--mono);color:var(--green)">${fmt(autoBonif.total)}</span>
-        </div>
-        <button class="btn btn-primary" style="width:100%;margin-top:10px;justify-content:center;font-size:12px" onclick="aplicarBonifNaFolha(${emp.id},${autoBonif.total})">
-          ✅ Aplicar na Folha do Mês
-        </button>
-      </div>` : cnt > 0 ? `
-      <div style="margin-top:12px;padding:10px 12px;background:var(--surface2);border-radius:var(--radius-sm);font-size:12px;color:var(--text3)">
-        Nenhum bônus automático calculado pelas regras do cadastro.
-        <br>Use a aba Folha do Mês para lançar manualmente.
-      </div>` : ''}
-
-      <div style="margin-top:14px;padding:10px 12px;background:var(--surface2);border-radius:var(--radius-sm);font-size:11px;color:var(--text3)">
-        <strong style="color:var(--text2)">Regras:</strong> ${esc(emp.obs||'Sem regras cadastradas. Edite a ficha para adicionar.')}
-      </div>
-    `;
-  }
-
-  if (isConsultor) {
-    if (!mes.vendas) mes.vendas = [];
-    const vendas = mes.vendas;
-    let totVal=0, totCom=0;
-    vendas.forEach(v => { totVal+=parseFloat(v.valor)||0; totCom+=calcComissaoJean(v.valor); });
-
-    const formRows = vendas.map((v,i) => `
-      <div class="jean-grid-row">
-        <input class="proj-input" value="${esc(v.cliente)}" placeholder="Cliente"
-          oninput="bonifUpdateVenda(${i},'cliente',this.value);renderDetailBonificacoes(employees.find(e=>e.id===${emp.id}))">
-        <input class="proj-input" value="${esc(v.contrato)}" placeholder="Nº contrato"
-          oninput="bonifUpdateVenda(${i},'contrato',this.value)">
-        <input class="proj-input" value="${esc(v.ambiente)}" placeholder="Ambiente(s)"
-          oninput="bonifUpdateVenda(${i},'ambiente',this.value)">
-        <input class="proj-input" type="number" value="${v.valor||''}" placeholder="Valor R$"
-          oninput="bonifUpdateVenda(${i},'valor',this.value);dpUpdateJeanStats(${emp.id})">
-        <button class="btn btn-danger btn-sm" onclick="bonifDelVenda(${i});renderDetailBonificacoes(employees.find(e=>e.id===${emp.id}))" style="padding:3px 6px">✕</button>
-      </div>`).join('') || `<div style="font-size:12px;color:var(--text3);padding:8px 0">Nenhuma venda. Clique em "+ Venda".</div>`;
-
-    container.innerHTML = `
-      <div class="dp-bonif-header">
-        <div>
-          <div style="font-size:13px;font-weight:600">Vendas — ${mesLabel.charAt(0).toUpperCase()+mesLabel.slice(1)}</div>
-          <div style="font-size:11px;color:var(--text3);margin-top:2px">${vendas.length} venda(s) · Comissão: ${fmt(totCom)}</div>
-        </div>
-        <button class="btn btn-primary btn-sm" onclick="bonifAddVenda();renderDetailBonificacoes(employees.find(e=>e.id===${emp.id}))">+ Venda</button>
-      </div>
-
-      <div class="jean-grid-header" style="margin-top:8px">
-        <div>Cliente</div><div>Contrato</div><div>Ambiente</div><div>Valor R$</div><div></div>
-      </div>
-      ${formRows}
-
-      <div id="dp-jean-stats-${emp.id}" style="margin-top:12px"></div>
-
-      ${totCom > 0 ? `
-      <div style="margin-top:12px;padding:12px 14px;background:rgba(34,197,94,0.08);border:1px solid var(--green);border-radius:var(--radius-sm)">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div>
-            <div style="font-size:11px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:.05em">Comissão calculada</div>
-            <div style="font-size:20px;font-weight:700;font-family:var(--mono);color:var(--green);margin-top:4px">${fmt(totCom)}</div>
-          </div>
-          <button class="btn btn-primary" onclick="aplicarBonifNaFolha(${emp.id},${totCom})">✅ Aplicar na Folha</button>
-        </div>
-      </div>` : ''}
-
-      <div class="faixa-ref" style="margin-top:14px">
-        <div class="faixa-ref-title">Tabela de comissão</div>
-        <div class="faixa-pills">
-          <span class="faixa-pill">R$160k–199.999 → 1,1%</span>
-          <span class="faixa-pill">R$200k–249.999 → 1,2%</span>
-          <span class="faixa-pill">R$250k–299.999 → 1,3%</span>
-          <span class="faixa-pill">R$300k–349.999 → 1,4%</span>
-          <span class="faixa-pill">A partir de R$350k → 1,5%</span>
-        </div>
-      </div>
-    `;
-  }
-}
-
-// ── Calcula bônus automático por montador ──
-function calcAutoBonifMontador(emp, projs) {
-  const cnt = projs.length;
-  const items = [];
-  let total = 0;
-  const obs = (emp.obs||'').toLowerCase();
-
-  // Detecta valor por projeto nas obs
-  const matchProj = obs.match(/r\$\s*(\d+)[\s,]?\/?proj/);
-  if (matchProj) {
-    const valPorProj = parseFloat(matchProj[1]);
-    if (cnt > 0) {
-      const subtotal = cnt * valPorProj;
-      items.push({ desc: `${cnt} projeto(s) × R$ ${valPorProj}`, val: subtotal });
-      total += subtotal;
-    }
-  }
-
-  // Bônus extra a cada 10 projetos
-  if (obs.includes('10 projeto') || obs.includes('10 proj')) {
-    const matchExtra = obs.match(/r\$\s*(\d+)\s*extra/);
-    if (matchExtra && cnt >= 10) {
-      const extras = Math.floor(cnt / 10);
-      const val = extras * parseFloat(matchExtra[1]);
-      items.push({ desc: `Bônus extra (${extras}× R$ ${matchExtra[1]})`, val });
-      total += val;
-    }
-  }
-
-  return { total, items };
-}
-
-// ── Aplica bonificação de UM funcionário na folha ──
-function aplicarBonifNaFolha(empId, valor) {
-  if (!valor || valor <= 0) { showToast('Nenhum bônus para aplicar.'); return; }
-  const pay = getEmpPay(empId);
-  pay.bon_projeto = (parseFloat(pay.bon_projeto)||0) + valor;
-  saveEmpPay(empId, pay);
-  renderDashboard(); renderEmployees();
-  const emp = employees.find(e=>e.id===empId);
-  if (selectedEmpId === empId) renderDetailFolha(emp, getEmpPay(empId), calcSaldo(emp));
-  showToast(`${fmt(valor)} aplicado na folha de ${emp.nome.split(' ')[0]}!`);
-}
-
-// ── Aplica bonificações de TODOS os participantes de uma vez ──
-function aplicarTudoNaFolha() {
-  const mes = getBonifMes();
-  const monts = getBonifMontadores();
-  let count = 0;
-  let totalAplicado = 0;
-  const resumo = [];
-
-  monts.forEach(m => {
-    const projs = mes.projetos['emp_'+m.id] || [];
-    const bonif = calcAutoBonifMontador(m, projs);
-    if (bonif.total > 0) {
-      const pay = getEmpPay(m.id);
-      pay.bon_projeto = (parseFloat(pay.bon_projeto)||0) + bonif.total;
-      saveEmpPay(m.id, pay);
-      totalAplicado += bonif.total;
-      count++;
-      resumo.push(`${m.nome.split(' ')[0]}: ${fmt(bonif.total)}`);
-    }
-  });
-
-  if (count === 0) {
-    showToast('Nenhum bônus calculado para aplicar. Verifique os projetos lançados.');
-    return;
-  }
-
-  renderDashboard(); renderEmployees();
-  renderBonificacoes();
-
-  // Esconde o preview após aplicar
-  const prev = document.getElementById('bonif-preview-aplicar');
-  if (prev) prev.style.display = 'none';
-  const btn = document.getElementById('btnAplicarTudo');
-  if (btn) btn.style.display = 'none';
-
-  showToast(`✅ ${count} funcionário(s) atualizados — ${fmt(totalAplicado)} aplicados na folha!`);
-}
-
-// ── Aplica comissão do Jean na folha ──
-function aplicarComissaoJeanFolha() {
-  const mes = getBonifMes();
-  let totCom = 0;
-  mes.vendas.forEach(v => totCom += calcComissaoJean(v.valor));
-  if (totCom <= 0) { showToast('Nenhuma comissão para aplicar.'); return; }
-
-  // Jean tem id 4
-  const jean = employees.find(e => e.funcao === 'Consultor' && e.ativo !== false);
-  if (!jean) { showToast('Jean não encontrado.'); return; }
-
-  const pay = getEmpPay(jean.id);
-  pay.bon_projeto = (parseFloat(pay.bon_projeto)||0) + totCom;
-  saveEmpPay(jean.id, pay);
-  renderDashboard(); renderEmployees();
-
-  // Esconde o bloco após aplicar
-  const el = document.getElementById('bonif-jean-aplicar');
-  if (el) el.style.display = 'none';
-
-  showToast(`✅ Comissão ${fmt(totCom)} aplicada na folha do Jean!`);
-}
-
-// ── CRUD projetos no perfil ──
-function dpAddProjeto(empId) {
-  const mes = getBonifMes();
-  const key = 'emp_'+empId;
-  if (!mes.projetos[key]) mes.projetos[key] = [];
-  mes.projetos[key].push({ cliente:'', m2:'', valor:'' });
-  saveBonif();
-  const emp = employees.find(e=>e.id===empId);
-  renderDetailBonificacoes(emp);
-}
-
-function dpDelProjeto(empId, idx) {
-  const mes = getBonifMes();
-  const key = 'emp_'+empId;
-  mes.projetos[key].splice(idx, 1);
-  saveBonif();
-  const emp = employees.find(e=>e.id===empId);
-  renderDetailBonificacoes(emp);
-}
-
-function dpUpdateProjeto(empId, idx, field, val) {
-  const mes = getBonifMes();
-  const key = 'emp_'+empId;
-  if (!mes.projetos[key]) mes.projetos[key] = [];
-  mes.projetos[key][idx][field] = val;
-  saveBonif();
-  // Atualiza stats sem re-render total
-  const projs = mes.projetos[key];
-  const cnt = projs.length;
-  const soma = projs.reduce((a,p)=>a+(parseFloat(p.valor)||0),0);
-  const emp = employees.find(e=>e.id===empId);
-  const autoBonif = calcAutoBonifMontador(emp, projs);
-  // Atualiza subtítulo
-  const header = document.querySelector(`#dp-tab-bonificacoes .dp-bonif-header div:first-child div:last-child`);
-  if (header) header.textContent = `${cnt} projeto(s) · ${fmt(soma)}`;
-  if (field === 'valor') {
-    // Re-render bônus automático
-    const emp2 = employees.find(e=>e.id===empId);
-    renderDetailBonificacoes(emp2);
-  }
-}
-
-function dpUpdateJeanStats(empId) {
-  const mes = getBonifMes();
-  let totVal=0, totCom=0;
-  (mes.vendas||[]).forEach(v => { totVal+=parseFloat(v.valor)||0; totCom+=calcComissaoJean(v.valor); });
-  const el = document.getElementById(`dp-jean-stats-${empId}`);
-  if (el) el.innerHTML = totVal > 0 ? `
-    <div style="display:flex;gap:12px;font-size:12px">
-      <span style="color:var(--text3)">Volume: <strong style="color:var(--text);font-family:var(--mono)">${fmt(totVal)}</strong></span>
-      <span style="color:var(--text3)">Faixa: <strong style="color:var(--yellow)">${pctComissaoJean(totVal)}</strong></span>
-    </div>` : '';
+  const r = calcPremioEmp(emp);
+  container.innerHTML = `
+    <div style="padding:14px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:12px">
+      <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Setor / Papel na Premiação</div>
+      <div style="font-size:14px;font-weight:600">${role.papel} — <span style="color:var(--purple);text-transform:capitalize">${role.setor}</span></div>
+    </div>
+    ${r ? `
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-label">${role.setor==='comercial'?'Faturamento do mês':'Projetos no mês'}</div><div class="stat-value blue">${role.setor==='comercial'?fmt(r.contagem):r.contagem}</div></div>
+      <div class="stat-card"><div class="stat-label">Faixa atingida</div><div class="stat-value" style="color:var(--purple);font-size:15px">${r.info.label}</div></div>
+      <div class="stat-card"><div class="stat-label">Prêmio calculado</div><div class="stat-value green">${fmt(r.premioFinal)}</div></div>
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-top:4px;justify-content:center" onclick="showPage('bonificacoes');switchBonifTab('${role.setor}')">
+      ⭐ Ver e aplicar na página de Premiação
+    </button>` : ''}
+  `;
 }
 
 function closeDetail() { document.getElementById('detailPanel').classList.remove('open'); selectedEmpId=null; }
@@ -1579,13 +1541,46 @@ function togglePresenca(empId) {
   saveEmpPay(empId,pay); openDetail(empId, currentDetailTab); renderAll();
 }
 
+function updatePayObs(empId, key, val) {
+  const pay = getEmpPay(empId); pay[key] = val;
+  saveEmpPay(empId, pay);
+}
+
 function updatePay(empId,key,val) {
-  const pay=getEmpPay(empId); pay[key]=parseFloat(val)||0;
+  const pay=getEmpPay(empId); pay[key]=parseBR(val);
   saveEmpPay(empId,pay);
-  const c=calcSaldo(employees.find(e=>e.id===empId));
+  const emp=employees.find(e=>e.id===empId);
+  const c=calcSaldo(emp);
   renderDashboard(); renderEmployees();
-  const totalEl=document.querySelector('.total-value');
-  if(totalEl){totalEl.textContent=fmt(c.saldo);totalEl.style.color=c.saldo>=0?'var(--green)':'var(--red)';}
+  if (selectedEmpId===empId) renderDetailFolha(emp, getEmpPay(empId), c);
+}
+
+// ── Consignados (múltiplas linhas) ──
+function addConsignado(empId) {
+  const pay = getEmpPay(empId);
+  const emp = employees.find(e=>e.id===empId);
+  pay.consignados = getConsignados(pay, emp);
+  pay.consignados.push({ desc:'', valor:0 });
+  saveEmpPay(empId, pay);
+  renderDetailFolha(emp, pay, calcSaldo(emp));
+}
+function updateConsignado(empId, idx, field, val) {
+  const pay = getEmpPay(empId);
+  const emp = employees.find(e=>e.id===empId);
+  pay.consignados = getConsignados(pay, emp);
+  if (pay.consignados[idx]) pay.consignados[idx][field] = field==='valor' ? parseBR(val) : val;
+  saveEmpPay(empId, pay);
+  renderDashboard(); renderEmployees();
+  renderDetailFolha(emp, pay, calcSaldo(emp));
+}
+function removeConsignado(empId, idx) {
+  const pay = getEmpPay(empId);
+  const emp = employees.find(e=>e.id===empId);
+  pay.consignados = getConsignados(pay, emp);
+  pay.consignados.splice(idx, 1);
+  saveEmpPay(empId, pay);
+  renderDashboard(); renderEmployees();
+  renderDetailFolha(emp, pay, calcSaldo(emp));
 }
 
 // ══════ EMPLOYEES CRUD ════════════════════════════════════
@@ -1642,7 +1637,7 @@ function openAddAdvEmp(empId) { openAddAdv(); document.getElementById('adv_emp')
 
 function saveAdv() {
   const empId=parseInt(document.getElementById('adv_emp').value);
-  const valor=parseFloat(document.getElementById('adv_valor').value);
+  const valor=parseBR(document.getElementById('adv_valor').value);
   if(!valor||valor<=0){showToast('Informe o valor');return;}
   advances.push({id:Date.now().toString(),empId,mes:currentMonth,data:document.getElementById('adv_data').value,tipo:document.getElementById('adv_tipo').value,valor,obs:document.getElementById('adv_obs').value.trim()});
   save(); closeModal('modalAdv'); renderAll();
@@ -1690,7 +1685,7 @@ function getDia20Status(empId){return advances.some(a=>a.empId===empId&&a.mes===
 function getDia20Valor(empId){const pay=getEmpPay(empId);return pay.adiant_dia20_valor!==undefined?pay.adiant_dia20_valor:(employees.find(e=>e.id===empId)?.adiant_quinzena||0);}
 
 function renderDia20(){
-  const ativos=employees.filter(e=>e.ativo!==false&&e.adiant_quinzena>0).sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'));
+  const ativos=employees.filter(e=>e.ativo!==false).sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'));
   const pagos=ativos.filter(e=>getDia20Status(e.id));
   const pendentes=ativos.filter(e=>!getDia20Status(e.id));
   const totalGeral=ativos.reduce((s,e)=>s+getDia20Valor(e.id),0);
@@ -1711,7 +1706,7 @@ function renderDia20(){
       </div></td>
       <td><span class="badge badge-gray">${emp.funcao}</span></td>
       <td style="text-align:right;font-family:var(--mono);font-size:12px;color:var(--text3)">${fmt(emp.adiant_quinzena)}</td>
-      <td style="text-align:right">${pago?`<span style="font-family:var(--mono);font-size:12px;font-weight:600;color:var(--green)">${fmt(valor)}</span>`:`<input type="number" value="${valor}" onchange="setDia20Valor(${emp.id},this.value)" style="width:110px;text-align:right;font-family:var(--mono);font-size:12px;padding:4px 8px;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text)">`}</td>
+      <td style="text-align:right">${pago?`<span style="font-family:var(--mono);font-size:12px;font-weight:600;color:var(--green)">${fmt(valor)}</span>`:`<input type="text" inputmode="numeric" value="${formatBR(valor)}" oninput="maskMoneyInput(this)" onchange="setDia20Valor(${emp.id},this.value)" style="width:110px;text-align:right;font-family:var(--mono);font-size:12px;padding:4px 8px;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text)">`}</td>
       <td style="text-align:center">${pago?`<span class="badge badge-green">✓ Pago</span>`:`<span class="badge badge-yellow">⏳ Pendente</span>`}</td>
       <td style="text-align:right">${pago?`<button class="btn btn-ghost btn-sm" onclick="estornarDia20(${emp.id})" style="font-size:11px;color:var(--red)">Estornar</button>`:`<button class="btn btn-primary btn-sm" onclick="confirmarDia20(${emp.id})">✓ Pago</button>`}</td>
     </tr>`;
@@ -1732,7 +1727,7 @@ function renderDia20(){
   document.getElementById('advBody').innerHTML=advRows;
 }
 
-function setDia20Valor(empId,val){const pay=getEmpPay(empId);pay.adiant_dia20_valor=parseFloat(val)||0;saveEmpPay(empId,pay);}
+function setDia20Valor(empId,val){const pay=getEmpPay(empId);pay.adiant_dia20_valor=parseBR(val);saveEmpPay(empId,pay);}
 
 function confirmarDia20(empId){
   const valor=getDia20Valor(empId);
@@ -1795,10 +1790,16 @@ function lancarAdiantamentosTodos(){
 function lancarVariavel(){
   const empId=parseInt(document.getElementById('lanc_emp').value);
   const tipo=document.getElementById('lanc_tipo').value;
-  const valor=parseFloat(document.getElementById('lanc_valor').value);
+  const valor=parseBR(document.getElementById('lanc_valor').value);
+  const obs=(document.getElementById('lanc_obs')?.value||'').trim();
   if(!valor||valor<=0){showToast('Informe o valor');return;}
   const pay=getEmpPay(empId);pay[tipo]=(parseFloat(pay[tipo])||0)+valor;
-  saveEmpPay(empId,pay);document.getElementById('lanc_valor').value='';renderAll();showToast('Lançado!');
+  if(!Array.isArray(pay.extras_log)) pay.extras_log=[];
+  pay.extras_log.push({tipo,valor,obs,data:new Date().toISOString().slice(0,10)});
+  saveEmpPay(empId,pay);
+  document.getElementById('lanc_valor').value='';
+  if(document.getElementById('lanc_obs'))document.getElementById('lanc_obs').value='';
+  renderAll();showToast('Lançado!');
 }
 
 // ══════ BONIFICAÇÕES (página principal) ═══════════════════
@@ -1820,298 +1821,244 @@ function saveBonifParticipantes() {
   localStorage.setItem(BONIF_PART_KEY, JSON.stringify(bonifParticipantes));
 }
 
-function getBonifMontadores() {
-  return employees.filter(e =>
-    e.ativo !== false && bonifParticipantes.includes(e.id)
-  );
-}
-
-function openGerenciarParticipantes() {
-  const list = document.getElementById('participantesList');
-  list.innerHTML = employees
-    .filter(e => e.ativo !== false)
-    .sort((a,b) => a.nome.localeCompare(b.nome))
-    .map(emp => {
-      const checked = bonifParticipantes.includes(emp.id);
-      const col = avatarColor(emp.nome);
-      return `<label style="display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--surface2);border-radius:var(--radius-sm);border:1px solid ${checked ? 'var(--accent)' : 'var(--border)'};cursor:pointer;transition:border-color 0.15s" id="plabel_${emp.id}">
-        <input type="checkbox" id="pcheck_${emp.id}" value="${emp.id}" ${checked ? 'checked' : ''}
-          onchange="toggleParticLabel(${emp.id})"
-          style="width:16px;height:16px;accent-color:var(--accent);cursor:pointer;flex-shrink:0">
-        <div style="width:32px;height:32px;border-radius:50%;background:${col};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0">${initials(emp.nome)}</div>
-        <div style="flex:1">
-          <div style="font-size:13px;font-weight:600">${emp.nome.split(' ').slice(0,3).join(' ')}</div>
-          <div style="font-size:11px;color:var(--text3)">${emp.funcao}${emp.equipe ? ' · ' + emp.equipe : ''}</div>
-        </div>
-        ${checked ? '<span style="font-size:10px;font-weight:600;color:var(--accent);background:var(--accent-dim);padding:2px 8px;border-radius:99px">✓ ativo</span>' : ''}
-      </label>`;
-    }).join('');
-  document.getElementById('modalParticipantes').classList.add('open');
-}
-
-function toggleParticLabel(empId) {
-  const lbl = document.getElementById('plabel_' + empId);
-  const chk = document.getElementById('pcheck_' + empId);
-  if (lbl) {
-    lbl.style.borderColor = chk.checked ? 'var(--accent)' : 'var(--border)';
-    // Atualiza badge ativo
-    const badge = lbl.querySelector('span');
-    if (chk.checked && !badge) {
-      const sp = document.createElement('span');
-      sp.style.cssText = 'font-size:10px;font-weight:600;color:var(--accent);background:var(--accent-dim);padding:2px 8px;border-radius:99px';
-      sp.textContent = '✓ ativo';
-      lbl.appendChild(sp);
-    } else if (!chk.checked && badge) {
-      badge.remove();
-    }
-  }
-}
-
-function salvarParticipantes() {
-  const checks = document.querySelectorAll('#participantesList input[type=checkbox]');
-  bonifParticipantes = [];
-  checks.forEach(c => { if (c.checked) bonifParticipantes.push(parseInt(c.value)); });
-  saveBonifParticipantes();
-  closeModal('modalParticipantes');
-  renderBonificacoes();
-  showToast('Participantes atualizados!');
+// ══════ PREMIAÇÃO POR SETOR (Fábrica / Montagem / Comercial) ══════
+function empsDoSetor(setor) {
+  return employees.filter(e => {
+    if (e.ativo === false) return false;
+    const role = getPremiacaoRole(e);
+    return role && role.setor === setor;
+  });
 }
 
 function getBonifMes() {
   const k = bonifCurrentMonth || currentMonth;
-  if (!bonifData[k]) bonifData[k] = { projetos:{}, vendas:[] };
-  if (!bonifData[k].projetos) bonifData[k].projetos = {};
-  if (!bonifData[k].vendas) bonifData[k].vendas = [];
-  getBonifMontadores().forEach(m => {
-    const key = 'emp_'+m.id;
-    if (!bonifData[k].projetos[key]) bonifData[k].projetos[key] = [];
-  });
+  if (!bonifData[k]) bonifData[k] = {};
+  if (!bonifData[k].premiacao) bonifData[k].premiacao = {};
+  if (bonifData[k].faturamentoMes === undefined) bonifData[k].faturamentoMes = 0;
   return bonifData[k];
 }
-
-function calcComissaoJean(val) {
-  val=parseFloat(val)||0;
-  if(val>=350000)return val*0.015;
-  if(val>=300000)return val*0.014;
-  if(val>=250000)return val*0.013;
-  if(val>=200000)return val*0.012;
-  if(val>=160000)return val*0.011;
-  return 0;
+function getCritEmp(empId) {
+  const mes = getBonifMes();
+  const key = 'emp_' + empId;
+  if (!mes.premiacao[key]) mes.premiacao[key] = { projetos: [], criterios: {}, contagemManual: null };
+  if (!mes.premiacao[key].projetos) mes.premiacao[key].projetos = [];
+  if (!mes.premiacao[key].criterios) mes.premiacao[key].criterios = {};
+  return mes.premiacao[key];
 }
-function pctComissaoJean(val) {
-  val=parseFloat(val)||0;
-  if(val>=350000)return '1,5%';
-  if(val>=300000)return '1,4%';
-  if(val>=250000)return '1,3%';
-  if(val>=200000)return '1,2%';
-  if(val>=160000)return '1,1%';
-  return '—';
+
+function calcPremioEmp(emp) {
+  const role = getPremiacaoRole(emp);
+  if (!role) return null;
+  const dados = getCritEmp(emp.id);
+  const mes = getBonifMes();
+  let contagem;
+  if (role.setor === 'comercial') {
+    contagem = parseFloat(mes.faturamentoMes) || 0;
+  } else {
+    contagem = dados.contagemManual !== null && dados.contagemManual !== undefined && dados.contagemManual !== ''
+      ? (parseInt(dados.contagemManual) || 0)
+      : dados.projetos.length;
+  }
+  const info = faixaInfo(role.setor, role.papel, contagem);
+  const fator = fatorCriterios(dados.criterios);
+  const premioFinal = info.premio * fator;
+  return { role, contagem, info, fator, premioFinal, dados };
+}
+
+async function buscarProjetosSetor(setor) {
+  showToast('Buscando no Controle de Projetos...');
+  const lista = await fetchProjetosControle(true);
+  if (!lista.length) { showToast('Não foi possível buscar (verifique a conexão com o Controle de Projetos).'); return; }
+  const mesKey = bonifCurrentMonth || currentMonth;
+  empsDoSetor(setor).forEach(emp => {
+    const role = getPremiacaoRole(emp);
+    const dados = getCritEmp(emp.id);
+    const { itens } = contarProjetosAuto(lista, role.papel, emp.nome, mesKey, setor);
+    const existentes = new Set(dados.projetos.map(p => (p.cliente||'') + '|' + (p.data||'')));
+    itens.forEach(it => {
+      const clienteNome = it.cliente || it.ambiente || 'Projeto';
+      const dataRef = it.montagem_entregue || it.fim_fab || it.conferido || '';
+      const sig = clienteNome + '|' + dataRef;
+      if (!existentes.has(sig)) { dados.projetos.push({ cliente: clienteNome, data: dataRef, fonte: 'auto' }); existentes.add(sig); }
+    });
+  });
+  saveBonif();
+  renderBonificacoes();
+  showToast('Contagem automática atualizada — revise e ajuste manualmente se precisar.');
+}
+
+function atualizaFaturamentoMes(val) {
+  const mes = getBonifMes();
+  mes.faturamentoMes = parseBR(val);
+  saveBonif();
+  renderBonifSetor('comercial');
 }
 
 function switchBonifTab(sec) {
-  ['montadores','vendas'].forEach(s=>{
-    document.getElementById('bsec-'+s).classList.toggle('active',s===sec);
-    document.getElementById('btab-'+s).classList.toggle('active',s===sec);
+  ['fabrica','montagem','comercial'].forEach(s => {
+    document.getElementById('bsec-'+s)?.classList.toggle('active', s===sec);
+    document.getElementById('btab-'+s)?.classList.toggle('active', s===sec);
   });
+  currentPremiacaoSetor = sec;
 }
 
 function renderBonificacoes() {
-  const mes=getBonifMes();
-  const monts=getBonifMontadores();
-  let totProj=0,totValM=0;
-  monts.forEach(m=>{(mes.projetos['emp_'+m.id]||[]).forEach(p=>{totProj++;totValM+=parseFloat(p.valor)||0;});});
-  let totJeanCom=0;
-  mes.vendas.forEach(v=>totJeanCom+=calcComissaoJean(v.valor));
-  document.getElementById('bonif-resumo-geral').innerHTML=`
-    <div class="stat-card"><div class="stat-label">Projetos (montadores)</div><div class="stat-value blue">${totProj}</div><div class="stat-sub">no mês</div></div>
-    <div class="stat-card"><div class="stat-label">Valor total projetos</div><div class="stat-value green">${fmt(totValM)}</div></div>
-    <div class="stat-card"><div class="stat-label">Vendas Jean</div><div class="stat-value" style="color:var(--purple)">${mes.vendas.length}</div></div>
-    <div class="stat-card"><div class="stat-label">Comissão Jean</div><div class="stat-value yellow">${fmt(totJeanCom)}</div></div>
-  `;
-  renderBonifMontadores();
-  renderBonifJean();
+  const mes = getBonifMes();
+  const fatEl = document.getElementById('comercial_faturamento');
+  if (fatEl && document.activeElement !== fatEl) fatEl.value = mes.faturamentoMes ? formatBR(mes.faturamentoMes) : '';
+  renderBonifResumoGeral();
+  renderBonifSetor('fabrica');
+  renderBonifSetor('montagem');
+  renderBonifSetor('comercial');
 }
 
-function renderBonifMontadores(){
-  const mes=getBonifMes();const monts=getBonifMontadores();
-  let totProj=0,totValM=0;
-  monts.forEach(m=>{(mes.projetos['emp_'+m.id]||[]).forEach(p=>{totProj++;totValM+=parseFloat(p.valor)||0;});});
-  document.getElementById('bonif-mont-stats').innerHTML=`
-    <div class="stat-card"><div class="stat-label">Total de projetos</div><div class="stat-value blue">${totProj}</div></div>
-    <div class="stat-card"><div class="stat-label">Valor total</div><div class="stat-value green">${fmt(totValM)}</div></div>
-    <div class="stat-card"><div class="stat-label">Com projetos</div><div class="stat-value" style="color:var(--purple)">${monts.filter(m=>(mes.projetos['emp_'+m.id]||[]).length>0).length} / ${monts.length}</div></div>
+function renderBonifResumoGeral() {
+  let totalPremios = 0, totalPessoas = 0;
+  ['fabrica','montagem','comercial'].forEach(setor => {
+    empsDoSetor(setor).forEach(emp => {
+      const r = calcPremioEmp(emp);
+      if (r) { totalPremios += r.premioFinal; totalPessoas++; }
+    });
+  });
+  const el = document.getElementById('bonif-resumo-geral');
+  if (el) el.innerHTML = `
+    <div class="stat-card"><div class="stat-label">Colaboradores na premiação</div><div class="stat-value blue">${totalPessoas}</div></div>
+    <div class="stat-card"><div class="stat-label">Total de prêmios do mês</div><div class="stat-value green">${fmt(totalPremios)}</div></div>
+    <div class="stat-card"><div class="stat-label">Mês de apuração</div><div class="stat-value" style="font-size:15px;color:var(--purple)">${(() => { const d=new Date((bonifCurrentMonth||currentMonth)+'-15'); const l=d.toLocaleDateString('pt-BR',{month:'long',year:'numeric'}); return l.charAt(0).toUpperCase()+l.slice(1); })()}</div></div>
   `;
-  let html='';
-  monts.forEach(m=>{
-    const key='emp_'+m.id;const projs=mes.projetos[key]||[];
-    const cnt=projs.length;const soma=projs.reduce((a,p)=>a+(parseFloat(p.valor)||0),0);
-    const badgeCls=cnt>=10?'mont-badge-ok':'mont-badge-warn';
-    const badgeTxt=cnt>=10?`${cnt} proj. ✓`:`${cnt} / 10`;
-    const col=avatarColor(m.nome);const ini=initials(m.nome);
-    let rows=projs.map((p,i)=>`
-      <div class="proj-grid-row">
-        <input class="proj-input" value="${esc(p.cliente)}" placeholder="Nome do cliente" oninput="bonifUpdateProjeto(${m.id},${i},'cliente',this.value)">
-        <input class="proj-input" value="${esc(p.ambiente)}" placeholder="Ambiente" oninput="bonifUpdateProjeto(${m.id},${i},'ambiente',this.value)">
-        <input class="proj-input" type="number" value="${p.m2||''}" placeholder="m²" oninput="bonifUpdateProjeto(${m.id},${i},'m2',this.value)">
-        <input class="proj-input" type="number" value="${p.valor||''}" placeholder="0,00" oninput="bonifUpdateProjeto(${m.id},${i},'valor',this.value)">
-        <button class="btn btn-danger btn-sm" onclick="bonifDelProjeto(${m.id},${i})" style="padding:3px 6px">✕</button>
-      </div>`).join('');
-    if(!rows)rows=`<div style="font-size:12px;color:var(--text3);padding:8px 0">Nenhum projeto. Clique em "+ Projeto".</div>`;
-    html+=`<div class="mont-block">
+}
+
+function renderBonifSetor(setor) {
+  const emps = empsDoSetor(setor);
+  const statsEl = document.getElementById('bonif-stats-'+setor);
+  const listEl = document.getElementById('bonif-list-'+setor);
+  if (!listEl) return;
+
+  let totalPremio = 0, comFaixa = 0;
+  const cards = emps.map(emp => {
+    const r = calcPremioEmp(emp);
+    if (!r) return '';
+    totalPremio += r.premioFinal;
+    if (r.info.faixaIdx >= 0) comFaixa++;
+    const col = avatarColor(emp.nome), ini = initials(emp.nome);
+    const c = r.dados.criterios;
+    const zeroPorCriterio = r.fator === 0 && r.info.premio > 0;
+
+    const projRows = (setor !== 'comercial') ? r.dados.projetos.map((p,i) => `
+      <div class="proj-grid-row" style="grid-template-columns:1.6fr 110px 70px 30px">
+        <input class="proj-input" value="${esc(p.cliente)}" placeholder="Cliente / projeto" oninput="premUpdateProjeto(${emp.id},${i},'cliente',this.value)">
+        <input class="proj-input" value="${esc(p.data)}" placeholder="Data (AAAA-MM-DD)" oninput="premUpdateProjeto(${emp.id},${i},'data',this.value)">
+        <span class="badge ${p.fonte==='auto'?'badge-blue':'badge-gray'}" style="align-self:center;justify-self:center">${p.fonte==='auto'?'auto':'manual'}</span>
+        <button class="btn btn-danger btn-sm" onclick="premDelProjeto(${emp.id},${i})" style="padding:3px 6px">✕</button>
+      </div>`).join('') : '';
+
+    const criteriosHtml = `
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;padding:10px 12px;background:var(--surface);border-radius:var(--radius-sm);border:1px solid var(--border)">
+        <label style="font-size:11px;color:var(--text2);display:flex;align-items:center;gap:6px">Faltas <input type="number" min="0" value="${c.faltas||0}" style="width:50px" class="proj-input" onchange="premUpdateCriterio(${emp.id},'faltas',this.value)"></label>
+        <label style="font-size:11px;color:var(--text2);display:flex;align-items:center;gap:6px">Atrasos <input type="number" min="0" value="${c.atrasos||0}" style="width:50px" class="proj-input" onchange="premUpdateCriterio(${emp.id},'atrasos',this.value)"></label>
+        <label style="font-size:11px;color:var(--text2);display:flex;align-items:center;gap:6px"><input type="checkbox" ${c.advertencia?'checked':''} onchange="premUpdateCriterio(${emp.id},'advertencia',this.checked)"> Advertência</label>
+        <label style="font-size:11px;color:var(--text2);display:flex;align-items:center;gap:6px"><input type="checkbox" ${c.suspensao?'checked':''} onchange="premUpdateCriterio(${emp.id},'suspensao',this.checked)"> Suspensão</label>
+        <label style="font-size:11px;color:var(--text2);display:flex;align-items:center;gap:6px"><input type="checkbox" ${c.desvioProjeto?'checked':''} onchange="premUpdateCriterio(${emp.id},'desvioProjeto',this.checked)"> Desvio de projeto</label>
+        <label style="font-size:11px;color:var(--text2);display:flex;align-items:center;gap:6px"><input type="checkbox" ${c.retrabalho?'checked':''} onchange="premUpdateCriterio(${emp.id},'retrabalho',this.checked)"> Retrabalho</label>
+        <label style="font-size:11px;color:var(--text2);display:flex;align-items:center;gap:6px"><input type="checkbox" ${c.demissao?'checked':''} onchange="premUpdateCriterio(${emp.id},'demissao',this.checked)"> Pediu demissão</label>
+        <label style="font-size:11px;color:var(--text2);display:flex;align-items:center;gap:6px"><input type="checkbox" ${c.justaCausa?'checked':''} onchange="premUpdateCriterio(${emp.id},'justaCausa',this.checked)"> Justa causa</label>
+      </div>`;
+
+    return `<div class="mont-block">
       <div class="mont-header">
         <div class="mont-avatar" style="background:${col}22;color:${col}">${ini}</div>
         <div style="flex:1">
-          <div class="mont-name">${m.nome.split(' ').slice(0,3).join(' ')}</div>
-          <div class="mont-sub">${m.funcao}${m.equipe?' · '+m.equipe:''} · ${cnt} projeto(s) · ${fmt(soma)}</div>
+          <div class="mont-name">${emp.nome.split(' ').slice(0,3).join(' ')}</div>
+          <div class="mont-sub">${r.role.papel}${setor!=='comercial' ? ` · ${r.contagem} projeto(s) · ${r.info.label}` : ` · faturamento do mês → ${r.info.label}`}</div>
         </div>
-        <span class="mont-badge ${badgeCls}">${badgeTxt}</span>
-        <button class="btn btn-primary btn-sm" onclick="bonifAddProjeto(${m.id})">+ Projeto</button>
+        <span class="mont-badge ${zeroPorCriterio?'mont-badge-warn':r.premioFinal>0?'mont-badge-ok':''}" style="${r.premioFinal===0&&!zeroPorCriterio?'background:var(--surface2);color:var(--text3)':''}">${zeroPorCriterio ? '⚠ zerado por critério' : fmt(r.premioFinal)}</span>
+        <button class="btn btn-primary btn-sm" onclick="aplicarPremioNaFolha(${emp.id})">✅ Aplicar</button>
       </div>
-      <div class="proj-grid-header"><div>Cliente</div><div>Ambiente</div><div>m²</div><div>Valor (R$)</div><div></div></div>
-      ${rows}
+      ${setor !== 'comercial' ? `
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        <label style="font-size:11px;color:var(--text3)">Contagem manual (deixe em branco p/ usar a lista de projetos abaixo):</label>
+        <input class="proj-input" type="number" style="width:80px" placeholder="${r.dados.projetos.length}" value="${r.dados.contagemManual ?? ''}" onchange="premUpdateContagemManual(${emp.id},this.value)">
+        <button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="premAddProjeto(${emp.id})">+ Projeto</button>
+      </div>
+      ${projRows || '<div style="font-size:12px;color:var(--text3);padding:6px 0">Nenhum projeto vinculado ainda. Clique em "Atualizar contagem automática" ou "+ Projeto".</div>'}
+      ` : ''}
+      ${criteriosHtml}
     </div>`;
-  });
-  if(!monts.length)html=`<div style="font-size:13px;color:var(--text3);padding:20px 0">Nenhum montador ativo.</div>`;
-  document.getElementById('bonif-montadores-list').innerHTML=html;
+  }).join('');
 
-  // Calcular preview de bônus e mostrar/esconder botão + preview
-  const previews = [];
-  let totalGeral = 0;
-  monts.forEach(m => {
-    const projs = mes.projetos['emp_'+m.id] || [];
-    const bonif = calcAutoBonifMontador(m, projs);
-    if (bonif.total > 0) {
-      previews.push({ nome: m.nome.split(' ').slice(0,2).join(' '), bonif });
-      totalGeral += bonif.total;
+  listEl.innerHTML = cards || `<div style="padding:20px;text-align:center;color:var(--text3);font-size:13px">Nenhum colaborador mapeado para este setor.</div>`;
+  if (statsEl) statsEl.innerHTML = `
+    <div class="stat-card"><div class="stat-label">Colaboradores</div><div class="stat-value blue">${emps.length}</div></div>
+    <div class="stat-card"><div class="stat-label">Atingiram alguma faixa</div><div class="stat-value" style="color:var(--purple)">${comFaixa} / ${emps.length}</div></div>
+    <div class="stat-card"><div class="stat-label">Total de prêmios</div><div class="stat-value green">${fmt(totalPremio)}</div></div>
+  `;
+}
+
+function premAddProjeto(empId) {
+  const d = getCritEmp(empId);
+  d.projetos.push({ cliente: '', data: '', fonte: 'manual' });
+  saveBonif();
+  renderBonifSetor(getPremiacaoRole(employees.find(e=>e.id===empId)).setor);
+}
+function premDelProjeto(empId, idx) {
+  const d = getCritEmp(empId);
+  d.projetos.splice(idx, 1);
+  saveBonif();
+  renderBonifSetor(getPremiacaoRole(employees.find(e=>e.id===empId)).setor);
+}
+function premUpdateProjeto(empId, idx, field, val) {
+  const d = getCritEmp(empId);
+  if (d.projetos[idx]) d.projetos[idx][field] = val;
+  saveBonif();
+  renderBonifSetor(getPremiacaoRole(employees.find(e=>e.id===empId)).setor);
+}
+function premUpdateContagemManual(empId, val) {
+  const d = getCritEmp(empId);
+  d.contagemManual = val === '' ? null : (parseInt(val)||0);
+  saveBonif();
+  renderBonifSetor(getPremiacaoRole(employees.find(e=>e.id===empId)).setor);
+}
+function premUpdateCriterio(empId, campo, val) {
+  const d = getCritEmp(empId);
+  d.criterios[campo] = val;
+  saveBonif();
+  renderBonifSetor(getPremiacaoRole(employees.find(e=>e.id===empId)).setor);
+  renderBonifResumoGeral();
+}
+
+function aplicarPremioNaFolha(empId) {
+  const emp = employees.find(e=>e.id===empId); if (!emp) return;
+  const r = calcPremioEmp(emp); if (!r || r.premioFinal <= 0) { showToast('Sem prêmio a aplicar para este colaborador.'); return; }
+  const pay = getEmpPay(empId);
+  pay.bon_premiacao_faixa = (parseFloat(pay.bon_premiacao_faixa)||0) + r.premioFinal;
+  saveEmpPay(empId, pay);
+  renderDashboard(); renderEmployees();
+  if (selectedEmpId === empId) renderDetailFolha(emp, getEmpPay(empId), calcSaldo(emp));
+  showToast(`${fmt(r.premioFinal)} de premiação aplicado na folha de ${emp.nome.split(' ')[0]}!`);
+}
+
+function aplicarTudoSetor(setor) {
+  const emps = empsDoSetor(setor);
+  let count = 0, total = 0;
+  emps.forEach(emp => {
+    const r = calcPremioEmp(emp);
+    if (r && r.premioFinal > 0) {
+      const pay = getEmpPay(emp.id);
+      pay.bon_premiacao_faixa = (parseFloat(pay.bon_premiacao_faixa)||0) + r.premioFinal;
+      saveEmpPay(emp.id, pay);
+      count++; total += r.premioFinal;
     }
   });
-
-  const btnAplicar = document.getElementById('btnAplicarTudo');
-  const prevBox = document.getElementById('bonif-preview-aplicar');
-  const prevRows = document.getElementById('bonif-preview-rows');
-  const prevTotal = document.getElementById('bonif-preview-total');
-
-  if (previews.length > 0) {
-    if (btnAplicar) btnAplicar.style.display = 'inline-flex';
-    if (prevBox) prevBox.style.display = 'block';
-    if (prevRows) prevRows.innerHTML = previews.map(p => `
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(34,197,94,0.12)">
-        <div>
-          <span style="font-size:13px;font-weight:600">${p.nome}</span>
-          <span style="font-size:11px;color:var(--text3);margin-left:8px">${p.bonif.items.map(i=>i.desc).join(' + ')}</span>
-        </div>
-        <span style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--green)">${fmt(p.bonif.total)}</span>
-      </div>`).join('');
-    if (prevTotal) prevTotal.textContent = fmt(totalGeral);
-  } else {
-    if (btnAplicar) btnAplicar.style.display = 'none';
-    if (prevBox) prevBox.style.display = 'none';
-  }
+  if (count === 0) { showToast('Nenhum prêmio calculado para aplicar neste setor.'); return; }
+  renderDashboard(); renderEmployees(); renderBonificacoes();
+  showToast(`✅ ${count} colaborador(es) do setor — ${fmt(total)} aplicados na folha!`);
 }
 
-function renderBonifJean(){
-  const mes=getBonifMes();const vendas=mes.vendas;
-  let totVal=0,totCom=0;
-  vendas.forEach(v=>{totVal+=parseFloat(v.valor)||0;totCom+=calcComissaoJean(v.valor);});
-  document.getElementById('bonif-jean-stats').innerHTML=`
-    <div class="stat-card"><div class="stat-label">Vendas no mês</div><div class="stat-value blue">${vendas.length}</div></div>
-    <div class="stat-card"><div class="stat-label">Volume total</div><div class="stat-value green">${fmt(totVal)}</div></div>
-    <div class="stat-card"><div class="stat-label">Comissão total</div><div class="stat-value yellow">${fmt(totCom)}</div></div>
-  `;
-  let formHtml=vendas.map((v,i)=>`
-    <div class="jean-grid-row">
-      <input class="proj-input" value="${esc(v.cliente)}" placeholder="Nome do cliente" oninput="bonifUpdateVenda(${i},'cliente',this.value)">
-      <input class="proj-input" value="${esc(v.contrato)}" placeholder="Nº contrato" oninput="bonifUpdateVenda(${i},'contrato',this.value)">
-      <input class="proj-input" value="${esc(v.ambiente)}" placeholder="Ambiente(s)" oninput="bonifUpdateVenda(${i},'ambiente',this.value)">
-      <input class="proj-input" type="number" value="${v.valor||''}" placeholder="Valor R$" oninput="bonifUpdateVenda(${i},'valor',this.value)">
-      <button class="btn btn-danger btn-sm" onclick="bonifDelVenda(${i})" style="padding:3px 6px">✕</button>
-    </div>`).join('');
-  if(!formHtml)formHtml=`<div style="font-size:12px;color:var(--text3);padding:8px 0">Nenhuma venda registrada.</div>`;
-  document.getElementById('jean-form-rows').innerHTML=formHtml;
-  // Mostrar/esconder bloco de aplicar comissão Jean
-  const jeanAplicar = document.getElementById('bonif-jean-aplicar');
-  const jeanAplicarVal = document.getElementById('bonif-jean-aplicar-val');
-  if (totCom > 0) {
-    if (jeanAplicar) jeanAplicar.style.display = 'block';
-    if (jeanAplicarVal) jeanAplicarVal.textContent = fmt(totCom);
-  } else {
-    if (jeanAplicar) jeanAplicar.style.display = 'none';
-  }
-
-  if(vendas.length){
-    const rows=vendas.map(v=>{const val=parseFloat(v.valor)||0;const com=calcComissaoJean(val);return`<tr>
-      <td style="font-weight:500">${esc(v.cliente)||'—'}</td>
-      <td style="color:var(--text2);font-size:12px">${esc(v.contrato)||'—'}</td>
-      <td style="color:var(--text2);font-size:12px">${esc(v.ambiente)||'—'}</td>
-      <td style="font-family:var(--mono)">${val>0?fmt(val):'—'}</td>
-      <td><span class="badge badge-yellow">${pctComissaoJean(val)}</span></td>
-      <td style="font-family:var(--mono);font-weight:700;color:var(--green)">${com>0?fmt(com):'—'}</td>
-    </tr>`;}).join('');
-    document.getElementById('jean-tabela').innerHTML=`<div style="overflow-x:auto"><table class="hist-table">
-      <thead><tr><th>Cliente</th><th>Contrato</th><th>Ambiente</th><th>Valor</th><th>%</th><th>Comissão</th></tr></thead>
-      <tbody>${rows}<tr style="background:var(--surface2)"><td colspan="3" style="font-weight:700">Total</td><td style="font-family:var(--mono);font-weight:700">${fmt(totVal)}</td><td></td><td style="font-family:var(--mono);font-weight:700;color:var(--green)">${fmt(totCom)}</td></tr></tbody>
-    </table></div>`;
-  } else { document.getElementById('jean-tabela').innerHTML=''; }
-  renderBonifResumoGeral();
-}
-
-function renderBonifResumoGeral(){
-  const mes=getBonifMes();const monts=getBonifMontadores();
-  let totProj=0,totValM=0;
-  monts.forEach(m=>{(mes.projetos['emp_'+m.id]||[]).forEach(p=>{totProj++;totValM+=parseFloat(p.valor)||0;});});
-  let totJeanCom=0;mes.vendas.forEach(v=>totJeanCom+=calcComissaoJean(v.valor));
-  const el=document.getElementById('bonif-resumo-geral');
-  if(el)el.innerHTML=`
-    <div class="stat-card"><div class="stat-label">Projetos (montadores)</div><div class="stat-value blue">${totProj}</div><div class="stat-sub">no mês</div></div>
-    <div class="stat-card"><div class="stat-label">Valor total projetos</div><div class="stat-value green">${fmt(totValM)}</div></div>
-    <div class="stat-card"><div class="stat-label">Vendas Jean</div><div class="stat-value" style="color:var(--purple)">${mes.vendas.length}</div></div>
-    <div class="stat-card"><div class="stat-label">Comissão Jean</div><div class="stat-value yellow">${fmt(totJeanCom)}</div></div>
-  `;
-}
-
-function bonifAddProjeto(mid){
-  const mes=getBonifMes();const key='emp_'+mid;
-  if(!mes.projetos[key])mes.projetos[key]=[];
-  mes.projetos[key].push({cliente:'',ambiente:'',m2:'',valor:''});
-  saveBonif();renderBonifMontadores();
-}
-function bonifDelProjeto(mid,idx){
-  const mes=getBonifMes();const key='emp_'+mid;
-  mes.projetos[key].splice(idx,1);saveBonif();renderBonifMontadores();
-}
-function bonifUpdateProjeto(mid,idx,field,val){
-  const mes=getBonifMes();const key='emp_'+mid;
-  if(!mes.projetos[key])mes.projetos[key]=[];
-  mes.projetos[key][idx][field]=val;saveBonif();
-  const monts=getBonifMontadores();let totProj=0,totValM=0;
-  monts.forEach(m=>{(mes.projetos['emp_'+m.id]||[]).forEach(p=>{totProj++;totValM+=parseFloat(p.valor)||0;});});
-  const sm=document.getElementById('bonif-mont-stats');
-  if(sm)sm.innerHTML=`
-    <div class="stat-card"><div class="stat-label">Total de projetos</div><div class="stat-value blue">${totProj}</div></div>
-    <div class="stat-card"><div class="stat-label">Valor total</div><div class="stat-value green">${fmt(totValM)}</div></div>
-    <div class="stat-card"><div class="stat-label">Com projetos</div><div class="stat-value" style="color:var(--purple)">${monts.filter(m=>(mes.projetos['emp_'+m.id]||[]).length>0).length} / ${monts.length}</div></div>
-  `;
-  renderBonifResumoGeral();
-}
-function bonifAddVenda(){
-  const mes=getBonifMes();mes.vendas.push({cliente:'',contrato:'',ambiente:'',valor:''});
-  saveBonif();renderBonifJean();
-}
-function bonifDelVenda(idx){
-  const mes=getBonifMes();mes.vendas.splice(idx,1);saveBonif();renderBonifJean();
-}
-function bonifUpdateVenda(idx,field,val){
-  const mes=getBonifMes();mes.vendas[idx][field]=val;saveBonif();
-  let totVal=0,totCom=0;
-  mes.vendas.forEach(v=>{totVal+=parseFloat(v.valor)||0;totCom+=calcComissaoJean(v.valor);});
-  const sj=document.getElementById('bonif-jean-stats');
-  if(sj)sj.innerHTML=`
-    <div class="stat-card"><div class="stat-label">Vendas no mês</div><div class="stat-value blue">${mes.vendas.length}</div></div>
-    <div class="stat-card"><div class="stat-label">Volume total</div><div class="stat-value green">${fmt(totVal)}</div></div>
-    <div class="stat-card"><div class="stat-label">Comissão total</div><div class="stat-value yellow">${fmt(totCom)}</div></div>
-  `;
-  renderBonifResumoGeral();
-}
+function calcComissaoJean(val){val=parseFloat(val)||0;if(val>=350000)return val*0.015;if(val>=300000)return val*0.014;if(val>=250000)return val*0.013;if(val>=200000)return val*0.012;if(val>=160000)return val*0.011;return 0;}
+function pctComissaoJean(val){val=parseFloat(val)||0;if(val>=350000)return '1,5%';if(val>=300000)return '1,4%';if(val>=250000)return '1,3%';if(val>=200000)return '1,2%';if(val>=160000)return '1,1%';return '—';}
+function bonifAddVenda(){}
+function bonifDelVenda(){}
+function bonifUpdateVenda(){}
 
 // ══════ RELOAD ════════════════════════════════════════════
 async function reloadData(){
