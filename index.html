@@ -813,7 +813,7 @@ const PREMIACAO_ROLES = {
   'David Guilherme Moura da Silva Vieira':{ setor:'fabrica',   papel:'Montador' },
   'Railton da Silva Costa Oliveira':      { setor:'fabrica',   papel:'Montador' },
   'Helder Batista Pires':                 { setor:'montagem',  papel:'Gerente de Montagem' },
-  'Arlembeng Lopes Oliveira':             { setor:'montagem',  papel:'Montador' },
+  'Arlemberg Lopes Oliveira':             { setor:'montagem',  papel:'Montador' },
   'João Victor Gomes Marques da Silva':   { setor:'montagem',  papel:'Auxiliar' },
   'Tadeu Leandro Licar':                  { setor:'montagem',  papel:'Montador' },
   'Yure da Silva Carvalho':               { setor:'montagem',  papel:'Auxiliar' },
@@ -867,19 +867,44 @@ async function fetchProjetosControle(force) {
     return [];
   }
 }
+// Apelidos usados no campo "Equipe" do Controle de Projetos (nem sempre é o primeiro nome completo)
+const NOME_APELIDOS = {
+  'Arlemberg Lopes Oliveira':              ['arlemberg','arlembeng','arlem'],
+  'Tadeu Leandro Licar':                   ['tadeu'],
+  'Yure da Silva Carvalho':                ['yure'],
+  'João Victor Gomes Marques da Silva':    ['joão victor','joao victor','jvictor','jv'],
+  'José Atevaldo Santos da Cunha':         ['josé atevaldo','jose atevaldo','atevaldo'],
+  'David Guilherme Moura da Silva Vieira': ['david'],
+  'Railton da Silva Costa Oliveira':       ['railton'],
+};
+function normalizaTxt(s) {
+  return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+}
+// Verifica se algum apelido da pessoa aparece como palavra/token inteiro no campo Equipe do projeto
+// (evita falha quando o apelido é mais curto que o nome cadastrado, ex: "Arlem" vs "Arlemberg",
+// e evita falso-positivo de substring solto)
+function matchNomeEquipe(equipeStr, nomeBusca) {
+  const equipeNorm = normalizaTxt(equipeStr);
+  if (!equipeNorm) return false;
+  const tokens = equipeNorm.split(/[^a-z]+/).filter(Boolean);
+  const apelidos = (NOME_APELIDOS[nomeBusca] || [(nomeBusca||'').split(' ')[0]]).map(normalizaTxt);
+  return apelidos.some(ap => {
+    const apTokens = ap.split(/[^a-z]+/).filter(Boolean);
+    if (apTokens.length > 1) return equipeNorm.includes(ap); // apelido composto (ex: "joão victor")
+    return tokens.includes(apTokens[0]);
+  });
+}
 // Conta projetos automaticamente para um papel/pessoa no mês (mesKey = 'YYYY-MM')
 function contarProjetosAuto(lista, papel, nomeBusca, mesKey, setor) {
   if (!lista || !lista.length) return { count:0, itens:[] };
   const campoData = (papel==='Estoquista'||papel==='Projetista') ? 'conferido'
     : (setor==='fabrica') ? 'fim_fab'
     : 'montagem_entregue';
-  const primeiroNome = (nomeBusca||'').split(' ')[0].toLowerCase();
   const itens = lista.filter(p => {
     const dataRef = p[campoData];
     if (!dataRef || !String(dataRef).startsWith(mesKey)) return false;
     if (papel==='Gerente de Fábrica' || papel==='Gerente de Montagem' || papel==='Estoquista' || papel==='Projetista') return true; // gestor/estoque conta tudo do mês
-    const equipe = String(p.equipe||'').toLowerCase();
-    return equipe.includes(primeiroNome);
+    return matchNomeEquipe(p.equipe, nomeBusca);
   });
   return { count: itens.length, itens };
 }
