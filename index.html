@@ -1795,7 +1795,7 @@ function estornarDia20(empId){
 }
 
 function pagarTodosDia20(){
-  const pendentes=employees.filter(e=>e.ativo!==false&&e.adiant_quinzena>0&&!getDia20Status(e.id));
+  const pendentes=employees.filter(e=>e.ativo!==false&&getDia20Valor(e.id)>0&&!getDia20Status(e.id));
   if(!pendentes.length){showToast('Todos já confirmados!');return;}
   if(!confirm(`Confirmar adiantamento de ${pendentes.length} funcionários?`))return;
   pendentes.forEach(emp=>{advances.push({id:Date.now().toString()+emp.id,empId:emp.id,mes:currentMonth,data:currentMonth+'-20',tipo:'Adiantamento Quinzena',valor:getDia20Valor(emp.id),obs:'Dia 20'});});
@@ -1812,7 +1812,7 @@ function openLancamento(){
     const jaLancado=advances.some(a=>a.empId===emp.id&&a.mes===currentMonth&&a.tipo==='Adiantamento Quinzena');
     return `<div style="display:flex;align-items:center;gap:10px;padding:6px 10px;background:var(--surface);border-radius:var(--radius-sm);border:1px solid ${jaLancado?'var(--green)':'var(--border)'}">
       <div style="flex:1;font-size:12px;font-weight:500">${emp.nome.split(' ').slice(0,3).join(' ')}</div>
-      <div style="font-family:var(--mono);font-size:12px;color:var(--yellow)">R$ ${(emp.adiant_quinzena||0).toLocaleString('pt-BR',{minimumFractionDigits:2})}</div>
+      <div style="font-family:var(--mono);font-size:12px;color:var(--yellow)">R$ ${(getDia20Valor(emp.id)||0).toLocaleString('pt-BR',{minimumFractionDigits:2})}</div>
       ${jaLancado?'<span style="font-size:11px;color:var(--green)">✓ lançado</span>':`<button class="btn btn-ghost btn-sm" style="font-size:11px" onclick="lancarAdiantamentoUm(${emp.id})">Lançar</button>`}
     </div>`;
   }).join('');
@@ -1823,18 +1823,19 @@ function openLancamento(){
 
 function lancarAdiantamentoUm(empId){
   const emp=employees.find(e=>e.id===empId);
-  if(!emp||!emp.adiant_quinzena)return;
+  const valor=getDia20Valor(empId);
+  if(!emp||!valor)return;
   const jaLancado=advances.some(a=>a.empId===empId&&a.mes===currentMonth&&a.tipo==='Adiantamento Quinzena');
   if(jaLancado){showToast('Já lançado!');return;}
-  advances.push({id:Date.now().toString()+empId,empId,mes:currentMonth,data:currentMonth+'-20',tipo:'Adiantamento Quinzena',valor:emp.adiant_quinzena,obs:'Adiantamento dia 20'});
+  advances.push({id:Date.now().toString()+empId,empId,mes:currentMonth,data:currentMonth+'-20',tipo:'Adiantamento Quinzena',valor,obs:'Adiantamento dia 20'});
   save();renderAll();openLancamento();showToast('Adiantamento lançado!');
 }
 
 function lancarAdiantamentosTodos(){
   let count=0;
-  employees.filter(e=>e.ativo!==false&&e.adiant_quinzena).forEach(emp=>{
+  employees.filter(e=>e.ativo!==false&&getDia20Valor(e.id)>0).forEach(emp=>{
     const jaLancado=advances.some(a=>a.empId===emp.id&&a.mes===currentMonth&&a.tipo==='Adiantamento Quinzena');
-    if(!jaLancado){advances.push({id:Date.now().toString()+emp.id,empId:emp.id,mes:currentMonth,data:currentMonth+'-20',tipo:'Adiantamento Quinzena',valor:emp.adiant_quinzena,obs:'Adiantamento dia 20'});count++;}
+    if(!jaLancado){advances.push({id:Date.now().toString()+emp.id,empId:emp.id,mes:currentMonth,data:currentMonth+'-20',tipo:'Adiantamento Quinzena',valor:getDia20Valor(emp.id),obs:'Adiantamento dia 20'});count++;}
   });
   save();renderAll();openLancamento();
   showToast(count>0?`${count} adiantamentos lançados!`:'Todos já foram lançados.');
