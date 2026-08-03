@@ -2000,8 +2000,8 @@ function renderBonifSetor(setor) {
 
     const projRows = (setor !== 'comercial') ? r.dados.projetos.map((p,i) => `
       <div class="proj-grid-row" style="grid-template-columns:1.6fr 110px 70px 30px">
-        <input class="proj-input" value="${esc(p.cliente)}" placeholder="Cliente / projeto" oninput="premUpdateProjeto(${emp.id},${i},'cliente',this.value)">
-        <input class="proj-input" value="${esc(p.data)}" placeholder="Data (AAAA-MM-DD)" oninput="premUpdateProjeto(${emp.id},${i},'data',this.value)">
+        <input class="proj-input" value="${esc(p.cliente)}" placeholder="Cliente / projeto" onchange="premUpdateProjeto(${emp.id},${i},'cliente',this.value)">
+        <input class="proj-input" value="${esc(p.data)}" placeholder="Data (AAAA-MM-DD)" onchange="premUpdateProjeto(${emp.id},${i},'data',this.value)">
         <span class="badge ${p.fonte==='auto'?'badge-blue':'badge-gray'}" style="align-self:center;justify-self:center">${p.fonte==='auto'?'auto':'manual'}</span>
         <button class="btn btn-danger btn-sm" onclick="premDelProjeto(${emp.id},${i})" style="padding:3px 6px">✕</button>
       </div>`).join('') : '';
