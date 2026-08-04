@@ -947,6 +947,18 @@ async function loadFromSheets() {
         });
         localStorage.setItem(PAY_KEY, JSON.stringify(payData));
       }
+      if (res.data.bonifdata && res.data.bonifdata.length > 0) {
+        bonifData = {};
+        res.data.bonifdata.forEach(row => {
+          try { bonifData[row.key] = JSON.parse(row.value); } catch {}
+        });
+        localStorage.setItem(BONIF_KEY, JSON.stringify(bonifData));
+      } else if (bonifData && Object.keys(bonifData).length > 0) {
+        // Migração: já existe bonificação salva localmente (neste navegador) mas a
+        // planilha ainda não tem a coleção "bonifdata" — envia o que já foi
+        // preenchido pra nuvem, pra não perder nada e passar a sincronizar entre dispositivos.
+        await saveBonifToSheets();
+      }
       return true;
     }
   } catch(e) { console.warn('Sheets load failed', e); }
@@ -997,6 +1009,15 @@ function save() {
 
 function saveBonif() {
   localStorage.setItem(BONIF_KEY, JSON.stringify(bonifData));
+  saveBonifToSheets();
+}
+
+async function saveBonifToSheets() {
+  try {
+    const bdRows = Object.entries(bonifData).map(([key, value]) => ({ key, value: JSON.stringify(value) }));
+    await gasCall({ action: 'save', sheetId: SHEET_ID, collection: 'bonifdata', records: JSON.stringify(bdRows) });
+    updateSyncStatus(true);
+  } catch(e) { console.warn('Bonif sync failed', e); updateSyncStatus(false); showToast('⚠ Falha ao sincronizar bonificação — verifique a internet'); }
 }
 
 function saveEmployees() {
