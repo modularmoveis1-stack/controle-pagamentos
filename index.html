@@ -635,25 +635,9 @@ input[type="number"] { font-family: var(--mono); }
       </div>
 
       <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
-        <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">💰 Valores Fixos (padrão de todo mês)</div>
+        <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">💰 Valor Fixo</div>
         <div class="form-row">
           <div class="form-group" id="fg_salario"><label>Salário Base</label><input type="text" inputmode="numeric" id="emp_salario" placeholder="0,00" oninput="maskMoneyInput(this)"></div>
-          <div class="form-group" id="fg_cesta"><label>🎫 Ticket</label><input type="text" inputmode="numeric" id="emp_cesta" placeholder="0,00" oninput="maskMoneyInput(this)"></div>
-        </div>
-        <div class="form-row">
-          <div class="form-group" id="fg_adiant_quinzena"><label>Adiantamento Quinzenal (dia 20)</label><input type="text" inputmode="numeric" id="emp_adiant_quinzena" placeholder="0,00" oninput="maskMoneyInput(this)"></div>
-        </div>
-        <div class="form-row">
-          <div class="form-group" id="fg_prem_presenca"><label>Premiação (fixa)</label><input type="text" inputmode="numeric" id="emp_prem_presenca" placeholder="0,00" oninput="maskMoneyInput(this)"></div>
-          <div class="form-group" id="fg_inss"><label>INSS Padrão</label><input type="text" inputmode="numeric" id="emp_inss" placeholder="0,00" oninput="maskMoneyInput(this)"></div>
-        </div>
-        <div class="form-row">
-          <div class="form-group" id="fg_consignado"><label>Consignado Padrão</label><input type="text" inputmode="numeric" id="emp_consignado" placeholder="0,00" oninput="maskMoneyInput(this)"></div>
-          <div class="form-group" id="fg_ajuda_custo"><label>Ajuda de Custo</label><input type="text" inputmode="numeric" id="emp_ajuda_custo" placeholder="0,00" oninput="maskMoneyInput(this)"></div>
-        </div>
-        <div class="form-row">
-          <div class="form-group" id="fg_gratificacao"><label>Gratificação</label><input type="text" inputmode="numeric" id="emp_gratificacao" placeholder="0,00" oninput="maskMoneyInput(this)"></div>
-          <div class="form-group" id="fg_sal_familia"><label>Salário Família</label><input type="text" inputmode="numeric" id="emp_sal_familia" placeholder="0,00" oninput="maskMoneyInput(this)"></div>
         </div>
       </div>
     </div>
@@ -936,16 +920,39 @@ async function loadFromSheets() {
         await gasCall({ action: 'save', sheetId: SHEET_ID, collection: 'employees', records: JSON.stringify(employees) });
         localStorage.setItem(DB_KEY, JSON.stringify(employees));
       }
-      if (res.data.advances) {
+      if (res.data.advances && res.data.advances.length > 0) {
         advances = res.data.advances;
         localStorage.setItem(ADV_KEY, JSON.stringify(advances));
+      } else if (advances && advances.length > 0) {
+        // Sheets voltou vazio/sem essa coleção — não apaga o que já está salvo no aparelho.
+        // Reenvia os dados locais pra nuvem em vez de aceitar o vazio.
+        await gasCall({ action: 'save', sheetId: SHEET_ID, collection: 'advances', records: JSON.stringify(advances) });
+        console.warn('advances vazio no Sheets — dados locais preservados e reenviados');
+        showToast('⚠ Planilha voltou sem adiantamentos — dados locais mantidos e reenviados');
       }
-      if (res.data.paydata) {
-        payData = {};
+      if (res.data.paydata && res.data.paydata.length > 0) {
+        const remotePayData = {};
         res.data.paydata.forEach(row => {
-          try { payData[row.key] = JSON.parse(row.value); } catch {}
+          try { remotePayData[row.key] = JSON.parse(row.value); } catch {}
         });
+        // Mescla em vez de substituir: mantém meses que só existem localmente
+        // (ex: um mês que ainda não terminou de sincronizar) e atualiza os que vieram do Sheets.
+        payData = { ...payData, ...remotePayData };
         localStorage.setItem(PAY_KEY, JSON.stringify(payData));
+        // Se algum mês local não veio na resposta do Sheets, reenvia tudo pra garantir consistência.
+        const missingMonths = Object.keys(payData).filter(k => !remotePayData[k]);
+        if (missingMonths.length > 0) {
+          const pdRows = Object.entries(payData).map(([key, value]) => ({ key, value: JSON.stringify(value) }));
+          await gasCall({ action: 'save', sheetId: SHEET_ID, collection: 'paydata', records: JSON.stringify(pdRows) });
+          console.warn('Meses ausentes no Sheets reenviados:', missingMonths);
+          showToast('⚠ Planilha estava desatualizada — mês local preservado e reenviado');
+        }
+      } else if (payData && Object.keys(payData).length > 0) {
+        // Sheets voltou vazio — não apaga o que já está salvo no aparelho, reenvia.
+        const pdRows = Object.entries(payData).map(([key, value]) => ({ key, value: JSON.stringify(value) }));
+        await gasCall({ action: 'save', sheetId: SHEET_ID, collection: 'paydata', records: JSON.stringify(pdRows) });
+        console.warn('paydata vazio no Sheets — dados locais preservados e reenviados');
+        showToast('⚠ Planilha voltou vazia — dados locais mantidos e reenviados');
       }
       if (res.data.bonifdata && res.data.bonifdata.length > 0) {
         bonifData = {};
@@ -1116,7 +1123,7 @@ function getEmpPay(empId) {
       bon_removedor:0, bon_desempenho:0, bon_extra:0,
       premissao_surpresa:0, descanso_remunerado:0,
       bon_comissao_vendas:0, bon_credito_extra:0,
-      falta:0, consignado_extra:0, debito_extra:0, faltas_obs:'', obs_mes:'', presenca:true,
+      falta:0, dsr:0, consignado_extra:0, debito_extra:0, faltas_obs:'', obs_mes:'', presenca:true,
     };
   }
   return payData[currentMonth][empId];
@@ -1149,19 +1156,23 @@ function temSalFamilia(emp) {
 
 function calcSaldo(emp) {
   const pay = getEmpPay(emp.id);
-  // Créditos fixos: usa override do mês se existir, senão usa cadastro
+  // Créditos: usa override do mês se existir, senão usa cadastro (campos legados, sem mais tela própria na ficha)
   const salario    = pay.fix_salario    !== undefined ? pay.fix_salario    : (emp.salario||0);
   const sal_familia= pay.fix_sal_familia!== undefined ? pay.fix_sal_familia: (emp.sal_familia||0);
   const ajuda_custo= pay.fix_ajuda_custo!== undefined ? pay.fix_ajuda_custo: (emp.ajuda_custo||0);
-  const cesta      = pay.fix_cesta      !== undefined ? pay.fix_cesta      : (emp.cesta||0); // Ticket
+  const cesta      = pay.fix_cesta      !== undefined ? pay.fix_cesta      : (emp.cesta||0); // Ticket (legado)
   const gratificacao=pay.fix_gratificacao!==undefined ? pay.fix_gratificacao:(emp.gratificacao||0);
-  const prem_presenca=pay.fix_prem_presenca!==undefined?pay.fix_prem_presenca:(emp.prem_presenca||0); // Premiação (fixa)
+  const prem_presenca=pay.fix_prem_presenca!==undefined?pay.fix_prem_presenca:(emp.prem_presenca||0); // Premiação por Presença
 
   const mostraSalFamilia = temSalFamilia(emp);
-  const fixosPrincipais = salario + cesta + (pay.presenca ? prem_presenca : 0) + (mostraSalFamilia ? sal_familia : 0);
-  const fixosOutros = (mostraSalFamilia ? 0 : sal_familia) + ajuda_custo + gratificacao; // legado — somado no total, exibido só como "outros" no detalhe
 
-  const premiacaoVariavel = pay.bon_premiacao_faixa||0; // Premiação (calculada na página de Premiação)
+  // 1) Crédito Fixo = Salário Base (único)
+  const fixosPrincipais = salario;
+
+  // 2) Créditos Variáveis: Premiação por Presença, Salário Família, Premiação, Crédito Extra
+  const premiacaoPresenca = pay.presenca ? prem_presenca : 0;
+  const salFamiliaVar = mostraSalFamilia ? sal_familia : 0;
+  const premiacaoVariavel = pay.bon_premiacao_faixa||0; // Premiação (calculada na página de Bonificações)
   const creditoExtra = pay.bon_credito_extra||0;
   const variaveisOutros = [
     pay.hora_extra||0, pay.hora_extra_noturno||0,
@@ -1171,7 +1182,11 @@ function calcSaldo(emp) {
     pay.bon_comissao_vendas||0, pay.bon_valor_extra||0,
   ].reduce((a,b) => a+(parseFloat(b)||0), 0);
 
-  const creditos = fixosPrincipais + fixosOutros + premiacaoVariavel + creditoExtra + variaveisOutros;
+  // Legado (Ticket, Ajuda de Custo, Gratificação, Sal. Família p/ quem não tem linha própria) —
+  // não tem mais campo na ficha nem linha própria na folha, mas segue somado no total (migração gradual).
+  const fixosOutros = cesta + ajuda_custo + gratificacao + (mostraSalFamilia ? 0 : sal_familia);
+
+  const creditos = fixosPrincipais + premiacaoPresenca + salFamiliaVar + premiacaoVariavel + creditoExtra + variaveisOutros + fixosOutros;
 
   // ✅ Adiantamento do dia 20 foi lançado no MÊS ANTERIOR
   // A folha de junho desconta o adiantamento de maio
@@ -1179,15 +1194,17 @@ function calcSaldo(emp) {
   const monthAdvs = advances.filter(a => a.empId===emp.id && a.mes===mesAdiant);
   const totalAdv = monthAdvs.reduce((s,a) => s+(parseFloat(a.valor)||0), 0);
 
+  // 3) Deduções: INSS, Consignado, Falta, DSR, Adiantamento Quinzena (exibido aqui), Débito Extra
   const inss = pay.inss_mes !== undefined ? pay.inss_mes : (emp.inss||0);
   const consignados = getConsignados(pay, emp);
   const totalConsignado = consignados.reduce((s,c)=>s+(parseFloat(c.valor)||0),0);
-  const deducoes = [inss, totalConsignado, pay.falta||0, pay.debito_extra||0].reduce((a,b)=>a+(parseFloat(b)||0),0);
+  const dsr = pay.dsr||0;
+  const deducoes = [inss, totalConsignado, pay.falta||0, dsr, pay.debito_extra||0].reduce((a,b)=>a+(parseFloat(b)||0),0);
   return {
     total:creditos, deducoes, adiantamento:totalAdv, mesAdiant,
     saldo:creditos-deducoes-totalAdv,
-    fixosPrincipais, fixosOutros, premiacaoVariavel, creditoExtra, variaveisOutros,
-    inss, totalConsignado, consignados, sal_familia, mostraSalFamilia,
+    fixosPrincipais, premiacaoPresenca, salFamiliaVar, premiacaoVariavel, creditoExtra, variaveisOutros, fixosOutros,
+    inss, totalConsignado, consignados, dsr, sal_familia, mostraSalFamilia,
   };
 }
 
@@ -1270,13 +1287,13 @@ function abrirDashDetalhe(tipo) {
       head: ['Funcionário','Função','Fixos','Variáveis','Total'],
       sort: (a,b) => a.emp.nome.localeCompare(b.emp.nome,'pt-BR'),
       row: ({emp,c}) => `<tr><td>${emp.nome}</td><td><span class="badge badge-gray">${emp.funcao}</span></td>
-        <td style="font-family:var(--mono)">${fmt(c.fixosPrincipais + c.fixosOutros)}</td>
-        <td style="font-family:var(--mono)">${fmt(c.premiacaoVariavel + c.creditoExtra + c.variaveisOutros)}</td>
+        <td style="font-family:var(--mono)">${fmt(c.fixosPrincipais)}</td>
+        <td style="font-family:var(--mono)">${fmt(c.total - c.fixosPrincipais)}</td>
         <td style="font-family:var(--mono);font-weight:700;color:var(--green)">${fmt(c.total)}</td></tr>`,
     },
     deducoes: {
       titulo: '❌ Deduções — detalhe por funcionário',
-      head: ['Funcionário','Função','INSS','Consignado','Falta+DSR / Débito','Total Deduções'],
+      head: ['Funcionário','Função','INSS','Consignado','Falta+DSR+Débito','Total Deduções'],
       sort: (a,b) => a.emp.nome.localeCompare(b.emp.nome,'pt-BR'),
       row: ({emp,c}) => `<tr><td>${emp.nome}</td><td><span class="badge badge-gray">${emp.funcao}</span></td>
         <td style="font-family:var(--mono)">${fmt(c.inss)}</td>
@@ -1383,8 +1400,7 @@ function renderDetailFolha(emp, pay, c) {
   const mesAdiantLabel = (() => { const d = new Date(mesAdiant+'-15'); return d.toLocaleDateString('pt-BR',{month:'long'}); })();
 
   const salario   = pay.fix_salario      !== undefined ? pay.fix_salario      : emp.salario;
-  const cesta     = pay.fix_cesta        !== undefined ? pay.fix_cesta        : (emp.cesta||0); // Ticket
-  const prem_pres = pay.fix_prem_presenca!== undefined ? pay.fix_prem_presenca: (emp.prem_presenca||0); // Premiação fixa
+  const prem_pres = pay.fix_prem_presenca!== undefined ? pay.fix_prem_presenca: (emp.prem_presenca||0); // Premiação por Presença
   const sal_familia = pay.fix_sal_familia!== undefined ? pay.fix_sal_familia  : (emp.sal_familia||0);
 
   const presLabel = pay.presenca!==false ? '✅ Presente' : '❌ Faltou';
@@ -1449,8 +1465,8 @@ function renderDetailFolha(emp, pay, c) {
     </div>`).join('');
 
   const totalFixo = c.fixosPrincipais;
-  const outrosFixos = c.fixosOutros||0;
-  const outrosVariaveis = c.variaveisOutros||0;
+  const totalVariaveis = c.premiacaoPresenca + c.salFamiliaVar + c.premiacaoVariavel + c.creditoExtra;
+  const totalDeducoesCard = c.deducoes + c.adiantamento;
 
   document.getElementById('dp-tab-folha').innerHTML = `
     <div class="pay-section" style="margin-bottom:12px">
@@ -1461,26 +1477,25 @@ function renderDetailFolha(emp, pay, c) {
 
     <div class="pay-section" style="margin-bottom:12px">
       <div class="pay-section-header green">
-        <span>✅ Créditos Fixos</span>
+        <span>1️⃣ Crédito Fixo</span>
         <span style="font-size:12px">${fmt(totalFixo)}</span>
       </div>
-      ${fixedRow('Salário','salario', salario, emp.salario)}
-      ${fixedRow('🎫 Ticket','cesta', cesta, emp.cesta||0)}
-      ${fixedRow('Premiação','prem_presenca', prem_pres, emp.prem_presenca||0)}
-      ${c.mostraSalFamilia ? fixedRow('Salário Família','sal_familia', sal_familia, emp.sal_familia||0) : ''}
+      ${fixedRow('Salário Base','salario', salario, emp.salario)}
     </div>
 
     <div class="pay-section" style="margin-bottom:12px">
       <div class="pay-section-header purple">
-        <span>⭐ Créditos Variáveis</span>
-        <span style="font-size:12px">${fmt(c.premiacaoVariavel + c.creditoExtra)}</span>
+        <span>2️⃣ Créditos Variáveis</span>
+        <span style="font-size:12px">${fmt(totalVariaveis)}</span>
       </div>
+      ${fixedRow('Premiação por Presença','prem_presenca', prem_pres, emp.prem_presenca||0)}
+      ${c.mostraSalFamilia ? fixedRow('Salário Família','sal_familia', sal_familia, emp.sal_familia||0) : ''}
       ${editRow('Premiação','bon_premiacao_faixa', pay.bon_premiacao_faixa)}
       ${editRowObs('Crédito Extra','bon_credito_extra', pay.bon_credito_extra, 'bon_credito_extra_obs', pay.bon_credito_extra_obs)}
     </div>
 
     <div class="pay-section" style="margin-bottom:12px">
-      <div class="pay-section-header red"><span>❌ Deduções</span><span style="font-size:12px">-${fmt(c.deducoes)}</span></div>
+      <div class="pay-section-header red"><span>3️⃣ Deduções</span><span style="font-size:12px">-${fmt(totalDeducoesCard)}</span></div>
       <div class="pay-row">
         <div class="pay-label">INSS</div>
         <input class="pay-input" type="text" inputmode="numeric" value="${formatBR(c.inss)}" oninput="maskMoneyInput(this)" onchange="updatePay(${id},'inss_mes',this.value)"
@@ -1491,16 +1506,25 @@ function renderDetailFolha(emp, pay, c) {
         <button class="btn btn-ghost btn-sm" onclick="addConsignado(${id})" style="padding:2px 8px;font-size:12px">+</button>
       </div>
       ${consigRows || '<div style="padding:2px 14px 8px;font-size:11px;color:var(--text3)">Nenhum consignado lançado.</div>'}
-      ${editRow('Desconto/Falta + DSR','falta',pay.falta)}
+      ${editRow('Falta','falta',pay.falta)}
+      ${editRow('DSR','dsr',pay.dsr)}
+      <div class="pay-row" style="flex-direction:column;align-items:stretch;gap:6px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div class="pay-label">Adiantamento de ${mesAdiantLabel}</div>
+          <div class="pay-value red">-${fmt(c.adiantamento)}</div>
+        </div>
+        ${advsHtml}
+        <div style="font-size:11px;color:var(--text3)">Lançado direto na página de Adiantamento (dia 20) — aqui é só consulta.</div>
+      </div>
       ${editRowObs('Débito Extra','debito_extra',pay.debito_extra,'debito_extra_obs',pay.debito_extra_obs)}
     </div>
 
     <div class="pay-section" style="margin-bottom:12px">
-      <div class="pay-section-header yellow">
-        <span>💳 Adiantamento de ${mesAdiantLabel} — ${fmt(c.adiantamento)}</span>
+      <div class="pay-section-header blue"><span>4️⃣ Observação Individual</span></div>
+      <div class="pay-row" style="flex-wrap:wrap">
+        <textarea placeholder="Observações sobre este colaborador neste mês..." onchange="updatePayObs(${id},'obs_mes',this.value)"
+          style="width:100%;min-height:60px;background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text2);font-size:12px;padding:8px;font-family:var(--font);resize:vertical">${esc(pay.obs_mes||'')}</textarea>
       </div>
-      ${advsHtml}
-      <div style="padding:4px 14px 8px;font-size:11px;color:var(--text3)">Lançado direto na página de Adiantamento (dia 20) — aqui é só consulta.</div>
     </div>
 
     <div class="total-row" style="margin-bottom:6px">
@@ -1649,9 +1673,9 @@ function removeConsignado(empId, idx) {
 }
 
 // ══════ EMPLOYEES CRUD ════════════════════════════════════
-const EMP_MONEY_FIELDS = ['salario','cesta','prem_presenca','adiant_quinzena','inss','consignado','ajuda_custo','gratificacao','sal_familia'];
+const EMP_MONEY_FIELDS = ['salario'];
 // Estes ficam sempre visíveis (essenciais pra qualquer funcionário). O resto só aparece se já tiver valor > 0.
-const EMP_MONEY_SEMPRE_VISIVEL = ['salario','cesta','adiant_quinzena'];
+const EMP_MONEY_SEMPRE_VISIVEL = ['salario'];
 
 function openAddEmployee() {
   document.getElementById('modalEmpTitle').textContent='Novo Funcionário';
@@ -2027,17 +2051,7 @@ function renderBonifSetor(setor) {
         <button class="btn btn-danger btn-sm" onclick="premDelProjeto(${emp.id},${i})" style="padding:3px 6px">✕</button>
       </div>`).join('') : '';
 
-    const criteriosHtml = `
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;padding:10px 12px;background:var(--surface);border-radius:var(--radius-sm);border:1px solid var(--border)">
-        <label style="font-size:11px;color:var(--text2);display:flex;align-items:center;gap:6px">Faltas <input type="number" min="0" value="${c.faltas||0}" style="width:50px" class="proj-input" onchange="premUpdateCriterio(${emp.id},'faltas',this.value)"></label>
-        <label style="font-size:11px;color:var(--text2);display:flex;align-items:center;gap:6px">Atrasos <input type="number" min="0" value="${c.atrasos||0}" style="width:50px" class="proj-input" onchange="premUpdateCriterio(${emp.id},'atrasos',this.value)"></label>
-        <label style="font-size:11px;color:var(--text2);display:flex;align-items:center;gap:6px"><input type="checkbox" ${c.advertencia?'checked':''} onchange="premUpdateCriterio(${emp.id},'advertencia',this.checked)"> Advertência</label>
-        <label style="font-size:11px;color:var(--text2);display:flex;align-items:center;gap:6px"><input type="checkbox" ${c.suspensao?'checked':''} onchange="premUpdateCriterio(${emp.id},'suspensao',this.checked)"> Suspensão</label>
-        <label style="font-size:11px;color:var(--text2);display:flex;align-items:center;gap:6px"><input type="checkbox" ${c.desvioProjeto?'checked':''} onchange="premUpdateCriterio(${emp.id},'desvioProjeto',this.checked)"> Desvio de projeto</label>
-        <label style="font-size:11px;color:var(--text2);display:flex;align-items:center;gap:6px"><input type="checkbox" ${c.retrabalho?'checked':''} onchange="premUpdateCriterio(${emp.id},'retrabalho',this.checked)"> Retrabalho</label>
-        <label style="font-size:11px;color:var(--text2);display:flex;align-items:center;gap:6px"><input type="checkbox" ${c.demissao?'checked':''} onchange="premUpdateCriterio(${emp.id},'demissao',this.checked)"> Pediu demissão</label>
-        <label style="font-size:11px;color:var(--text2);display:flex;align-items:center;gap:6px"><input type="checkbox" ${c.justaCausa?'checked':''} onchange="premUpdateCriterio(${emp.id},'justaCausa',this.checked)"> Justa causa</label>
-      </div>`;
+    const criteriosHtml = ''; // Critérios disciplinares (faltas, atrasos, advertência, suspensão, desvio de projeto, retrabalho, pediu demissão, justa causa) removidos da aba de Bonificações a pedido.
 
     return `<div class="mont-block">
       <div class="mont-header">
