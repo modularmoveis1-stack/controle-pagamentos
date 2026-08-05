@@ -1780,7 +1780,15 @@ function showToast(msg){
 
 // ══════ DIA 20 ════════════════════════════════════════════
 function getDia20Status(empId){return advances.some(a=>a.empId===empId&&a.mes===currentMonth&&a.tipo==='Adiantamento Quinzena');}
-function getDia20Valor(empId){const pay=getEmpPay(empId);return pay.adiant_dia20_valor!==undefined?pay.adiant_dia20_valor:(employees.find(e=>e.id===empId)?.adiant_quinzena||0);}
+function getDia20Valor(empId){
+  const pay=getEmpPay(empId);
+  if (pay.adiant_dia20_valor!==undefined) return pay.adiant_dia20_valor;
+  // Se este mês já tem o adiantamento quinzena efetivamente lançado, usa o valor REAL gravado na hora —
+  // nunca recalcula pelo "padrão" do cadastro, que pode ter mudado depois e faria o histórico mostrar errado.
+  const jaLancado = advances.find(a=>a.empId===empId && a.mes===currentMonth && a.tipo==='Adiantamento Quinzena');
+  if (jaLancado) return parseFloat(jaLancado.valor)||0;
+  return employees.find(e=>e.id===empId)?.adiant_quinzena||0;
+}
 
 function renderDia20(){
   const ativos=employees.filter(e=>e.ativo!==false).sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'));
