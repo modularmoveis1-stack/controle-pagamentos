@@ -1670,8 +1670,7 @@ function renderDetailBonificacoes(emp) {
     ${r ? `
     <div class="stats-grid">
       <div class="stat-card"><div class="stat-label">${role.setor==='comercial'?'Faturamento do mês':'Projetos no mês'}</div><div class="stat-value blue">${role.setor==='comercial'?fmt(r.contagem):r.contagem}</div></div>
-      <div class="stat-card"><div class="stat-label">Faixa atingida</div><div class="stat-value" style="color:var(--purple);font-size:15px">${r.info.label}</div></div>
-      <div class="stat-card"><div class="stat-label">Prêmio calculado</div><div class="stat-value green">${fmt(r.premioFinal)}</div></div>
+      <div class="stat-card"><div class="stat-label">Prêmio (manual)</div><div class="stat-value green">${fmt(r.premioFinal)}</div></div>
     </div>
     <button class="btn btn-primary" style="width:100%;margin-top:4px;justify-content:center" onclick="showPage('bonificacoes');switchBonifTab('${role.setor}')">
       ⭐ Ver e aplicar na página de Premiação
@@ -2003,9 +2002,10 @@ function getBonifMes() {
 function getCritEmp(empId) {
   const mes = getBonifMes();
   const key = 'emp_' + empId;
-  if (!mes.premiacao[key]) mes.premiacao[key] = { projetos: [], criterios: {}, contagemManual: null };
+  if (!mes.premiacao[key]) mes.premiacao[key] = { projetos: [], criterios: {}, contagemManual: null, premioManual: 0 };
   if (!mes.premiacao[key].projetos) mes.premiacao[key].projetos = [];
   if (!mes.premiacao[key].criterios) mes.premiacao[key].criterios = {};
+  if (mes.premiacao[key].premioManual === undefined) mes.premiacao[key].premioManual = 0;
   return mes.premiacao[key];
 }
 
@@ -2022,10 +2022,10 @@ function calcPremioEmp(emp) {
       ? (parseInt(dados.contagemManual) || 0)
       : dados.projetos.length;
   }
-  const info = faixaInfo(role.setor, role.papel, contagem);
-  const fator = fatorCriterios(dados.criterios);
-  const premioFinal = info.premio * fator;
-  return { role, contagem, info, fator, premioFinal, dados };
+  // Cálculo automático por tabela de faixas retirado a pedido — o programa de premiação está sendo revisado.
+  // O valor do prêmio agora é 100% digitado manualmente por colaborador.
+  const premioFinal = parseFloat(dados.premioManual) || 0;
+  return { role, contagem, premioFinal, dados };
 }
 
 async function buscarProjetosSetor(setor) {
@@ -2097,15 +2097,12 @@ function renderBonifSetor(setor) {
   const listEl = document.getElementById('bonif-list-'+setor);
   if (!listEl) return;
 
-  let totalPremio = 0, comFaixa = 0;
+  let totalPremio = 0;
   const cards = emps.map(emp => {
     const r = calcPremioEmp(emp);
     if (!r) return '';
     totalPremio += r.premioFinal;
-    if (r.info.faixaIdx >= 0) comFaixa++;
     const col = avatarColor(emp.nome), ini = initials(emp.nome);
-    const c = r.dados.criterios;
-    const zeroPorCriterio = r.fator === 0 && r.info.premio > 0;
 
     const projRows = (setor !== 'comercial') ? r.dados.projetos.map((p,i) => `
       <div class="proj-grid-row" style="grid-template-columns:1.6fr 110px 70px 30px">
@@ -2115,16 +2112,14 @@ function renderBonifSetor(setor) {
         <button class="btn btn-danger btn-sm" onclick="premDelProjeto(${emp.id},${i})" style="padding:3px 6px">✕</button>
       </div>`).join('') : '';
 
-    const criteriosHtml = ''; // Critérios disciplinares (faltas, atrasos, advertência, suspensão, desvio de projeto, retrabalho, pediu demissão, justa causa) removidos da aba de Bonificações a pedido.
-
     return `<div class="mont-block">
       <div class="mont-header">
         <div class="mont-avatar" style="background:${col}22;color:${col}">${ini}</div>
         <div style="flex:1">
           <div class="mont-name">${emp.nome.split(' ').slice(0,3).join(' ')}</div>
-          <div class="mont-sub">${r.role.papel}${setor!=='comercial' ? ` · ${r.contagem} projeto(s) · ${r.info.label}` : ` · faturamento do mês → ${r.info.label}`}</div>
+          <div class="mont-sub">${r.role.papel}${setor!=='comercial' ? ` · ${r.contagem} projeto(s)` : ` · faturamento do mês: ${fmt(r.contagem)}`}</div>
         </div>
-        <span class="mont-badge ${zeroPorCriterio?'mont-badge-warn':r.premioFinal>0?'mont-badge-ok':''}" style="${r.premioFinal===0&&!zeroPorCriterio?'background:var(--surface2);color:var(--text3)':''}">${zeroPorCriterio ? '⚠ zerado por critério' : fmt(r.premioFinal)}</span>
+        <input class="proj-input" type="text" inputmode="numeric" style="width:110px;text-align:right;font-family:var(--mono)" value="${formatBR(r.dados.premioManual||0)}" oninput="maskMoneyInput(this)" onchange="premUpdatePremioManual(${emp.id},this.value)">
         <button class="btn btn-primary btn-sm" onclick="aplicarPremioNaFolha(${emp.id})">✅ Aplicar</button>
       </div>
       ${setor !== 'comercial' ? `
@@ -2135,16 +2130,22 @@ function renderBonifSetor(setor) {
       </div>
       ${projRows || '<div style="font-size:12px;color:var(--text3);padding:6px 0">Nenhum projeto vinculado ainda. Preencha a contagem manual acima ou clique em "+ Projeto".</div>'}
       ` : ''}
-      ${criteriosHtml}
     </div>`;
   }).join('');
 
   listEl.innerHTML = cards || `<div style="padding:20px;text-align:center;color:var(--text3);font-size:13px">Nenhum colaborador mapeado para este setor.</div>`;
   if (statsEl) statsEl.innerHTML = `
     <div class="stat-card"><div class="stat-label">Colaboradores</div><div class="stat-value blue">${emps.length}</div></div>
-    <div class="stat-card"><div class="stat-label">Atingiram alguma faixa</div><div class="stat-value" style="color:var(--purple)">${comFaixa} / ${emps.length}</div></div>
     <div class="stat-card"><div class="stat-label">Total de prêmios</div><div class="stat-value green">${fmt(totalPremio)}</div></div>
   `;
+}
+
+function premUpdatePremioManual(empId, val) {
+  const d = getCritEmp(empId);
+  d.premioManual = parseBR(val);
+  saveBonif();
+  renderBonifSetor(getPremiacaoRole(employees.find(e=>e.id===empId)).setor);
+  renderBonifResumoGeral();
 }
 
 function premAddProjeto(empId) {
