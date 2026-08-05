@@ -517,9 +517,8 @@ input[type="number"] { font-family: var(--mono); }
 
       <div class="bonif-section active" id="bsec-fabrica">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-          <div style="font-size:12px;color:var(--text3)">Contagem automática (Controle de Projetos) + ajuste manual. Prêmio calculado pela tabela oficial por faixa.</div>
+          <div style="font-size:12px;color:var(--text3)">Contagem manual. Prêmio calculado pela tabela oficial por faixa.</div>
           <div style="display:flex;gap:8px">
-            <button class="btn btn-ghost btn-sm" onclick="buscarProjetosSetor('fabrica')" style="color:var(--accent);border-color:var(--accent)">🔄 Atualizar contagem automática</button>
             <button class="btn btn-primary btn-sm" onclick="aplicarTudoSetor('fabrica')">✅ Aplicar tudo na folha</button>
           </div>
         </div>
@@ -529,9 +528,8 @@ input[type="number"] { font-family: var(--mono); }
 
       <div class="bonif-section" id="bsec-montagem">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-          <div style="font-size:12px;color:var(--text3)">Contagem automática (Controle de Projetos) + ajuste manual. Prêmio calculado pela tabela oficial por faixa.</div>
+          <div style="font-size:12px;color:var(--text3)">Contagem manual. Prêmio calculado pela tabela oficial por faixa.</div>
           <div style="display:flex;gap:8px">
-            <button class="btn btn-ghost btn-sm" onclick="buscarProjetosSetor('montagem')" style="color:var(--accent);border-color:var(--accent)">🔄 Atualizar contagem automática</button>
             <button class="btn btn-primary btn-sm" onclick="aplicarTudoSetor('montagem')">✅ Aplicar tudo na folha</button>
           </div>
         </div>
@@ -2135,7 +2133,7 @@ function renderBonifSetor(setor) {
         <input class="proj-input" type="number" style="width:80px" placeholder="${r.dados.projetos.length}" value="${r.dados.contagemManual ?? ''}" onchange="premUpdateContagemManual(${emp.id},this.value)">
         <button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="premAddProjeto(${emp.id})">+ Projeto</button>
       </div>
-      ${projRows || '<div style="font-size:12px;color:var(--text3);padding:6px 0">Nenhum projeto vinculado ainda. Clique em "Atualizar contagem automática" ou "+ Projeto".</div>'}
+      ${projRows || '<div style="font-size:12px;color:var(--text3);padding:6px 0">Nenhum projeto vinculado ainda. Preencha a contagem manual acima ou clique em "+ Projeto".</div>'}
       ` : ''}
       ${criteriosHtml}
     </div>`;
