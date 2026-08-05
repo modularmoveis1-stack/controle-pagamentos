@@ -1162,7 +1162,7 @@ function calcSaldo(emp) {
   const ajuda_custo= pay.fix_ajuda_custo!== undefined ? pay.fix_ajuda_custo: (emp.ajuda_custo||0);
   const cesta      = pay.fix_cesta      !== undefined ? pay.fix_cesta      : (emp.cesta||0); // Ticket (legado)
   const gratificacao=pay.fix_gratificacao!==undefined ? pay.fix_gratificacao:(emp.gratificacao||0);
-  const prem_presenca=pay.fix_prem_presenca!==undefined?pay.fix_prem_presenca:(emp.prem_presenca||0); // Premiação por Presença
+  const prem_presenca=pay.prem_presenca!==undefined?pay.prem_presenca:(pay.fix_prem_presenca!==undefined?pay.fix_prem_presenca:(emp.prem_presenca||0)); // Premiação por Presença
 
   const mostraSalFamilia = temSalFamilia(emp);
 
@@ -1400,7 +1400,7 @@ function renderDetailFolha(emp, pay, c) {
   const mesAdiantLabel = (() => { const d = new Date(mesAdiant+'-15'); return d.toLocaleDateString('pt-BR',{month:'long'}); })();
 
   const salario   = pay.fix_salario      !== undefined ? pay.fix_salario      : emp.salario;
-  const prem_pres = pay.fix_prem_presenca!== undefined ? pay.fix_prem_presenca: (emp.prem_presenca||0); // Premiação por Presença
+  const prem_pres = pay.prem_presenca!==undefined ? pay.prem_presenca : (pay.fix_prem_presenca!==undefined ? pay.fix_prem_presenca: (emp.prem_presenca||0)); // Premiação por Presença
   const sal_familia = pay.fix_sal_familia!== undefined ? pay.fix_sal_familia  : (emp.sal_familia||0);
 
   const presLabel = pay.presenca!==false ? '✅ Presente' : '❌ Faltou';
@@ -1488,7 +1488,7 @@ function renderDetailFolha(emp, pay, c) {
         <span>2️⃣ Créditos Variáveis</span>
         <span style="font-size:12px">${fmt(totalVariaveis)}</span>
       </div>
-      ${fixedRow('Premiação por Presença','prem_presenca', prem_pres, emp.prem_presenca||0)}
+      ${editRow('Premiação por Presença','prem_presenca', prem_pres)}
       ${c.mostraSalFamilia ? fixedRow('Salário Família','sal_familia', sal_familia, emp.sal_familia||0) : ''}
       ${editRow('Premiação','bon_premiacao_faixa', pay.bon_premiacao_faixa)}
       ${editRowObs('Crédito Extra','bon_credito_extra', pay.bon_credito_extra, 'bon_credito_extra_obs', pay.bon_credito_extra_obs)}
