@@ -1148,6 +1148,40 @@ function getConsignados(pay, emp) {
   return legacy > 0 ? [{ desc: 'Consignado', valor: legacy }] : [];
 }
 
+// Crédito Extra e Débito Extra: mesma lógica de lista (múltiplos lançamentos, cada um com observação),
+// com migração automática do valor único antigo (bon_credito_extra/debito_extra) pro primeiro item da lista.
+function getExtraList(pay, listKey, legacyValKey, legacyObsKey) {
+  if (Array.isArray(pay[listKey])) return pay[listKey];
+  const legacyVal = pay[legacyValKey]||0;
+  return legacyVal ? [{ desc: pay[legacyObsKey]||'', valor: legacyVal }] : [];
+}
+function addExtra(empId, listKey, legacyValKey, legacyObsKey) {
+  const pay = getEmpPay(empId);
+  pay[listKey] = getExtraList(pay, listKey, legacyValKey, legacyObsKey);
+  pay[listKey].push({ desc:'', valor:0 });
+  saveEmpPay(empId, pay);
+  const emp = employees.find(e=>e.id===empId);
+  renderDetailFolha(emp, pay, calcSaldo(emp));
+}
+function updateExtra(empId, listKey, legacyValKey, legacyObsKey, idx, field, val) {
+  const pay = getEmpPay(empId);
+  pay[listKey] = getExtraList(pay, listKey, legacyValKey, legacyObsKey);
+  if (pay[listKey][idx]) pay[listKey][idx][field] = field==='valor' ? parseBR(val) : val;
+  saveEmpPay(empId, pay);
+  renderDashboard(); renderEmployees();
+  const emp = employees.find(e=>e.id===empId);
+  renderDetailFolha(emp, pay, calcSaldo(emp));
+}
+function removeExtra(empId, listKey, legacyValKey, legacyObsKey, idx) {
+  const pay = getEmpPay(empId);
+  pay[listKey] = getExtraList(pay, listKey, legacyValKey, legacyObsKey);
+  pay[listKey].splice(idx,1);
+  saveEmpPay(empId, pay);
+  renderDashboard(); renderEmployees();
+  const emp = employees.find(e=>e.id===empId);
+  renderDetailFolha(emp, pay, calcSaldo(emp));
+}
+
 // Salário Família só aparece como linha própria pra estes colaboradores
 const SAL_FAMILIA_NOMES = ['Arlembeng Lopes Oliveira','José Atevaldo Santos da Cunha','Rafael Galeno de Oliveira','Railton da Silva Costa Oliveira'];
 function temSalFamilia(emp) {
@@ -1173,7 +1207,8 @@ function calcSaldo(emp) {
   const premiacaoPresenca = pay.presenca ? prem_presenca : 0;
   const salFamiliaVar = mostraSalFamilia ? sal_familia : 0;
   const premiacaoVariavel = pay.bon_premiacao_faixa||0; // Premiação (calculada na página de Bonificações)
-  const creditoExtra = pay.bon_credito_extra||0;
+  const creditosExtra = getExtraList(pay, 'creditos_extra', 'bon_credito_extra', 'bon_credito_extra_obs');
+  const creditoExtra = creditosExtra.reduce((s,x)=>s+(parseFloat(x.valor)||0),0);
   const variaveisOutros = [
     pay.hora_extra||0, pay.hora_extra_noturno||0,
     pay.bon_projeto||0, pay.bon_supervisao||0, pay.bon_meta_equipe||0,
@@ -1199,12 +1234,14 @@ function calcSaldo(emp) {
   const consignados = getConsignados(pay, emp);
   const totalConsignado = consignados.reduce((s,c)=>s+(parseFloat(c.valor)||0),0);
   const dsr = pay.dsr||0;
-  const deducoes = [inss, totalConsignado, pay.falta||0, dsr, pay.debito_extra||0].reduce((a,b)=>a+(parseFloat(b)||0),0);
+  const debitosExtra = getExtraList(pay, 'debitos_extra', 'debito_extra', 'debito_extra_obs');
+  const debitoExtra = debitosExtra.reduce((s,x)=>s+(parseFloat(x.valor)||0),0);
+  const deducoes = [inss, totalConsignado, pay.falta||0, dsr, debitoExtra].reduce((a,b)=>a+(parseFloat(b)||0),0);
   return {
     total:creditos, deducoes, adiantamento:totalAdv, mesAdiant,
     saldo:creditos-deducoes-totalAdv,
-    fixosPrincipais, premiacaoPresenca, salFamiliaVar, premiacaoVariavel, creditoExtra, variaveisOutros, fixosOutros,
-    inss, totalConsignado, consignados, dsr, sal_familia, mostraSalFamilia,
+    fixosPrincipais, premiacaoPresenca, salFamiliaVar, premiacaoVariavel, creditoExtra, creditosExtra, variaveisOutros, fixosOutros,
+    inss, totalConsignado, consignados, dsr, debitoExtra, debitosExtra, sal_familia, mostraSalFamilia,
   };
 }
 
@@ -1464,6 +1501,18 @@ function renderDetailFolha(emp, pay, c) {
       <button class="btn btn-danger btn-sm" onclick="removeConsignado(${id},${i})" style="padding:2px 6px">✕</button>
     </div>`).join('');
 
+  const extraRows = (list, listKey, legacyValKey, legacyObsKey, color) => list.map((it,i)=>`
+    <div class="pay-row" style="flex-wrap:wrap">
+      <div class="pay-label">Lançamento ${i+1}</div>
+      <input class="pay-input" type="text" inputmode="numeric" value="${formatBR(it.valor)}" oninput="maskMoneyInput(this)" onchange="updateExtra(${id},'${listKey}','${legacyValKey}','${legacyObsKey}',${i},'valor',this.value)"
+        style="background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-sm);color:${color}">
+      <button class="btn btn-danger btn-sm" onclick="removeExtra(${id},'${listKey}','${legacyValKey}','${legacyObsKey}',${i})" style="padding:2px 6px">✕</button>
+      <input type="text" value="${esc(it.desc||'')}" placeholder="Observação (opcional)" onchange="updateExtra(${id},'${listKey}','${legacyValKey}','${legacyObsKey}',${i},'desc',this.value)"
+        style="width:100%;margin-top:2px;background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text2);font-size:12px;padding:6px 8px">
+    </div>`).join('');
+  const creditoExtraRows = extraRows(c.creditosExtra, 'creditos_extra', 'bon_credito_extra', 'bon_credito_extra_obs', 'var(--green)');
+  const debitoExtraRows = extraRows(c.debitosExtra, 'debitos_extra', 'debito_extra', 'debito_extra_obs', 'var(--red)');
+
   const totalFixo = c.fixosPrincipais;
   const totalVariaveis = c.premiacaoPresenca + c.salFamiliaVar + c.premiacaoVariavel + c.creditoExtra;
   const totalDeducoesCard = c.deducoes + c.adiantamento;
@@ -1491,7 +1540,11 @@ function renderDetailFolha(emp, pay, c) {
       ${editRow('Premiação por Presença','prem_presenca', prem_pres)}
       ${c.mostraSalFamilia ? fixedRow('Salário Família','sal_familia', sal_familia, emp.sal_familia||0) : ''}
       ${editRow('Premiação','bon_premiacao_faixa', pay.bon_premiacao_faixa)}
-      ${editRowObs('Crédito Extra','bon_credito_extra', pay.bon_credito_extra, 'bon_credito_extra_obs', pay.bon_credito_extra_obs)}
+      <div class="pay-row">
+        <div class="pay-label">Crédito Extra</div>
+        <button class="btn btn-ghost btn-sm" onclick="addExtra(${id},'creditos_extra','bon_credito_extra','bon_credito_extra_obs')" style="padding:2px 8px;font-size:12px">+</button>
+      </div>
+      ${creditoExtraRows || '<div style="padding:2px 14px 8px;font-size:11px;color:var(--text3)">Nenhum crédito extra lançado.</div>'}
     </div>
 
     <div class="pay-section" style="margin-bottom:12px">
@@ -1516,7 +1569,11 @@ function renderDetailFolha(emp, pay, c) {
         ${advsHtml}
         <div style="font-size:11px;color:var(--text3)">Lançado direto na página de Adiantamento (dia 20) — aqui é só consulta.</div>
       </div>
-      ${editRowObs('Débito Extra','debito_extra',pay.debito_extra,'debito_extra_obs',pay.debito_extra_obs)}
+      <div class="pay-row">
+        <div class="pay-label">Débito Extra</div>
+        <button class="btn btn-ghost btn-sm" onclick="addExtra(${id},'debitos_extra','debito_extra','debito_extra_obs')" style="padding:2px 8px;font-size:12px">+</button>
+      </div>
+      ${debitoExtraRows || '<div style="padding:2px 14px 8px;font-size:11px;color:var(--text3)">Nenhum débito extra lançado.</div>'}
     </div>
 
     <div class="pay-section" style="margin-bottom:12px">
