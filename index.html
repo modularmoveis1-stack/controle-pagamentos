@@ -445,6 +445,7 @@ input[type="number"] { font-family: var(--mono); }
         <select id="filterFunc" onchange="renderEmployees()">
           <option value="">Todas as funções</option>
         </select>
+        <button class="btn btn-danger btn-sm" onclick="excluirLegadoTodos()" title="Exclui Ticket/Ajuda de Custo/Gratificação oculto de todo mundo — some do total pra sempre">🗑 Excluir Legado (todos)</button>
       </div>
       <div class="emp-grid" id="empGrid"></div>
     </div>
@@ -636,7 +637,6 @@ input[type="number"] { font-family: var(--mono); }
         <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">💰 Valores Fixos</div>
         <div class="form-row">
           <div class="form-group" id="fg_salario"><label>Salário Base</label><input type="text" inputmode="numeric" id="emp_salario" placeholder="0,00" oninput="maskMoneyInput(this)"></div>
-          <div class="form-group" id="fg_adiant_quinzena"><label>Adiantamento Quinzenal (dia 20)</label><input type="text" inputmode="numeric" id="emp_adiant_quinzena" placeholder="0,00" oninput="maskMoneyInput(this)"></div>
         </div>
       </div>
     </div>
@@ -1181,6 +1181,49 @@ function removeExtra(empId, listKey, legacyValKey, legacyObsKey, idx) {
   renderDetailFolha(emp, pay, calcSaldo(emp));
 }
 
+// Exclusão de legado (Ticket, Ajuda de Custo, Gratificação, Sal. Família oculto).
+// Zera o valor-base no cadastro do funcionário — não soma mais escondido no total,
+// não recorre nos próximos meses e não vira Crédito Extra. Some de vez.
+function excluirLegado(empId) {
+  const emp = employees.find(e=>e.id===empId); if (!emp) return 0;
+  const c = calcSaldo(emp);
+  const d = c.legadoDetalhe;
+  const total = (parseFloat(d.cesta)||0) + (parseFloat(d.ajuda_custo)||0) + (parseFloat(d.gratificacao)||0) + (parseFloat(d.sal_familia_oculto)||0);
+  if (total <= 0) return 0;
+
+  const pay = getEmpPay(empId);
+  // Limpa qualquer override deste mês pra esses campos
+  delete pay.fix_cesta; delete pay.fix_ajuda_custo; delete pay.fix_gratificacao; delete pay.fix_sal_familia;
+  saveEmpPay(empId, pay);
+
+  // Zera o valor-base no cadastro, pra não somar escondido nunca mais
+  emp.cesta = 0; emp.ajuda_custo = 0; emp.gratificacao = 0;
+  if (!c.mostraSalFamilia) emp.sal_familia = 0;
+  saveEmployees();
+
+  return total;
+}
+
+function excluirLegadoUm(empId) {
+  const total = excluirLegado(empId);
+  renderDashboard(); renderEmployees();
+  const emp = employees.find(e=>e.id===empId);
+  if (selectedEmpId===empId) renderDetailFolha(emp, getEmpPay(empId), calcSaldo(emp));
+  showToast(total>0 ? `Legado excluído: ${fmt(total)} removido do total` : 'Nada pra excluir aqui.');
+}
+
+function excluirLegadoTodos() {
+  if (!confirm('Excluir o legado (Ticket/Ajuda de Custo/Gratificação/Sal. Família oculto) de TODOS os funcionários? Esse valor some do total de todo mundo que tiver.')) return;
+  let count = 0, totalGeral = 0;
+  employees.forEach(emp => {
+    const v = excluirLegado(emp.id);
+    if (v > 0) { count++; totalGeral += v; }
+  });
+  renderAll();
+  if (selectedEmpId) { const emp = employees.find(e=>e.id===selectedEmpId); if (emp) renderDetailFolha(emp, getEmpPay(selectedEmpId), calcSaldo(emp)); }
+  showToast(count ? `${count} funcionário(s) — ${fmt(totalGeral)} removidos` : 'Ninguém tinha legado pra excluir.');
+}
+
 // Salário Família só aparece como linha própria pra estes colaboradores
 const SAL_FAMILIA_NOMES = ['Arlembeng Lopes Oliveira','José Atevaldo Santos da Cunha','Rafael Galeno de Oliveira','Railton da Silva Costa Oliveira'];
 function temSalFamilia(emp) {
@@ -1241,6 +1284,7 @@ function calcSaldo(emp) {
     saldo:creditos-deducoes-totalAdv,
     fixosPrincipais, premiacaoPresenca, salFamiliaVar, premiacaoVariavel, creditoExtra, creditosExtra, variaveisOutros, fixosOutros,
     inss, totalConsignado, consignados, dsr, debitoExtra, debitosExtra, sal_familia, mostraSalFamilia,
+    legadoDetalhe: { cesta, ajuda_custo, gratificacao, sal_familia_oculto: (mostraSalFamilia ? 0 : sal_familia) },
   };
 }
 
@@ -1539,6 +1583,14 @@ function renderDetailFolha(emp, pay, c) {
       ${editRow('Premiação por Presença','prem_presenca', prem_pres)}
       ${c.mostraSalFamilia ? fixedRow('Salário Família','sal_familia', sal_familia, emp.sal_familia||0) : ''}
       ${editRow('Premiação','bon_premiacao_faixa', pay.bon_premiacao_faixa)}
+      ${c.fixosOutros > 0 ? `<div class="pay-row" style="flex-direction:column;align-items:stretch;gap:6px;background:rgba(245,158,11,.08);border-radius:var(--radius-sm);padding:8px 10px;margin:4px 0">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div class="pay-label" style="color:var(--yellow)">⚠ Legado ainda oculto (Ticket/Ajuda/Gratificação)</div>
+          <div class="pay-value" style="color:var(--yellow)">${fmt(c.fixosOutros)}</div>
+        </div>
+        <div style="font-size:11px;color:var(--text3)">Esse valor já está somado no total, mas não tem linha própria.</div>
+        <button class="btn btn-danger btn-sm" onclick="excluirLegadoUm(${id})" style="align-self:flex-start">🗑 Excluir esse valor</button>
+      </div>` : ''}
       <div class="pay-row">
         <div class="pay-label">Crédito Extra</div>
         <button class="btn btn-ghost btn-sm" onclick="addExtra(${id},'creditos_extra','bon_credito_extra','bon_credito_extra_obs')" style="padding:2px 8px;font-size:12px">+</button>
@@ -1728,9 +1780,13 @@ function removeConsignado(empId, idx) {
 }
 
 // ══════ EMPLOYEES CRUD ════════════════════════════════════
-const EMP_MONEY_FIELDS = ['salario','adiant_quinzena'];
+// "adiant_quinzena" NÃO fica mais na Editar Ficha — o valor do dia 20 é controlado
+// direto na página "Dia 20" (getDia20Valor / setDia20Valor), que já tem override por mês.
+// O campo emp.adiant_quinzena continua existindo nos dados (usado como valor-base quando
+// ninguém editou o dia 20 daquele mês ainda), só não é mais editável por aqui.
+const EMP_MONEY_FIELDS = ['salario'];
 // Estes ficam sempre visíveis (essenciais pra qualquer funcionário). O resto só aparece se já tiver valor > 0.
-const EMP_MONEY_SEMPRE_VISIVEL = ['salario','adiant_quinzena'];
+const EMP_MONEY_SEMPRE_VISIVEL = ['salario'];
 
 function openAddEmployee() {
   document.getElementById('modalEmpTitle').textContent='Novo Funcionário';
